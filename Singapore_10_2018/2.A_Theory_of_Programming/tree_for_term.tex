@@ -1,0 +1,34 @@
+%%-*-latex-*-
+
+\documentclass{slides}
+
+\usepackage{pst-tree}
+
+\begin{document}
+
+\psset{radius=3pt}
+\pstree[levelsep=17pt,treesep=14pt]{\TC[fillstyle=hlines]}{
+  \pstree{\TC}{
+    \pstree{\TC}{
+      \pstree{\TC}{
+        \TC*[linecolor=black]
+        \TC*[linecolor=black]
+      }
+      \TC*[linecolor=black]
+    }
+    \pstree{\TC}{
+      \TC*[linecolor=black]
+      \TC*[linecolor=black]
+    }
+  }
+  \Tn
+  \TC*[linecolor=black]
+  \pstree{\TC}{
+    \pstree{\TC}{
+      \TC*[linecolor=black]
+    }
+    \TC*[linecolor=black]
+  }
+}
+
+\end{document}

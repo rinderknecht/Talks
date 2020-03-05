@@ -1,0 +1,58 @@
+
+
+\begin{frame}
+  \frametitle{Exceptions}
+
+  Exceptions are values of the predefined type \textbf{exn}.
+  \begin{itemize}
+
+    \item The type \textsf{exn} is an \textbf{open variant type}. For
+      example:
+      \begin{alltt}
+        \textbf{exception} Exit \textbf{of} int
+      \end{alltt}
+
+    \item \textbf{Raising an exception} is done by the expression
+      (\textsf{raise} $e$). The expression~\(e\) must evaluate in an
+      exception, which becomes the value of the raise, e.g.,
+      \texttt{raise (Exit 2)}.
+
+    \item An exception can be matched if the expression~\(e\) where it
+      was raised is embedded in an expression
+      \begin{center}
+        \Xtry{} $e$ \Xwith{} $p_1 \rightarrow e_1 \mid \ldots
+        \mid p_n \rightarrow e_n$
+      \end{center}
+      \begin{itemize}
+
+        \item If the evaluation of~\(e\) results in a normal value,
+          that value is the value of the \textbf{try} expression;
+
+        \item otherwise, the exceptional value is matched against the
+          patterns~\(p_i\);
+          \begin{itemize}
+
+            \item if the pattern~\(p_i\) matches the exception, then
+              \(e_i\)~is evaluated and its value becomes the value of
+              the \textbf{try} expression,
+
+            \item else the exception becomes the value of the
+              \textbf{try} expression.
+
+          \end{itemize}
+
+        %% \item Note that the patterns for exceptions need not be
+        %%   complete, whence a source of potential problems because the
+        %%   programmer has to keep track of the set of exceptions
+        %%   potentially raised by a given expression. (Contrary to
+        %%   \Java, exceptions in \OCaml are no part of the type of
+        %%   functions, because this would be deemed cumbersome in the
+        %%   presence of higher\hyp{}order functions, like
+        %%   \textsf{List.map}.)
+
+      \end{itemize}
+
+  \end{itemize}
+
+\end{frame}
+

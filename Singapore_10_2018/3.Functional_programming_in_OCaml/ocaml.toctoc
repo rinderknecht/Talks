@@ -1,0 +1,188 @@
+\onemoreslide
+\toctocslide{0}{ Introduction}
+\onemoreslide
+\toctocslide{0}{ Growing a language}
+\onemoreslide
+\toctocslide{0}{ Appending a stack}
+\onemoreslide
+\toctocslide{0}{ Appending a stack (continued)}
+\onemoreslide
+\toctocslide{0}{ Sentences}
+\onemoreslide
+\toctocslide{0}{ Metavariables}
+\onemoreslide
+\toctocslide{0}{ Expressions}
+\onemoreslide
+\toctocslide{0}{ Examples of expressions}
+\onemoreslide
+\toctocslide{0}{ Examples of expressions (continued)}
+\onemoreslide
+\toctocslide{0}{ Functions}
+\onemoreslide
+\toctocslide{0}{ Function calls}
+\onemoreslide
+\toctocslide{0}{ Abstract syntax}
+\onemoreslide
+\toctocslide{0}{ Abstract syntax}
+\onemoreslide
+\toctocslide{0}{ Abstract syntax}
+\onemoreslide
+\toctocslide{0}{ Bindings, environments, scope}
+\onemoreslide
+\toctocslide{0}{ Bindings, environments, scope}
+\onemoreslide
+\toctocslide{0}{ Bindings, environments, scope}
+\onemoreslide
+\toctocslide{0}{ Bindings, environments, scope}
+\onemoreslide
+\toctocslide{0}{ Free variables}
+\onemoreslide
+\toctocslide{0}{ Free variables}
+\onemoreslide
+\toctocslide{0}{ Free variables}
+\onemoreslide
+\toctocslide{0}{ Free variables}
+\onemoreslide
+\toctocslide{0}{ Closed expressions}
+\onemoreslide
+\toctocslide{0}{ Evaluation}
+\onemoreslide
+\toctocslide{0}{ Evaluation}
+\onemoreslide
+\toctocslide{0}{ Evaluation}
+\onemoreslide
+\toctocslide{0}{ Example of evaluation}
+\onemoreslide
+\toctocslide{0}{ Example of evaluation}
+\onemoreslide
+\toctocslide{0}{ Formal semantics}
+\onemoreslide
+\toctocslide{0}{ Partial applications}
+\onemoreslide
+\toctocslide{0}{ Auto-application and termination}
+\onemoreslide
+\toctocslide{0}{ Fixed points}
+\onemoreslide
+\toctocslide{0}{ Fixed points}
+\onemoreslide
+\toctocslide{0}{ Local recursive definitions}
+\onemoreslide
+\toctocslide{0}{ Extensions}
+\onemoreslide
+\toctocslide{0}{ Irrefutable patterns}
+\onemoreslide
+\toctocslide{0}{ Extensions}
+\onemoreslide
+\toctocslide{0}{ Parallel definitions}
+\onemoreslide
+\toctocslide{0}{ Mutually recursive definitions}
+\onemoreslide
+\toctocslide{0}{ Mutually recursive definitions}
+\onemoreslide
+\toctocslide{0}{ Mutually recursive definitions}
+\onemoreslide
+\toctocslide{0}{ Static typing and inference}
+\onemoreslide
+\toctocslide{0}{ Static typing and inference}
+\onemoreslide
+\toctocslide{0}{ Types}
+\onemoreslide
+\toctocslide{0}{ Type expressions}
+\onemoreslide
+\toctocslide{0}{ Type expressions}
+\onemoreslide
+\toctocslide{0}{ Type definitions}
+\onemoreslide
+\toctocslide{0}{ Type inference}
+\onemoreslide
+\toctocslide{0}{ Polymorphism}
+\onemoreslide
+\toctocslide{0}{ Polymorphism inference}
+\onemoreslide
+\toctocslide{0}{ Polymorphic equality}
+\onemoreslide
+\toctocslide{0}{ Pattern matching}
+\onemoreslide
+\toctocslide{0}{ Pattern matching}
+\onemoreslide
+\toctocslide{0}{ Pattern matching}
+\onemoreslide
+\toctocslide{0}{ Variant types}
+\onemoreslide
+\toctocslide{0}{ Variant types}
+\onemoreslide
+\toctocslide{0}{ Pattern matching (resumed)}
+\onemoreslide
+\toctocslide{0}{ Pattern matching (resumed)}
+\onemoreslide
+\toctocslide{0}{ Lists}
+\onemoreslide
+\toctocslide{0}{ Lists}
+\onemoreslide
+\toctocslide{0}{ Polymorphic iterators on lists}
+\onemoreslide
+\toctocslide{0}{ Maps}
+\onemoreslide
+\toctocslide{0}{ Folds}
+\onemoreslide
+\toctocslide{0}{ Folds}
+\onemoreslide
+\toctocslide{0}{ Folds}
+\onemoreslide
+\toctocslide{0}{ Folds}
+\onemoreslide
+\toctocslide{0}{ Folds}
+\onemoreslide
+\toctocslide{0}{ Folds}
+\onemoreslide
+\toctocslide{0}{ Folds}
+\onemoreslide
+\toctocslide{0}{ Binary trees}
+\onemoreslide
+\toctocslide{0}{ Binary trees}
+\onemoreslide
+\toctocslide{0}{ Binary trees in OCaml}
+\onemoreslide
+\toctocslide{0}{ Tree traversals}
+\onemoreslide
+\toctocslide{0}{ The option type}
+\onemoreslide
+\toctocslide{0}{ Tree traversals}
+\onemoreslide
+\toctocslide{0}{ A shortcut}
+\onemoreslide
+\toctocslide{0}{ Tree traversals (resumed)}
+\onemoreslide
+\toctocslide{0}{ Tree traversals}
+\onemoreslide
+\toctocslide{0}{ Preorder traversal}
+\onemoreslide
+\toctocslide{0}{ Preorder traversal}
+\onemoreslide
+\toctocslide{0}{ Inorder and postorder traversals}
+\onemoreslide
+\toctocslide{0}{ Binary Search Trees}
+\onemoreslide
+\toctocslide{0}{ Binary Search Trees}
+\onemoreslide
+\toctocslide{0}{ Binary Search Trees}
+\onemoreslide
+\toctocslide{0}{ Searching}
+\onemoreslide
+\toctocslide{0}{ Leaf insertion}
+\onemoreslide
+\toctocslide{0}{ Leaf insertion}
+\onemoreslide
+\toctocslide{0}{ Root insertion}
+\onemoreslide
+\toctocslide{0}{ Right rotation}
+\onemoreslide
+\toctocslide{0}{ Left rotation}
+\onemoreslide
+\toctocslide{0}{ Root insertion (resumed)}
+\onemoreslide
+\toctocslide{0}{ Root insertion}
+\onemoreslide
+\toctocslide{0}{ Balancing a binary search tree}
+\onemoreslide
+\toctocslide{0}{ Sorting with Binary Search Trees}

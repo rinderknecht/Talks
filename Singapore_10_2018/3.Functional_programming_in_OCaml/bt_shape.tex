@@ -1,0 +1,52 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\pagestyle{empty}
+\usepackage{pst-tree}
+
+\begin{document}
+
+\psset{radius=3pt}
+\pstree[levelsep=17pt,treesep=14pt]{\TR{\scriptsize\(\oslash\)}}{
+  \pstree{\TC}{
+    \pstree{\TC}{
+      \pstree{\TC}{
+        \Tf[framesize=6pt]
+        \pstree{\TC*[linecolor=black]}{
+          \Tf[framesize=6pt]
+          \Tf[framesize=6pt]
+        }
+      }
+      \pstree{\TC*[linecolor=black]}{
+        \Tf[framesize=6pt]
+        \Tf[framesize=6pt]
+      }
+    }
+    \pstree{\TC}{
+      \Tf[framesize=6pt]
+      \pstree{\TC}{
+        \Tf[framesize=6pt]
+        \pstree{\TC*[linecolor=black]}{
+          \Tf[framesize=6pt]
+          \Tf[framesize=6pt]
+        }
+      }
+    }
+  }
+  \pstree{\TC}{
+    \pstree{\TC*[linecolor=black]}{
+      \Tf[framesize=6pt]
+      \Tf[framesize=6pt]
+    }
+    \pstree{\TC}{
+      \pstree{\TC*[linecolor=black]}{
+        \Tf[framesize=6pt]
+        \Tf[framesize=6pt]
+      }
+      \Tf[framesize=6pt]
+    }
+  }
+}
+
+\end{document}

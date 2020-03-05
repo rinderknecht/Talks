@@ -1,0 +1,56 @@
+* Formal methods in software engineering
+   - Failures: the case of Ariane 5
+   - Success stories
+      * PolySpace
+      * The B Method
+      * Astree
+      * Frama-C
+      * CompCert
+   - Model checking
+      * SPIN
+   - The mathematics of formal methods
+   - Undecidable problems
+   - A shift in education
+
+* A theory of programming
+   - Rewrite systems
+   - Functional languages
+   - Stacks in a functional setting
+   - Data sharing
+   - The call stack and the heap
+   - Tail call optimisation
+
+* OCaml: A programming language for formal methods
+   - Mini-ML: a subset of OCaml
+   - Sentences and expressions of Mini-ML
+   - Evaluation of Mini-ML and formal semantics
+   - Recursive definitions
+   - Static typing and inference
+   - Variant types and pattern matching
+   - Tree traversals
+   - Search trees and rotations
+
+* OCaml: A language for interpreting OCaml itself
+   - An overview of compiler construction
+   - OCamllex: A tool for building lexers in OCaml
+   - An abstract syntax of Mini-ML in OCaml
+   - An interpreter of Mini-ML in OCaml
+
+* Advanced topics in software verification (optional)
+   - Type inference of Mini-ML
+   - Proving termination
+   - Analysis of algorithms
+   - Proving properties of programs
+
+* The blockchain network and smart contracts
+   - The Tezos protocols
+   - The design of Liquidity and Michelson: two
+     Domain-Specific Languages for smart contracts
+   - A small example in Michelson
+   - Demo: Running the contract on the Tezos blockchain
+
+* The client side of the Tezos blockchain (workshop)
+   - Design and innovation in application dev cycle
+   - The mobile wallet Cortez
+   - The block explorer TezScan
+   - The middleware Mezos

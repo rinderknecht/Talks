@@ -1,0 +1,35 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\pagestyle{empty}
+\usepackage{pst-tree}
+
+\begin{document}
+
+\pstree[levelsep=17pt,treesep=14pt,nodesep=1pt]{\TR{\(8\)}}{
+  \pstree{\TR{\(1\)}}{
+    \pstree[nodesepB=0pt,treesep=20pt]{\TR{\(3\)}}{
+      \Tf[framesize=6pt]
+      \psset{nodesepB=1pt}
+      \pstree[nodesepB=0pt,treesep=14pt]{\TR{\(5\)}}{
+        \Tf[framesize=6pt]
+        \Tf[framesize=6pt]
+      }
+    }
+    \pstree[nodesepB=0pt]{\TR{\(9\)}}{
+      \Tf[framesize=6pt]
+      \Tf[framesize=6pt]
+    }
+  }
+  \pstree[nodesepB=0pt,treesep=20pt]{\TR{\(3\)}}{
+    \Tf[framesize=6pt]
+    \psset{nodesepB=1pt}
+    \pstree[nodesepB=0pt,treesep=14pt]{\TR{\(2\)}}{
+      \Tf[framesize=6pt]
+      \Tf[framesize=6pt]
+    }
+  }
+}
+
+\end{document}

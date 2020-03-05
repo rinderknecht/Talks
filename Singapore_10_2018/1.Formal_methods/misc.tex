@@ -1,0 +1,2384 @@
+%%-*-latex-*-
+
+\documentclass[wide]{slides}
+
+% Language
+%
+\usepackage{hyphenat}          % \hyp{} is a breakable dash
+
+\frenchspacing  % Follow French conventions after a period
+
+% Maths & Logic
+%
+\usepackage{stmaryrd}
+\usepackage{mathpartir}
+
+% Input files
+%
+\input{commands}
+
+% ----------------------------------------------------------------
+% Document
+%
+\maintitle{Formal Methods in Software Engineering II}
+\mainauthor{\textbf{Christian Rinderknecht}\\
+  {\small\url{Christian.Rinderknecht@tezcore.com}}\\
+\Nomadic}
+\confname{Tezos Masterclass}
+\confshortname{Tezos}
+\confdate{19 October 2018}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{slide}
+  \title{Formal logic}
+
+  The relevance and importance of logic in the context of software
+  engineering consists of two aspects:
+  \begin{enumerate}
+
+    \item logic provides a framework to express sundry notions,
+
+    \item logic lends itself well to formalisation.
+
+  \end{enumerate}
+
+\end{slide}
+
+\begin{slide}
+  \title{Logic as a framework}
+
+  As far as the first aspect is concerned,
+  \begin{itemize}
+
+    \item the data processed by programs can be described as
+      elementary sets (integers, characters etc.) being combined, for
+      example by means of Cartesian products (e.g., the records of
+      \OCaml) or unions (e.g., the variant types of
+      \OCaml).
+
+    \item Computability theory informs us of the existence of limits,
+      that is, of specifications that can be expressed but not
+      satisfied.
+
+    \item Type theory leads to compilers that ensure the safety of
+      programming by matching given type annotations against the
+      expressions, and/or by inferring those types from the
+      expressions.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Logic for modelling}
+
+  As far as the second aspect is concerned, there are two reasons for
+  formalising:
+  \begin{itemize}
+
+    \item the rigour of the texts and the reasonings is enhanced, for
+      they can be reduced, at least in part, to some interpretative
+      processing of symbols;
+
+    \item the effort can be alleviated by the use of interactive tools
+      or even, sometimes, some tasks can be completely automated.
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Theorem proving}
+
+  \begin{itemize}
+
+    \item Another approach is \textbf{theorem proving}, which delivers
+      the same guarantees as model checking (except in presence of a
+      counterexample) but does not require the model to be finite,
+      because it relies on the principle of \textbf{induction}.
+
+    \item Some proof assistants, like \Coq (implemented in \OCaml),
+      can even generate implementations from proofs, thanks to the use
+      of a constructive logic.
+
+    \item Theorem proving can fruitfully be used in conjunction with
+      model checking.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Static analysis}
+  \begin{itemize}
+
+    \item Finally, \textbf{static analysis} consists in approximating
+      sets of values and behaviours of implementations as they would
+      occur at run-time, without instrumenting the source code, nor
+      actually running it.
+
+    \item The need for approximations stems both from theoretical
+      reasons (undecidable problems), and practical issues (state
+      explosion).
+
+    \item A powerful theoretical framework is \textbf{abstract
+      interpretation}, which is based on a sound abstraction of the
+      semantics of a programming language and a symbolic execution of
+      the program.
+
+    \item More syntactical algorithms (therefore less powerful), like
+      \textbf{type checking} or \textbf{type inference}, also work
+      well in practice and both approaches are useful.
+
+    \item Static analysis can be thought of as abstracting a model
+      from a program, and is thus complementary to the techniques we
+      have mentioned earlier.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation}
+
+  \begin{itemize}
+
+    \item Abstract interpretation can be used to analyse systems whose
+      number of possible states is infinite.
+
+    \item A \textbf{state} is all the information characterising a
+      system running at a given point in time (memory contents,
+      program counter, files, network buffers, etc.)
+
+    \item A behaviour of a system, or \textbf{trace}, can be thought
+      as a line from one state to the next. The (usually) infinite set
+      of traces is the \textbf{concrete semantics} of the program.
+
+    \item Abstract interpretation over\hyp{}approximates the states
+      and behaviours of a system, yielding, respectively, an
+      \textbf{abstract domain} and an \textbf{abstract semantics}.
+
+    \item Concrete properties to be checked are abstracted in such a
+      way that abstract states satisfying the property can be
+      discovered by a \textbf{terminating interpretation of the
+        abstract program}, and translated each back to sets of
+      concrete states.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation}
+
+  \begin{itemize}
+
+    \item Like all static analyses, abstract interpretation is an
+      over\hyp{}approximation, which means that it may find an
+      erroneous abstract state whose corresponding concrete states are
+      \emph{not} all erroneous, but it cannot miss concrete erroneous
+      states (it is a \textbf{sound approximation}).
+
+    \item To reduce the number of those \textbf{false positives}, the
+      abstract semantics must become closer to the concrete semantics,
+      whilst the property remaining tractable (that is, both
+      theoretically and practically computable). In other words, we
+      seek a smaller over\hyp{}approximation.
+
+    \item The abstract states should retain enough information to
+      correspond to useful sets of concrete states.
+
+    \item For instance, if the concrete domain is the set of integers,
+      a possible abstract domain could be the signs of the integers
+      (little information), or their remainders by~\(16\) (more
+      information), etc.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation / An illustration}
+
+  \begin{itemize}
+
+    \item As an illustration, let us consider a system whose states
+      are pairs of positive real numbers.
+
+    \item Let us choose an abstract domain made of pairs of natural
+      numbers: the nearest integral coordinate represents a set of
+      concrete states.
+
+    \item Some abstract states are coloured in \textcolor{red}{red} to
+      denote that they are erroneous: this is the abstract property
+      ``To be erroneous.''
+
+    \item We show four abstract traces as \textbf{black} lines. (They
+      potentially denote an infinite set of concrete traces, all
+      traces making up the abstract semantics itself.)
+
+    \item One of the abstract traces actually ends in an error (but it
+      may be that not all the corresponding concrete states are
+      erroneous).
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation / An illustration}
+
+  \begin{center}
+    \includegraphics[bb=95 428 500 727, scale=0.64]{traces.eps}
+  \end{center}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation / An illustration}
+
+  \begin{itemize}
+
+    \item In general, the number of erroneous states in a finite
+      region can be infinite (imagine that the abstract states are
+      rational numbers, instead of natural numbers).
+
+    \item We need to characterise the erroneous states in a finite
+      manner, at the cost of over\hyp{}approximating them: this means
+      to abstract the property ``To be erroneous'' so it becomes
+      easier to check.
+
+    \item For example, we can abstract the error property by a red
+      square containing the set of erroneous states, instead of being
+      the set itself.
+
+    \item A square on the abstract domain can be defined by three
+      numbers only and it is easy to check whether a given state
+      belongs to it: if so, we deem it an error.
+
+    \item In our example, this creates false positives, that is,
+      states inside the square that are not actual errors.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation / An illustration}
+
+  \begin{center}
+    \includegraphics[bb=95 428 500 727, scale=0.64]{traces.eps}
+  \end{center}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation / An illustration}
+
+  \begin{center}
+    \includegraphics[bb=95 428 500 727, scale=0.64]{traces_square.eps}
+  \end{center}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation / An illustration}
+
+  \begin{center}
+\includegraphics[bb=95 428 500 727,scale=0.64]{traces_square_cropped.eps}
+  \end{center}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation / An illustration}
+
+  \begin{itemize}
+
+    \item To reduce the number of false positives, we \textbf{refine
+      the abstract property} so it gets closer to the concrete
+      property.
+
+    \item For instance, we could use another polygon to cover more
+      tightly the erroneous states.
+
+    \item Let us try an hexagon: to define it, we need the same amount
+      of information as for a square, but the inclusion property is
+      slightly more complex.
+
+    \item This is better, but one trace remains a false positive.
+
+    \item In general, false positives are inevitable if the property
+      is complex enough, so trade\hyp{}offs are necessary.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation}
+
+  \begin{center}
+    \includegraphics[bb=85 428 500 727, scale=0.64]{traces_square_cropped.eps}
+  \end{center}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstract interpretation}
+
+  \begin{center}
+    \includegraphics[bb=85 428 500 727, scale=0.64]{traces_hexagon.eps}
+  \end{center}
+
+\end{slide}
+
+\begin{slide}
+  \title{The proof assistant Coq: An example}
+
+  \begin{itemize}
+
+    \item To give a taste of what can \Coq automatically do for us,
+      let us consider a microscopic example.
+
+    \item We are going to need a simple data structure called a
+      \textbf{stack}.
+
+    \item A stack can be thought of as a finite series of items that
+      can only be accessed sequentially from one end, called the
+      \textbf{top}, following the analogy with a stack of material
+      objects.
+
+    \item We need to define all the shapes that a stack can take. A
+      stack can either be empty or contain at least one item.
+
+    \item Let us denote the empty stack by ``\(\fun{nil}\)'', and the
+      stack with \(x\)~on top of the stack~\(s\) as \(\cons{x}{s}\).
+
+    \item For example, the stack containing only~\(0\) is noted
+      \(\cons{0}{\fun{nil}}\), the stack containing~\(1\) on top,
+      then~\(0\) is \(\cons{1}{\cons{0}{\fun{nil}}}\).
+
+    \item The operator (\(::\)) associates to the right, so
+      \(\cons{x}{\cons{y}{s}}\) actually means
+      \(\cons{x}{(\cons{y}{s})}\).
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{An short example in Coq}
+
+  \begin{itemize}
+
+    \item Let us define a \textbf{binary relation} (\(\approx\)) over
+      stacks that capture the notion of \textbf{permutation}.
+
+    \item Intuitively, the permutation of a stack is another stack
+      containing the same items, but not necessarily in the same
+      order.
+
+    \item For example, ``\(\fun{nil}\)'' is a trivial permutation of
+      ``\(\fun{nil}\)'', and
+      \(\cons{2}{\cons{1}{\cons{0}{\fun{nil}}}}\) is a permutation of
+      \(\cons{0}{\cons{2}{\cons{1}{\fun{nil}}}}\), formally:
+      \begin{itemize}
+
+        \item \(\fun{nil} \approx \fun{nil}\),
+
+        \item \(\cons{2}{\cons{1}{\cons{0}{\fun{nil}}}} \approx
+          \cons{0}{\cons{2}{\cons{1}{\fun{nil}}}}\).
+
+      \end{itemize}
+
+    \item The relation (\(\approx\)) can be defined in different
+      ways.
+
+    \item The idea here consists in defining a permutation as a series
+      of \textbf{transpositions}, namely, exchanges of adjacent items.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{An short example in Coq}
+
+  Here is an \textbf{inductive definition} of permutations, based on
+  transpositions:
+  \begin{enumerate}
+
+    \item \label{perm:nil} \(\fun{nil} \;\approx\; \fun{nil}\),
+
+    \item \label{perm:swap} \(\cons{x}{\cons{y}{s}} \;\approx\;
+      \cons{y}{\cons{x}{s}}\),
+
+    \item \label{perm:push} if \(s \;\approx\; t\), then \(\cons{x}{s}
+      \;\approx\; \cons{x}{t}\),
+
+    \item \label{perm:trans} if \(s \;\approx\; u\) and \(u
+      \;\approx\; t\), then \(s \;\approx\; t\). (This is the
+      \textbf{transitivity} property.)
+
+  \end{enumerate}
+  We are going to use a special notation to write the same definition,
+  called \textbf{inference systems}:
+  \begin{mathpar}
+    \inferrule*{}{\el \;\approx\; \el}
+    \;\TirName{Nil}
+    \qquad
+    \inferrule*{}{\cons{x}{\cons{y}{s}} \;\approx\; \cons{y}{\cons{x}{s}}}
+    \;\;\TirName{Swap}\\
+    \inferrule
+        {s \;\approx\; t}
+        {\cons{x}{s} \;\approx\; \cons{x}{t}}
+        \;\TirName{Push}
+        \qquad
+        \inferrule
+            {s \;\approx\; u \and u \;\approx\; t}
+            {s \;\approx\; t}
+            \;\TirName{Trans}
+  \end{mathpar}
+
+\end{slide}
+
+\begin{slide}
+  \title{Inference systems}
+
+  \begin{itemize}
+
+    \item Each case is called an \textbf{inference rule}.
+
+    \item Beyond removing potientially ambiguous English statements
+      from the definition, what makes inference systems interesting is
+      that they enable two kinds of interpretations: logical and
+      computational.
+
+    \item The \textbf{logical interpretation} considers inference
+      rules as logical implications of the form \(P_1 \wedge P_2
+      \wedge \ldots \wedge P_n \;\Rightarrow\; C\), written
+      \begin{equation*}
+        \inferrule
+            {P_1 \\ P_2 \\ \ldots \\ P_n}
+            {C}
+      \end{equation*}
+
+    \item The propositions~\(P_i\) are called \textbf{premises} and
+      \(C\)~is the \textbf{conclusion}.
+
+    \item In the case of \TirName{Push}, there is only one
+      premise. There are two for \TirName{Trans}. When premises are
+      lacking, as in \TirName{Nil} and \TirName{Swap}, then \(C\)~is
+      called an \textbf{axiom} and no horizontal line is drawn.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Inference rules}
+
+  \begin{itemize}
+
+    \item The logical interpretation, also called \textbf{deductive},
+      is top\hyp{}down.
+
+    \item The \textbf{computational interpretation}, called
+      \textbf{inductive} in some contexts, is bottom\hyp{}up: given a
+      statement matching the conclusion of a rule, computing that
+      statement requires the computation of the premises.
+
+    \item Let us imagine that we want to prove that
+      \begin{enumerate}
+
+        \item \(s \;\approx\; s\) (\textbf{reflexivity}),
+
+        \item \(s \;\approx\; t \;\Rightarrow\; t \;\approx\; s\)
+          (\textbf{symmetry}).
+
+      \end{enumerate}
+
+    \item In a later lecture, we will do it by hand.
+
+    \item For the moment, here is the \textbf{proof script} for \Coq,
+      which is enough to automatically establish these two properties
+      by means of tactics, that is, predefined patterns of proof that
+      can be composed using heuristics.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A proof in Coq}
+\begin{verbatim}
+Set Implicit Arguments.
+Require Import List.
+Variable A: Type.
+
+Inductive perm: list A -> list A -> Prop :=
+  Pnil  : perm nil nil
+| Push  : forall x s t, perm s t -> perm (x::s) (x::t)
+| Swap  : forall x y s, perm (x::y::s) (y::x::s)
+| Trans : forall s t u, perm s u -> perm u t -> perm s t.
+
+Hint Constructors perm.
+
+Lemma reflexivity: forall s, perm s s.
+Proof. induction s; eauto. Qed.
+Lemma symmetry: forall s t, perm s t -> perm t s.
+Proof. induction 1; eauto. Qed.
+\end{verbatim}
+
+\end{slide}
+
+\begin{slide}
+  \title{Verification of protocols}
+
+  \begin{itemize}
+
+    \item Depending on the scale and the nature of the software
+      applications, different network topologies, routing and
+      synchronisation protocols may be used, for example centralised
+      architectures (client\hyp{}server) or decentralised ones, like
+      peer\hyp{}to\hyp{}peer (P2P) or mobile ad hoc networks (MANET),
+      where nodes are also routers.
+
+    \item Whether there is an actual network is not essential here:
+      more generally, what matters is to have \textbf{independent
+        processes} whose interactions are valid according to a
+      \textbf{protocol}.
+
+    \item Nowadays, blockchains may feature layered protocols. For
+      instance, in the case of the \Tezos blockchain: a network
+      protocol, a transaction protocol and a consensus protocol.
+
+    \item These protocols interact in very complex ways and the stakes
+      are high to avoid hacks or errors, like unwanted \textbf{feature
+        interactions}.
+
+    \item Formal methods can contribute to protocol engineering, as
+      the telecommunication industry is already aware.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Model checking with SPIN}
+
+  \begin{itemize}
+
+    \item \SPIN is a system supporting the design, simulation
+      and model checking of \textbf{asynchronous systems}.
+
+    \item It is the most widely used in industry, and the first
+      designs and implementations were made at Bell Labs by Holzmann
+      in the 80s.
+
+    \item Sequential computations tend to be abstracted so the state
+      of the system reflects mainly process interactions.
+
+    \item These can be classified into several kinds:
+      \begin{itemize}
+
+        \item asynchronous message passing through buffered channels,
+
+        \item rendezvous primitives (binary synchronisation via
+          handshake by means of a channel of buffer size zero),
+
+        \item shared variables,
+
+      \end{itemize}
+      and any combination of these.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Promela}
+
+  \begin{itemize}
+
+    \item The language for defining the models is \Promela (process
+      meta\hyp{}language), from which the name \SPIN is actually
+      derived: ``Simple \Promela Interpreter.''
+
+    \item It is an imperative specification language with a \Clang
+      look and feel, except for the lack of pointers, dynamic memory
+      allocation and functions returning values.
+
+    \item The purpose of those restrictions, and others, is mainly to
+      constrain the number of states in the model to be
+      \textbf{finite}.
+
+    \item In theory, this enables all correctness properties to become
+      decidable, although, in practice, some engineering methods and
+      techniques are needed to overcome resource limitations in the
+      presence of very large state spaces.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Linear Temporal Logic}
+
+  \begin{itemize}
+
+    \item The language used in \Promela to express temporal formulas
+      is based upon the standard \textbf{Linear Temporal Logic} (LTL).
+
+    \item Formulas are interpreted on each execution of a program and
+      quantification is always universal, that is, it is not possible
+      to isolate a strict subset of paths with respect to a property.
+
+    \item The typical temporal operators used are
+      \begin{itemize}
+
+        \item $\bigcirc \varphi$, meaning that $\varphi$ is true in
+          the \textbf{next} moment in time;
+
+        \item $\Box \varphi$, meaning that $\varphi$ is true in
+          \textbf{all} future moments;
+
+        \item $\lozenge \varphi$, meaning that $\varphi$ is true in
+          \textbf{some} future moment;
+
+        \item $\varphi \mathrel{\textsf{U}} \psi$, meaning that
+          $\varphi$ is true \textbf{until} $\psi$ is true.
+
+      \end{itemize}
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Linear Temporal Logic}
+
+  \begin{itemize}
+
+    \item The usual connectors of non\hyp{}temporal logic are present
+      as well in the LTL, like conjunction, negation, etc. but time is
+      \textbf{not} explicitly present, for example in the guise of
+      clocks.
+
+    \item As a consequence, time constraints, like \textbf{timeouts},
+      can not be modelled, but partial orderings of process
+      interactions can.
+
+    \item Once a \Promela model and temporal formulas in LTL have been
+      written, \SPIN generates a dedicated \textsf{C}~program, whose
+      run checks the claims against the specification.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Trade-offs}
+
+  \begin{itemize}
+
+    \item In case the state space is too large, some parts of the
+      model used for verification have to over\hyp{}approximated.
+
+    \item Also, \Promela allows for the embedding of
+      \textbf{\textsf{C}~code as atomic sections} whose scope is local
+      and invisible to other processes (note: there is no hierarchy of
+      processes).
+
+    \item Of course, this is only feasible if the code in question
+      does not deal directly with the control aspect of the protocol,
+      otherwise its effects have to be observable in the global state
+      space. Purely computational tasks can be abstracted this way,
+      though.
+
+    \item If a system features a coupling between a real\hyp{}time
+      controller and a continuous physical environment (sensors), it
+      is necessary to model the closed\hyp{}loop system as a whole.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Timed automata}
+
+  \begin{itemize}
+
+    \item \textbf{Timed automata} are a standard modelling formalism
+      for real\hyp{}time systems because they enable efficient system
+      verification by model checking and testing.
+
+    \item Basically, a timed automaton is a finite\hyp{}state machine
+      extended with clock variables.
+
+    \item The time denoted by the clocks is dense or continuous, in
+      other words, it is a mathematical real number.
+
+    \item Moreover, edges of the automata are threefold, in all
+      generality:
+      \begin{enumerate}
+
+        \item not only do they carry \textbf{send or receive} actions
+          for synchronisation on unbuffered channels,
+
+        \item but also \textbf{guards}, which are constraints on the
+          clock values that must hold for the edges to be executable,
+
+        \item and \textbf{clock resets} to zero.
+
+      \end{enumerate}
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Timed automata}
+
+  \begin{itemize}
+
+    \item The semantics of a network of timed automata is their
+      synchronous product.
+
+    \item This kind of model is usually extended further with bounded
+      discrete variables which are part of the system state and are
+      used as if in an imperative language.
+
+    \item In sum, the state of the system consists in the locations
+      (vertices) of all the automata, the clock values and the
+      discrete variable values.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{UPPAAL}
+
+  \begin{itemize}
+
+    \item The model checker \UPPAAL uses an extension of timed
+      automata, called \textbf{timed safety automata} because the
+      theoretical model is further extended with features which help
+      in proving safety and liveness properties, like urgent and
+      committed locations, urgent synchronisations and broadcast
+      channels.
+
+    \item User functions are allowed for computational tasks and have
+      a \textsf{C}~look and feel, except for the absence of
+      pointers.
+
+    \item Synchronisations are realised only with rendezvous on one
+      action name: the sender is blocked until the receiver is in a
+      state with an out\hyp{}going executable edge receiving the same
+      action; the sender is released after the receiver has accessed
+      and perhaps modified the global state and reached the next local
+      state (vertex).
+
+    \item In other words, there is no parameter passing with actions:
+      instead, shared variables and side\hyp{}effects are used to
+      exchange information (bidirectionally) during the rendezvous.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Temporal Computational Temporal Logic}
+
+  \begin{itemize}
+
+    \item The query language of the model checker for \UPPAAL is based
+      on \textbf{Timed Computational Temporal Logic} (TCTL), a modal
+      extension of \textbf{Computational Temporal Logic} (CTL) with
+      time.
+
+    \item Temporal logics only express constraints on the order of
+      events, their timed extensions can add quantitative constraints
+      on delays between those events.
+
+    \item TCTL adds two important concepts to LTL:
+      \begin{enumerate}
+
+        \item Branching time: The concept of future in the TCTL is
+          that of a tree of all possible traces from the present
+          moment. The objects of the logical formulas are paths (in
+          the tree) and individual states.
+
+        \item Clock variables and clock constraints, making it
+          possible to reason about clocks and their values.
+
+      \end{enumerate}
+
+  \end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+  \title{TCTL}
+
+  \begin{itemize}
+
+    \item Quantifications are universal or existential: $\textsf{A} \,
+      \varphi$, which means that, from the present state, ``for all
+      paths, the formula $\varphi$~holds,'' and $\textsf{E}\,
+      \varphi$, which means that ``there exists a path such that
+      $\varphi$~holds.''  Furthermore, we find the following modal
+      operators:
+      \begin{itemize}
+
+        \item $\textsf{X} \, \varphi$, meaning: ``In the next state,
+          $\varphi$ is true;''
+
+        \item $\textsf{F}\,\varphi$, meaning: ``In a future state,
+          $\varphi$ is true;''
+
+        \item $\textsf{G} \, \varphi$, meaning: ``Globally in the
+          future, $\varphi$ is true;''
+
+        \item $\varphi \mathrel{\textsf{U}} \psi$, meaning:
+          ``$\varphi$ is true \textbf{until} $\psi$ is true.''
+
+      \end{itemize}
+
+    \item For example: $\textsf{AG}(\varphi \rightarrow
+      (\textsf{EF}\,\psi))$ means: ``It is globally the case that, if
+      $\varphi$ holds, then there exists a path such that, at some
+      point in the future, $\psi$ holds as well.''
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Statistical model checking}
+
+  \begin{itemize}
+
+    \item There is an extension of model checking which attracts a lot
+      of attention nowadays: \textbf{statistical model checking}.
+
+    \item Simply put, the timed automata are extended with
+      probabilities to become \textbf{Priced Timed Automata}, and a
+      stochastic semantics is used.
+
+    \item The temporal logic TCTL is also extended conservatively to
+      support probabilistic queries.
+
+    \item The main interest of these extension is to have model
+      checking go beyond worst case analyses, like the worst case
+      response time of a recurrent task following a given schedule,
+      and assess the average case behaviour of real\hyp{}time systems.
+
+    \item In other words, statistical model checking decides whether a
+      system statisfies a property \textbf{with some degree of
+        confidence}.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{SPIN versus UPPAAL}
+
+  \begin{itemize}
+
+    \item Perhaps the most obvious differences between the modelling
+      languages of \SPIN and \UPPAAL are the absence of real\hyp{}time
+      (clocks) in the former and the absence of asynchronicity
+      (buffered channels) in the latter.
+
+    \item \Promela allows several kinds of synchronisations, whilst
+      \UPPAAL only offers binary rendezvous (except for broadcast) and
+      the sharing of variables. In other words, \Promela features
+      synchronisation by message passing, whilst \UPPAAL uses
+      rendezvous and shared variables.
+
+    \item In particular, this means that the exchange of information
+      in \UPPAAL can be bidirectional.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{SPIN versus UPPAAL}
+
+  \begin{itemize}
+
+    \item As far as data types are concerned, both \Promela and
+      \UPPAAL have primitive and structured data types, including
+      arrays, although \Promela does not allow arrays to be passed as
+      a parameter during synchronisation.
+
+    \item Buffered channels can be modelled explicitly in \UPPAAL as
+      timed automata with an array of messages as a local variable,
+      but this may quickly overload the state space, as all
+      permutations of the messages are observable.
+
+    \item In \Promela, channels are first\hyp{}class objects, that is,
+      they are values and they can be sent from one process to another
+      in order to create a private communication channel.
+
+    \item By contrast, in \UPPAAL, channels are not a concept and they
+      have to be inferred on the basis of the synchronisations, i.e.,
+      if two automata can synchronise, an implicit channel exists
+      between them.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{SPIN versus UPPAAL (continued)}
+
+  \begin{itemize}
+
+    \item It is possible in \Promela to create at most~255 processes
+      at run\hyp{}time, whilst \UPPAAL requires a statically fixed
+      number of automata (so\hyp{}called template instanciations).
+
+    \item To a certain extent, \Promela and \UPPAAL can simulate each
+      other, even if it is an open question as to what are the largest
+      subsets of these languages that are equivalent by bisimulation.
+
+    \item Nevertheless, in practice, the models of \Promela often use
+      asynchronous channels and the models of \UPPAAL often rely
+      prominently on clocks, which makes the two languages
+      incommensurable.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{LTL versus TCTL}
+
+  \begin{itemize}
+
+    \item The timed nature of TCTL makes it trivially incomparable to
+      LTL.
+
+    \item The untimed fragment of TCTL, which is CTL, has \textbf{not}
+      the same expressive power as LTL.
+
+    \item A CTL formula and a LTL formula are said equivalent if, for
+      all models expressed as Labelled Transition Systems, they have
+      the same truth value.
+
+    \item It can be shown that there are formulas in CTL which have no
+      equivalent in LTL, and vice versa, although there exists
+      equivalent formulas.
+
+  \end{itemize}
+
+\end{slide}
+\begin{slide}
+  \title{Synchronous dataflow languages}
+
+  \begin{itemize}
+
+    \item By contrast, note that in the control system industry (e.g.,
+      automotive industry, aerospace, robotics, logic circuit design,
+      etc.) \textbf{synchronous languages} like \Esterel, \Lustre,
+      \Simulink, etc. are used to express the models.
+
+    \item These enable the automatic generation of the implementation,
+      but they assume static functional blocks and a global clock.
+
+    \item By contrast, the application domain of \SPIN is that of
+      \textbf{dynamic} asynchronous software systems, which allow the
+      instantiation and scheduling of new processes at run\hyp{}time,
+      and where processes may perform complex computational tasks in
+      addition to protocol related operations.
+
+    \item Blockchain network protocols are waiting to be formally
+      modelled, and their critical properties could be verified.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Model checking in a nutshell}
+
+  \begin{itemize}
+
+    \item The \textbf{model-driven design} of protocols uses formal
+      models, possibly including real\hyp{}time features, which are
+      checked with regards to some desired properties and tested
+      through simulation, before implementations are derived.
+
+    \item \textbf{Model checking} is a formal method whereby the truth
+      of a logical formula (e.g., of a temporal nature) is checked on
+      a finite model of a system.
+
+    \item The model is a \textbf{non\hyp{}deterministic finite
+      automaton} (NDFA), and the claim is the \textbf{negation} of the
+      property (as a NDFA too).
+
+    \item The \textbf{product} of these automata is computed: if a
+      path in the model is a run in the product, then the property is
+      false and a \textbf{counterexample} is the path in the model,
+      otherwise the property holds for all paths.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Model checking compared}
+
+  \begin{itemize}
+
+    \item Model checking is different from \textbf{testing}, which
+      consists in interacting with an implementation, whose state
+      space may be infinite, and observing whether its responses
+      conform to its model (if no stimulation of the system is
+      performed, we have an instance of \textbf{passive testing}).
+
+    \item Model checking is also different from \textbf{abstract
+      interpretation} because it does not rely on induction when
+      interpreting the states of the system: model checking really
+      exhausts them one by one.
+
+    \item Testing hence applies to implementations and can, at best,
+      only prove the presence of errors, whilst model checking applies
+      to models and conclusively proves the absence of design errors
+      or finds a counterexample (with an execution trace, called
+      \textbf{scenario} in telecommunications), thanks to the
+      finiteness imposed by construction.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Model checking and testing}
+
+  \begin{itemize}
+
+    \item Clearly, model checking and testing are complementary, and
+      it even makes sense to ``test'' a model by \textbf{simulation},
+      that is, by animating runs of the model itself and thusly derive
+      \textbf{test sequences} (of inputs and outputs), ranging from
+      purely random walks to guided explorations, for example to cover
+      all the transitions of a component.
+
+    \item \textbf{Model\hyp{}based test generation} is usually a
+      heuristics which avoids the potential combinatorial explosion of
+      the state space at the cost of incompleteness.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Notions of temporal logic}
+
+  \begin{itemize}
+
+    \item The properties or, put more properly, the claims to be
+      checked on the models are expressed in some temporal logic, that
+      is, a modal logic interpreted over time.
+
+    \item The most common properties expected from a system are
+      \begin{itemize}
+
+        \item \textbf{reachability}: ``Something good may
+          happen;''
+
+        \item \textbf{liveness}: ``Something good eventually
+          happens;''
+
+        \item \textbf{safety}: ``Something good always happens.''
+
+      \end{itemize}
+
+    \item Reachability is a weak property, which is nonetheless useful
+      to debug a model under construction, for example, by asserting
+      that a process may access a given resource (a scenario can
+      usually be automatically constructed).
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Safety}
+
+  \begin{itemize}
+
+    \item Safety is a strong property reminiscent of a global
+      invariant in non\hyp{}temporal logics, and it can be utilised
+      for example
+      \begin{itemize}
+
+        \item to state \textbf{mutual exclusion}, that is, that, at
+          any time, there will be no more than one process accessing a
+          common resource,
+
+        \item or the absence of \textbf{deadlocks}, that is, that, at
+          any time, there will be no processes waiting transitively on
+          each other for the release of a lock on a shared
+          resource.
+
+      \end{itemize}
+      Other interesting safety properties are the non\hyp{}reception
+      of unspecified messages and the absence of invalid end states.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Safety versus liveness}
+
+  \begin{itemize}
+
+    \item In a temporal logic, doing nothing obviously realises
+      safety, and this is where liveness comes into play, to require
+      some progress.
+
+    \item For example, liveness is useful for expressing the absence
+      of \textbf{starvation}, in other words, the fact that a process
+      will gain access to a resource.
+
+    \item In the theory of programming languages, \textbf{partial
+      correctness}, by which, if a program terminates, then its output
+      satisfies some condition, would be considered a safety property
+      in temporal logics, whilst \textbf{termination} would be
+      considered a liveness property. (Partial correctness and
+      termination entail \textbf{total correctness}.)
+
+    \item A criterion to distinguish between safety and liveness is
+      the following: safety can, in theory, be \textbf{disproved} in
+      finite time, by simple observation of the states of the system
+      execution, whereas liveness can be \textbf{proved} in finite
+      time.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Fairness}
+
+  \begin{itemize}
+
+    \item Let us note that temporal logics assume infinite futures,
+      and since the system is finite, its behaviour must then be
+      cyclic, as this happens to be the case of many communication
+      systems implementing sessions or interactive loops, like servers
+      and command shells.
+
+    \item This aspect is perhaps addressed more obviously by
+      properties like \textbf{fairness}, which states that ``something
+      good will happen an arbitrary number of times,'' and can be
+      conceived as a repeated liveness property.
+
+    \item For example: ``If access to the critical section is
+      infinitely often requested, then access will be granted
+      infinitely often.''
+
+    \item Fairness is most useful when dealing with the scheduling of
+      processes.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Mastering complexity}
+
+  \begin{itemize}
+
+      \item The increase in computing power and decrease in hardware
+        costs both contribute to the pertinence of formal methods, and
+        even sometimes simply unlock their application to certain
+        domains.
+
+      \item What is at stake here, indirectly, is \textbf{mastering
+        the size and the logical complexity of computing systems},
+        which is the main topic of software engineering.
+
+      \item Formal methods are also of interest to the
+        \textbf{ordering party}, that is, the party that commissions,
+        in part or total, the development of a software from a third
+        party, the \textbf{supplier} (the remaining party being the
+        \textbf{customer}).
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{The limits of tests}
+
+  \begin{itemize}
+
+    \item  The ordering party must make sure that
+      \begin{enumerate}
+
+        \item their specifications and requirements are not ambiguous
+          and cover their expectations,
+
+        \item the delivered product matches the specifications.
+
+      \end{enumerate}
+
+    \item Concerning the second point, the ordering party must at
+      least validate the product, and, in that aim, they require that
+      it passes a \textbf{battery of tests}.
+
+    \item The complexity of the tests increases greatly with that of
+      the product and of its new versions (i.e., proportionally to the
+      number of system states).
+
+    \item These tests can be manual, but the \textbf{automatic
+      generation of test suites} from formal specifications or
+      \textbf{simulations} is gaining traction.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{The limits of tests}
+
+  \begin{itemize}
+
+    \item Testing is always \textbf{necessary} but can prove
+      \textbf{insufficient}, depending on the level of requirement,
+      because tests only cover a finite number of system
+      behaviours.
+
+    \item The structural coverage of all the branches in a program
+      does not take into account all the possible combinations of the
+      input values (which can be infinite in theory).
+
+    \item A failing test proves the presence of a fault (bug), but a
+      passing test is at best a non\hyp{}regression test or is simply
+      non\hyp{}conclusive because it \textbf{does not prove the
+        absence of errors}.
+
+    \item Sometimes the ordering party provides the test suite that
+      the product must pass. This is problematic if the supplier
+      intentionally builds a product that pass the tests (thus a
+      finite number of use cases), but is faulty otherwise.
+
+    %% \item If the product has been developed with the support (even
+    %%   partial) of formal methods, then it can be delivered with a
+    %%   \textbf{proof of its conformity} (even partial), which the
+    %%   ordering party can then check. (It is much easier to verify the
+    %%   correctness of a mathematical proof than discovering it.)
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Stakes}
+
+  \begin{itemize}
+
+    \item National bodies and institutions are aware of the progress
+      of formal methods. For instance, in the transport, aerospace,
+      medical devices and smart cards industries, they require the use
+      of formal methods when certain thresholds of safety and security
+      must be met.
+
+    \item We can observe both an increase in the number of fields of
+      applications (operating systems, robotics, e-commerce, air
+      traffic control, etc.) and a rise in the requirements.
+
+    \item In certain cases (transport, control systems in nuclear
+      plants, implanted medical devices), human lives are at stake.
+
+    \item Almost since their inception, rising industries, like the
+      internet of things and blockchain networks, can now benefit from
+      formal methods, instead of waiting many years.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Stakes}
+
+  \begin{itemize}
+
+    \item There is now a long string of textbook examples of system
+      failures due to faulty software, incurring financial losses,
+      with or without malicious intent.
+
+    \item Perhaps worth of notice are the recent \textbf{attacks on
+      the Ethereum blockchain} network, which targeted erroneous smart
+      contracts (programs representing an agreement between two peers
+      over the network). We will come back to this topic in another
+      lecture.
+
+    \item Currently, formal methods apply to programs up to hundreds
+      of thousands lines of code (LOC), or even more, depending on the
+      language and the level of accuracy: \textbf{this is not
+        negligible.}
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Communication and rigour}
+
+  \begin{itemize}
+
+    \item One overlooked aspect of a rigorous or formal semantics is
+      to \textbf{facilitate the communication}, by providing a clear
+      framework for the discourse and also an impartial arbiter. It is
+      also an excellent guide to build support tools (as in compiler
+      construction). It becomes then possible to express some expected
+      properties of a system, and even to prove some of them.
+
+    \item Let us keep in mind that the maintenance of software systems
+      swallows in average two thirds of the total cost of a project,
+      and that correcting an error in a specification requires
+      20$\times$ more efforts than if detected during the exploitation
+      phase.
+
+    \item Formal methods bring an \textbf{extra rigour} to the
+      software industry in order to reduce those costs.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{The method in ``Formal methods''}
+
+  \begin{itemize}
+
+    \item Software engineering shows that it is important to spend a
+      significant effort during the first phases of the life cycle, in
+      particular, by establishing \textbf{trustworthy specifications},
+      that is,
+
+      \begin{itemize}
+
+        \item that match what is intuitively expected,
+
+        \item that are coherent.
+
+      \end{itemize}
+
+    \item The first point relies on a good knowledge of the customers'
+      business and needs, a knowledge that the customers themselves
+      cannot always express. A Socratic dialogue is needed between
+      customer and designer in order to delineate the properties of
+      the expected result.
+
+    \item Step by step, the designer builds a \textbf{formal model}
+      that is not always shared with the customer, but to whom they
+      feed back the logical implications, with the aim of
+      \textbf{refining} those properties.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{The method in ``Formal methods''}
+
+  \begin{itemize}
+
+    \item The designer can also opt for a \textbf{fast prototyping},
+      which yields in a short lapse a new version of the system, one
+      that seems more desirable.
+
+    \item Early concerns about the cleanliness or efficiency of the
+      pieces of software can hamper the process at this stage.
+
+    \item When the prototyping phase is over, priorities change and
+      the quality goals come to the fore.
+
+    \item The use of \textbf{functional languages}, like \OCaml,
+      simplify the transition from prototyping to the product.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{In short}
+
+  Software engineering shows that it is important to spend a
+  significant effort during the first phases of the life cycle of a
+  project and
+  \begin{itemize}
+
+    \item understanding the customer’s business,
+
+    \item establishing trustworthy specifications,
+
+    \item validating and refining with the customer the specification,
+
+    \item creating prototypes of the system.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Formal languages as Ariadne's threads}
+
+  \begin{itemize}
+
+    \item The first step towards a solution is to formulate the
+      problem in a formal or semi-formal language.
+
+    \item That is because a \textbf{formal language} can be given a
+      clear semantics, at least less ambiguous than expressed in
+      English, and it is founded on proven mathematical theories.
+
+    \item This enables the proof of some desired \textbf{properties of
+      the system} at the specification level, on the one hand, and at
+      the code level, on the other hand.
+
+    \item It becomes then possible to
+      guarantee the \textbf{conformity} of the latter with respect to
+      the former:
+      \begin{itemize}
+
+        \item the \textbf{correctness} (or \textbf{soundness})
+          property states that all the values returned by the program
+          are indeed expected by the specification;
+
+        \item the \textbf{completeness} property states that all
+          expected values can be computed by the program.
+
+      \end{itemize}
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Methodology}
+
+  In short, the first steps of any formal methodology consists in
+  \begin{enumerate}
+
+    \item formulating the problem in a formal or semi\hyp{}formal
+      language,
+
+    \item expressing the desired properties at the specification
+      level,
+
+    \item proving those properties,
+
+    \item prove the correctness and completeness of the implementation
+      with respect to the specification.
+
+  \end{enumerate}
+
+\end{slide}
+
+\begin{slide}
+  \title{Properties}
+
+   For reasons stemming from the very foundations of mathematics,
+   these properties, as others, may not always be provable in general
+   ---~logicians call them \textbf{undecidable}. (We will revisit what
+   his means later.)
+
+   \bigskip
+
+   There are many ways to address the issue of conformity:
+   \begin{itemize}
+
+     \item Hoare logic (pre- and postconditions),
+
+     \item the enumeration of reachable states (model checking),
+
+     \item the refinement of specifications (B method),
+
+     \item rewrite systems,
+
+     \item arithmetic,
+
+     \item program extraction from a proof (\Coq), etc.
+
+   \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Tooling}
+
+  A formal language lends itself well to the elaboration of
+  \textbf{software tools} to automatically or interactively support
+  the different tasks of software engineering.
+
+  \bigskip
+
+  As a consequence, it becomes easier and cheaper
+  \begin{itemize}
+
+    \item to program a systems,
+
+    \item to test it,
+
+    \item to maintain it.
+
+  \end{itemize}
+
+  \bigskip
+
+  This yields
+  \begin{itemize}
+
+    \item an increased mastering of the life cycle,
+
+    \item a more reliable documentation.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Formal languages for the ordering party}
+
+  Formal languages also help the ordering party as
+  \begin{itemize}
+
+    \item specifications can be reviewed,
+
+    \item products can be checked against their specifications.
+
+  \end{itemize}
+
+  \bigskip
+
+  Other upsides are
+  \begin{itemize}
+
+    \item the shortening of the test and integration phases,
+
+    \item the early identification of corner cases.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Some upsides}
+
+  \begin{itemize}
+
+    \item Formal methods exploit a lot the initial phases of the
+      development (specification, design), at the risk of giving the
+      negative impression of being too time consuming.
+
+    \item Nevertheless, later phases (test, integration) are shortened
+      and better mastered.
+
+    \item Quite early, the formalisation, that is, the use of a logic
+      for modelling, brings forth many delicate aspects.
+
+    \item These delicate points are often inherent to the problem at
+      hand, which may therefore seem more complex than at first sight:
+      it is important to \textbf{understand where the complexity comes
+        from} and not always point the finger at the method.
+
+    \item The use of abstract notations is then a simple necessity,
+      not an adventive complication.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Some caution}
+
+  \begin{itemize}
+
+    \item \textbf{Formal methods are not a panacea}: when facing
+      complex problems, there is no easy, obvious way, but informed
+      compromises.
+
+    \item One must always keep in mind the distance between the formal
+      specification and the reality it models. That gap can only be
+      bridged by an approach combining peer reviews, reformulations,
+      confrontations to conjectures, Socratic dialogues.
+
+    \item A major obstacle to the adoption of formal methods is a
+      \textbf{lack in mathematical culture}, in particular not enough
+      familiarity with mathematical notations.
+
+    \item In civil engineering and electronics, mathematics are part
+      of daily life, but not in software engineering: \textbf{a shift
+        in education is needed}.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{A tour of formal methods}
+
+  Formal methods are quite varied and can be classified in families
+  featuring at least
+  \begin{itemize}
+
+    \item \textbf{a mathematical framework} with a salient theory (for
+      example, transition systems, set theory, universal algebras,
+      $\lambda$-calculus),
+
+    \item \textbf{software tools} supported by vendors actively
+      maintaining them, but also open source projects,
+
+    \item a preferred \textbf{domain of application} (for instance,
+      text processing, databases, real-time computing, network
+      protocols, parsing),
+
+    \item and \textbf{a community} of knowledgeable and enthusiast
+      users, sometimes belonging to different schools of thought, but
+      sharing the same interests.
+
+  \end{itemize}
+  We can look at formal methods with different angles: whether they
+  are \textbf{specialised or general}, or whether they favour
+  \textbf{specification or verification}.
+
+\end{slide}
+
+\begin{slide}
+  \title{Specialised approaches}
+
+  \begin{itemize}
+
+    \item The specification of a system spans a large set of aspects,
+      including architecture, observable behaviours (I/O,
+      communication), data representation and storage (internal or
+      external), etc.
+
+    \item \textbf{Specialised methods} are going to support well one
+      aspect.
+
+    \item Some methods model systems by privileging \textbf{data
+      storage and processing}, perhaps from tables or streams. For
+      example, a web service could focus on database management.
+
+    \item Other methods will focus on \textbf{information exchange},
+      which can be modelled by the sharing of data (in a central
+      memory), by synchronous communication (which assumes a unique
+      clock without propagation delays) or asynchronous by message
+      interchange, or remote procedure calls, etc.
+
+    \item An example would be a switch, which is a telecommunication
+      system that routes messages (like landlines telephone calls).
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{General approaches}
+
+  \begin{itemize}
+
+    \item Other methods are less constrained and offer an excellent
+      general interpretative framework.
+
+    \item By often focusing on the operational aspects, like tooling,
+      specialised approaches can obfuscate the global understanding
+      and track with difficulty the evolution of the subject being
+      studied.
+
+    \item What \textbf{general approaches} offer, by lying
+      \textbf{closer to mathematical logic}, is a greater freedom of
+      expression, but they lack in methodology.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{State for the specialised approaches}
+
+  \begin{itemize}
+    \item A typical example contrasting these two different approaches
+      is the role they give to the \textbf{state of a system}.
+
+    \item As we saw earlier, the state is all the information
+      characterising a system running at a given point in time (memory
+      contents, program counter, files, network buffers, etc.)
+
+    \item State is obvious when we consider a \textbf{database}: its
+      contents makes up for a greal deal of the overall system
+      information.
+
+    \item When considering a switching telephone network, the state is
+      more about the \textbf{global signalling information} needed to
+      route the messages, rather than the messages themselves (the
+      human voice can be highly compressed).
+
+    \item Also, state seems fundamental if one considers the
+      \textbf{devices for executing programs} (computers or virtual
+      machines), which imply a memory whose contents may change and,
+      perhaps, also a clock.
+
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{State for the general approaches}
+
+  \begin{itemize}
+
+    \item On the other hand, state is not fundamental in mathematics.
+
+    \item This is because mathematics focus more on \textbf{composing
+      abstractions}, like functions.
+
+    \item For a mathematical function, the state consists of the
+      arguments and the constants within the body.
+
+    \item Mathematics can speak about states (think of sets in set
+      theory), but it is more difficult to describe the composition of
+      instructions affecting a memory, rather than compose purely
+      mathematical functions.
+
+    \item In the B~method, there is a notion of \textbf{simultaneous
+      assignment} whose interest, by grouping a series of
+      non-interfering assignments, consists in \textbf{reducing the
+        number of states} a system can reach.
+
+    %% \item Another example is that of \textbf{impure functional
+    %%   languages}, like \OCaml, which feature a stateless semantic
+    %%   but enable stateful computations: the programmers is trusted
+    %%   to handle the state carefully (by means of the so-called
+    %%   \textbf{imperative features}, like loops and arrays) and only
+    %%   marginally, for optimisation purposes, communication with the
+    %%   physical world or with another logical thread.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Favouring specification or verification}
+
+  \begin{itemize}
+
+    \item We said that another viewpoint for formal methods is whether
+      they ease specification or verification.
+
+    \item Indeed, a formal method is made up of two main ingredients,
+      \textbf{a specification language} and \textbf{a verification
+        system}.
+
+    \item Proof assistants \`a la Boyer-Moore favour the automating of
+      proofs at the expense of the ease of expression. At the opposite
+      side of the gamut, the design of the formal notation \textsf{Z}
+      aimed primarily at providing a large expressiveness and was hard
+      to support for tools.
+
+    \item More recent approaches, like \textsf{HOL} or \textsf{Coq},
+      try to bring together the best of two worlds: by relying on
+      powerful logics to express the application domain, they also
+      come along with tools which, on the one hand, help at building
+      proofs and, on the other hand, enable the complete verification
+      of these with great confidence.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Agile development and formal methods}
+
+  \begin{itemize}
+
+    \item Agile development is a set of guidelines for software
+      engineering that departs from the classic waterfall life cycle.
+
+    \item In particular, the agile approach consistently warns against
+      spending too much time ``up front'' on specifications, and,
+      instead, includes the customer in an interactive and iterative
+      process of feedback during all the development (not just the
+      specification phase).
+
+    \item Agile methods are common in many software industries, and
+      are not even limited to the software industry.
+
+    \item It is unclear yet if they can be blended with formal
+      methods.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A short review of mathematical logic}
+
+  Mathematical logic grew along different axes:
+  \begin{itemize}
+
+    \item model theory,
+
+    \item proof theory,
+
+    \item set theory,
+
+    \item computability theory.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Model theory}
+
+  There are essentially two manners to specify a system, which are
+  complementary:
+  \begin{enumerate}
+
+    \item to represent a system by its properties,
+
+    \item or to propose a constructive model of it.
+
+  \end{enumerate}
+  Sometimes this duality is expressed as \textbf{specification by
+    properties} or \textbf{specification by models}.
+
+  \medskip
+
+  Properties are expressed as \textbf{logical axioms} and the models
+  as \textbf{operations on sets}:
+  \begin{enumerate}
+
+    \item axioms are the \textbf{syntactic aspect},
+
+    \item operations on sets are the \textbf{semantic aspect}
+      (describing the universe of discourse itself).
+
+  \end{enumerate}
+  For example, some models satisfying the statement $\forall x.\exists
+  y.(y \, R \, x)$ are $(\mathbb{N},>)$, or $(\mathbb{R},<)$, or
+  $(\mathbb{N},\mbox{`is a multiple of'})$, etc.
+\end{slide}
+
+\begin{slide}
+  \title{Truth in model theory}
+
+  \begin{itemize}
+
+    \item The \textbf{semantic consequence} is fundamental in model
+      theory and it corresponds to the notion of \textbf{truth}.
+
+    \item A statement~$E$ is a semantic consequence of the
+      statements~$A$, $B$, $C$, etc. if \textbf{any} model satisfying
+      the properties~$A$, $B$, $C$, etc. also satisfies the
+      property~$E$.
+
+    \item We write $A, B, C \ldots \models E$.
+
+    \item This reads: ``$E$ is \textbf{true} if $A$, $B$, $C$,
+      etc. are.''
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Proof theory}
+
+  \begin{itemize}
+
+    \item The relationship of semantic consequence is inconvenient
+      because it has to be verified on all possible models and there
+      may be an infinity of them in general.
+
+    \item We may prefer a provability relationship, or
+      \textbf{syntactic consequence}: a statement $E$ is said to be
+      \textbf{provable} from the statements~$A$, $B$, $C$, etc. if a
+      formal proof of~$E$ can be constructed only from the
+      hypotheses~$A$, $B$, $C$, etc. as well as from the axioms and
+      the deduction rules of the logic.
+
+    \item (Such a proof is called a \textbf{derivation} in some
+      contexts.)
+
+    \item We write $A, B, \ldots \vdash E$.
+
+    \item This reads: ``$E$ is provable if $A$, $B$, etc. $E$ are.''
+
+    \item The statement~$E$ is said to be \textbf{refutable} if its
+      negation is provable.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Soundness and completeness}
+
+  \begin{itemize}
+
+    \item Nevertheless, each step in a proof of a syntactic
+      consequence must preserve the meaning (that is, the semantics)
+      of the statements: this is called \textbf{soundness}.
+
+    \item Conversely, if all semantic consequence is provable, then
+      the theory is said to be \textbf{complete}.
+
+    \item A theory is sound and complete if all provable statements
+      are true and vice-versa.
+
+    \item Unfortunately, \textbf{in general, not all true statements
+      are provable} (incompleteness theorems of G\"odel).
+
+    \item This is the case already with arithmetics with quantifiers.
+
+    \item Consequently, when we annotate a program with properties, we
+      must ask ourselves whether these can actually be proved within
+      the chosen logical framework.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Soundness and completeness}
+
+  In short, now that we have two notions of consequence, we want to
+  know how they compare:
+  \begin{itemize}
+
+    \item a theory is inconsistent if false statements are provable;
+
+    \item a theory is sound if provable statements are true;
+
+    \item a theory is complete if all true statements are provable;
+
+    \item a theory is sound and complete if all provable statements
+      are true and reciprocally.
+
+  \end{itemize}
+  While all the theories we use are sound, most of them are not
+  complete, meaning there are true statements we cannot prove (the
+  theorems of G\"odel explicit under what conditions a theory is not
+  complete).
+
+  \medskip
+
+  This is a fundamental, intrinsic, \textbf{limit} to what formal
+  logic can do for us.
+
+\end{slide}
+
+\begin{slide}
+  \title{Proof theory (resumed)}
+
+  \begin{itemize}
+
+    \item Independently of the connection between the notions of
+      syntactic and semantic consequence (that is, provability and
+      truth), there are questions that are inherent to the latter,
+      like: ``If~$E$ is provable, is there a proof of~$E$ only made up
+      of sub-formulas of~$E$?''
+
+    \item If so, the space in which to seek the proof is considerably
+      reduced, which empowers an automated proof assistant.
+
+    \item The study of axioms and rules as formal systems (that is,
+      how formulas imply other formulas without interpretation), as
+      well as their relationship to the notion of semantic consequence
+      (that is, how truth begets other truths) is the foundation of
+      proof theory.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Cantor's set theory}
+
+  \begin{itemize}
+
+    \item It is useful to form a set whose elements possess a given
+      property: such a definition is said to be a \textbf{definition
+        by comprehension} (or \textbf{intension}).
+
+    \item If that kind of definition is left unconstrained, we
+      position ourselves in the framework of the first set theory,
+      called nowadays na\"{\i}ve, which was found to be inconsistent
+      at the start of the twentieth century.
+
+    \item A \textbf{contradiction} is a pair of statements of the
+      form~$P$ and~$\neg P$.
+
+    \item A set of statements is \textbf{inconsistent} if a
+      contradiction can be derived from them by means of the axioms
+      and rules of the logic.
+
+    \item An inconsistent theory can prove anything, and is thus
+      worthless.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Russell's paradox}
+
+  Let us consider Russell's paradox.
+  \begin{itemize}
+
+    \item Let us define by comprehension the curious set $R = \{x \mid
+      \neg(x \in x)\}$.
+
+    \item If $R \in R$, then~$R$ must obey the property of its
+      elements, that is, $\neg(R \in R)$.
+
+    \item Conversely, if $\neg(R \in R)$, then~$R$ satisfies the
+      characteristic property of the elements of~$R$, which means that
+      $R \in R$.
+
+    \item Therefore, by defining the property $P = R \in R$, we proved
+      \(P \Leftrightarrow \neg P\), which is a contradiction.
+
+    \item What this contradiction entails is that
+      \begin{quote}
+        \textit{the whole question whether a class [set] is or is not
+          a member of itself is nonsense.  (Bertrand Russell).}
+      \end{quote}
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{The axiomatic set theory of Zermelo and Fraenkel}
+
+  \begin{itemize}
+
+    \item A way to avoid the reef of paradoxes consists in
+      reformulating the set theory in an axiomatic manner (that is,
+      with logical rules) that enforces a \textbf{stratification of
+        the constructs}.
+
+    \item Consequently, a property cannot be defined by relying on an
+      arbitrary property, as was the case with Russell's paradox,
+      where an object was ``defined'' by referencing itself with a
+      negation. (\textbf{Impredicativity with negation.})
+
+    \item A modern set theory was proposed by Zermelo and Fraenkel,
+      and it yielded a refoundation of mathematics that has been
+      devoid of paradoxes up today.
+
+    \item The specification languages~\textsf{Z} and~\textsf{B} are
+      built upon that modern theory, plus a zest of type theory to
+      bring it closer to the programming language \Ada.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Type theory}
+
+  \begin{itemize}
+
+    \item Another way to avoid the paradoxes has been proposed by
+      Russell himself: \textbf{type theory}.
+
+    \item Type theory also stratifies sets and properties.
+
+    \item At the bottom layer, layer~$0$, lie the individuals.
+
+    \item At layer~$1$ are the sets of individuals (and the properties
+      about individuals).
+
+    \item At layer~$2$ are the sets of sets of individuals, etc.
+
+    \item \textbf{Types denote those layers.}
+
+    \item They are associated to the individuals and basic properties,
+      and they constrain the construction of the upper layers in such
+      way that they can only depend on constructs of the lower layers
+      and the \textbf{induction principle}.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Type theory in programming}
+
+  \begin{itemize}
+
+    \item Type theory has been very fruitful with the programming of
+      computers, as many programming languages in recent years feature
+      \textbf{type systems}.
+
+    \item Those type systems are logical theories derived from the
+      general type theory.
+
+    \item Compilers for these languages use these type systems to
+      \textbf{check} type annotations or to \textbf{infer} types, as
+      is the case with \OCaml.
+
+    \item The strict layering inherent to type theories is a challenge
+      to the definition of \textbf{recursive functions} (which are
+      impredicative definitions), so some rules have to be relaxed.
+
+    \item The unpleasant consequence is that some non\hyp{}terminating
+      programs may then be given a type, and cannot be rejected by
+      compilers.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Computability theory}
+
+  During the 1940s, several approaches were undertaken to bring the
+  concept of computability into the purview of mathematics:
+  \begin{itemize}
+
+    \item Turing machines,
+
+    \item $\lambda$-calculus (of Alonzo Church),
+
+    \item partial recursive functions (G\"odel, Herbrand).
+
+  \end{itemize}
+  Each theory constitutes a framework in which can be expressed a
+  notion of \textbf{effective procedure}, also known as
+  \textbf{algorithm}.
+
+  \medskip
+
+  The thesis of Church is that these different formalisms are, in
+  fact, equivalent, in the informal sense that they can compute what
+  the set of mathematical functions can.
+
+\end{slide}
+
+\begin{slide}
+  \title{Countable sets}
+
+  Are all functions computable? To seize that question, a detour
+  through the theory of formal languages is needed.
+  \begin{itemize}
+
+    \item A set is said to be \textbf{countable} if it is finite or a
+      bijection (a one-to-one correspondence) exists between its
+      elements and the set of the natural numbers~$\mathbb{N}$ (in
+      which case it is infinite). The cardinal of a infinite countable
+      set is noted~$\aleph_0$.
+
+    \item The set of the even numbers is countable (the trivial
+      bijection is $2n \mapsto n$). In general, any infinite subset of
+      the natural numbers is countable.
+
+    \item The set of finite words over the alphabet $\{a,b\}$ is
+      countable (the bijection is made up by sorting all the words as
+      if entries of a dictionary).
+
+    \item The rational numbers are countable.
+
+    \item Regular expressions are countable.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Cantor's diagonalisation}
+
+  \begin{itemize}
+
+    \item We may wonder then whether there exists sets whose cardinal
+      is strictly greater than~$\aleph_0$, that is, sets that are
+      uncountable.
+
+    \item The answer is yes.
+
+    \item For example, \textbf{the set of the subsets of an infinite
+      countable set is not countable.}
+
+    \item To see why, we use a technique called
+      \textbf{diagonalisation}, introduced for the first time by
+      Cantor.
+
+    \item Let a countable set be $A = \{a_0, a_1, \ldots\}$ and
+      let~$S$ be the set of the subsets of~$A$.
+
+    \item Let us reason by \textbf{reduction to absurdity} and assume
+      that~$S$ is countable. Therefore we can write $S = \{s_0, s_1,
+      \ldots\}$.
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Cantor's diagonalisation}
+
+  Let us construct the following infinite table:
+
+  \bigskip
+
+  \begin{equation*}
+    \begin{array}{c|cccccc}
+      & a_0    & a_1    & a_2    & a_3   & a_4      & \ldots\\
+      \hline
+      s_0    & \times & \times &        & \times \\
+      s_1    & \times & \circ  &        & \times \\
+      s_2    &        & \times & \times &        & \times\\
+      s_3    & \times &        & \times & \circ  & \\
+      s_4    &        & \times &        & \times & \circ\\
+      \vdots &        &        &        &        &         & \ddots
+    \end{array}
+  \end{equation*}
+
+  \bigskip
+
+  It shows which elements of~$A$ belong to which elements of~$S$: a
+  cross at the column~$i$ and row~$j$ means that $a_i \in s_j$.
+
+\end{slide}
+
+\begin{slide}
+  \title{Cantor's diagonalisation}
+
+  \begin{itemize}
+
+    \item Let us now consider the set \(D = \{a_i \mid \neg(a_i \in
+      s_i)\}\).
+
+    \item Its elements are marked with a circle in our table above
+      (completing the diagonal): we have $D \subset A$, but is~$D$
+      found amongst the~$s_j$?
+
+    \item Let us assume that it is, so there is a~$k$ such that $D =
+      s_k$.
+
+    \item We have $a_k \in D \Leftrightarrow \neg(a_k \in s_k)
+      \Leftrightarrow \neg(a_k \in D)$, which is a contradiction,
+      therefore $D$~is not listed, even though $D \subset A$.
+
+    \item This means that the set of the subsets of an infinite
+      countable set is uncountable.
+
+    \item We note~$2^{\aleph_0}$ the cardinal of an uncountable set,
+      by analogy with the fact that the cardinal of the set of the
+      subsets of a finite set of cardinal~$n$ is~$2^n$.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Undecidable problems}
+
+  \begin{itemize}
+
+    \item The set of all formal languages is the set of the subsets of
+      a countable set (the set of all words), therefore, the previous
+      theorem implies that it is \textbf{not} countable.
+
+    \item The solution to a problem corresponds to such a language,
+      thus the set of solutions (or problems) is in bijection with the
+      set of languages and, thus, is \textbf{not} countable.
+
+    \item An algorithm is a finite chain of symbols, like a word,
+      therefore the set of all algorithms is countable.
+
+    \item Consequently, there are more solutions than computable
+      solutions (one for each algorithm).
+
+    \item Problems whose solutions are computable are called
+      \textbf{decidable problems}, and \textbf{undecidable problems}
+      the others.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Turing-completeness}
+
+  \begin{itemize}
+
+    \item A programming language featuring a conditional construct and
+      recursion (or only conditional branching) is enough to express
+      all computable functions: this property is called
+      \textbf{Turing-completeness}.
+
+    \item This property is very useful but it entails the existence of
+      programs that do not terminate for some of their inputs, and
+      also the nonexistence of programs that can distinguish them from
+      terminating programs (\textbf{G\"odel incompleteness}).
+
+    \item Let us reason by reduction to absurdity and assume the
+      existence of a predicate for termination. Let~\(f\) \, be the
+      function such that, for any function~\(g\), if~\(g\) \,
+      terminates (on all its domain), then \(f \, (g)\) does
+      \textbf{not} terminate (has no value), otherwise \(f \; (g)\)
+      terminates (has a value).
+
+    \item Then $f\,(f\,)$ does not terminate if~$f$ terminates on
+      \textbf{all} its inputs, which is a contradiction, since
+      \(f\)~is an input to~\(f\). Thus such a predicate does not
+      exist.
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Undecidable problems (redux)}
+
+  \begin{itemize}
+
+    \item This means that the \textbf{termination problem} (or halting
+      problem, in the context of Turing machines) is undecidable.
+
+    \item The negation of an undecidable problem is undecidable as
+      well.
+
+    \item It is important to know some of these problems because they
+      do not have a solution in general.
+
+    \item For \textbf{any} program of a Turing-complete language, the
+      following problems are undecidable in general:
+      \begin{itemize}
+
+        \item whether it terminates on all its inputs (But a
+          \textbf{given} program can be proved to terminate!);
+
+        \item knowing the value of a variable at a given moment of the
+          execution;
+
+        \item whether a function call is never performed (\textbf{dead
+          code detection}).
+
+      \end{itemize}
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A shift in education}
+
+  \begin{itemize}
+
+    \item The inventors of perpetual motions make us smile nowadays
+      because their devices contradict our knowledge of the laws of
+      physics: we immediately know that their claims are bogus without
+      having to examine them in detail.
+
+    \item Some limits to the application of formal methods can be
+      removed by technical progress, but others are inherent to the
+      mathematics of what is computable. We have seen that certain
+      computing problems are not solvable in general: they are
+      undecidable.
+
+    \item The knowledge of intrinsic (theoretical) and extrinsic
+      (practical) limits lies within the domain of formal methods.
+
+    \item \textbf{A shift in education is needed} towards more
+      mathematics in software engineering.
+
+\end{itemize}
+
+\end{slide}
+
+\end{document}

@@ -1,0 +1,28 @@
+%%-*-latex-*-
+
+\documentclass{slides}
+
+
+\usepackage{pst-tree}
+\input{commands}
+
+\begin{document}
+
+\pstree[nodesep=2pt,levelsep=20pt,treesep=7pt]{\TR{\fun{f}}}{
+  \pstree{\TR{\texttt{.}}}{
+    \pstree{\TR{\fun{g}}}{
+      \TR{\(0\)}
+    }
+    \pstree{\TR{\texttt{.}}}{
+      \TR{\(x\)}
+      \TR{\(1\)}
+    }
+  }
+  \Tn
+  \TR{\(()\)}
+  \pstree{\TR{\fun{g}}}{
+    \TR{\(y\)}
+  }
+}
+
+\end{document}

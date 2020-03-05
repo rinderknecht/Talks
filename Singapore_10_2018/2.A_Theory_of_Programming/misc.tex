@@ -1,0 +1,52 @@
+\begin{frame}
+  \frametitle{Emails as trees (continued)}
+
+  \begin{itemize}
+
+    \item Consider, for instance, an email message.
+
+    \item It contains at least the sender's address, a subject or
+      title, the recipient's address, and a body of text, like:
+      \medskip
+\begin{center}
+\fbox{%
+\begin{minipage}{0.8\linewidth}
+\begin{alltt}
+From: Me\\
+Subject: Homework\\
+To: You\\
+
+A \textbf{deadline} is a due date for a \textbf{homework}.
+\end{alltt}
+\end{minipage}
+}
+\end{center}
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Emails as trees (continued)}
+
+  \begin{itemize}
+
+    \item These elements correspond to nodes in a tree:
+      \begin{figure}
+        \centering
+        \includegraphics{mail}
+      \end{figure}
+
+    \item The topmost node (``email'') is the root and the framed
+      pieces of text are leaves.
+
+    \item Note that, for historical reasons, computer scientists grow
+      their trees upside down, with the root at the top.
+
+    \item The inner (non-leaf) nodes hold ``metadata'', or ``markup'',
+      that is, information about the nature of the data contained in
+      the subtree.
+
+  \end{itemize}
+
+\end{frame}
