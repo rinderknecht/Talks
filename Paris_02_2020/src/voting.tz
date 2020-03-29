@@ -1,0 +1,19 @@
+storage (map string int);
+
+parameter string;
+
+code {
+  AMOUNT;
+  PUSH mutez 5000;
+  IFCMPGT { PUSH string "Stingy!"; FAILWITH } {};
+  DUP;
+  UNPAIR;
+  GET;
+  IF_SOME { PUSH int 1; ADD; SOME }
+          { PUSH string "Unknown candidate."; FAILWITH }
+  DIP { UNPAIR };
+  SWAP;
+  UPDATE;
+  NIL operation;
+  PAIR;
+}
