@@ -1,0 +1,1001 @@
+%%-*-latex-*-
+
+\documentclass[wide]{slides}
+
+% Language
+%
+\usepackage{hyphenat}          % \hyp{} is a breakable dash
+\usepackage{alltt}
+
+\frenchspacing  % Follow French conventions after a period
+
+% Graphics
+%
+\usepackage{graphicx}
+
+% Maths & Logic
+%
+\usepackage{amsmath,amssymb,amsthm,stmaryrd}
+\usepackage{mathpartir}
+
+% ----------------------------------------------------------------
+% Document
+%
+
+\maintitle{LIGO/Marigold: Smart Contracts and Layer-2}
+\mainauthor{\textbf{Christian Rinderknecht}\\
+  {\small\url{Christian.Rinderknecht@nomadic-labs.com}}\\
+Nomadic Labs}
+\confname{Tezos London Meetup}
+\confshortname{Tezos}
+\confdate{15 August 2019}
+
+\begin{document}
+
+\maketitle
+
+\begin{slide}
+  \title{A personal introduction}
+
+  \begin{itemize}
+
+    \item My alma mater is \emph{Universit\'e Pierre et Marie Curie}
+      (UPMC, a.k.a. Paris~6).
+
+    \item I did my doctoral studies at Inria, one of the most
+      prestigious research institutes in informatics in France.
+
+    \item I was a member of the team that developed the programming
+      language OCaml.
+
+    \item I went on to work as an engineer, a researcher and a
+      professor for many years, across several countries (France,
+      Korea, Hungary, Sweden), both in academia and private
+      companies.
+
+    \item In \oldstylenums{2018}, I joined Nomadic Labs, where most of
+      the maintenance of the Tezos blockchain is done. My expertise is
+      in compiler construction and functional programming. I have been
+      working on a high-level language for writing smart contracts on
+      Tezos.
+
+  \end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+  \title{A personal introduction}
+
+  \begin{minipage}{0.5\linewidth}
+    My book about functional programming is published in London!
+  \end{minipage}%
+  \begin{minipage}{0.5\linewidth}
+    \includegraphics[scale=0.35]{my_book.eps}
+  \end{minipage}%
+
+\end{slide}
+
+\begin{slide}
+  \title{Nomadic Labs}
+
+  \begin{itemize}
+
+    \item Nomadic Labs is an engineering company based in Paris.
+
+    \item It is funded by the Tezos Foundation, which tasked it with
+      developing the Tezos ecosystem.
+
+    \item It focuses on R\&D and is the main contributor to the Tezos
+      blockchain itself.
+
+    \item Most of the \oldstylenums{35}~engineers are doctors in
+      informatics, specialised in programming language theory and
+      practice, functional programming (OCaml), distributed systems,
+      and formal verification.
+
+    \item Nomadic Labs is also the home of Cortez, a mobile wallet for
+      Tezos.
+
+    \item It also helps with the training of Tezos users and other
+      trainers.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Blockchains}
+
+  \begin{itemize}
+
+    \item The economic protocol of Tezos handles a ledger of
+      transactions as a \textbf{blockchain}. In a nutshell: a
+      replicated database with strong access control, immutable
+      entries and resilience to malicious users.
+
+    \item Those transactions consist in the exchange of assets
+      (tokens) between peers of the network. Each peer has an address
+      and an account (an amount of tokens), but \textbf{a physical
+        person can be several peers.}
+
+    \item \textbf{Public-key cryptography} is used to secure the
+      identity of the senders of transactions and to ensure that past
+      transactions are not tempered with. An address is the hash of
+      the peer's public key.
+
+    \item The business logic between the peers is \emph{not} recorded
+      in the chain, that is, the knowledge of what they agree should
+      trigger transfers of tokens.
+
+    \item The economic protocol of Tezos offers the possibility to
+      record in the chain that logic as a \textbf{smart contract}.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Smart Contracts on Tezos}
+
+  \begin{itemize}
+
+    \item A smart contract is a peer that also has a program
+      associated to a private storage.
+
+    \item That storage is writable only by the program, but is
+      publicly readable (except by other contracts, to make them more
+      deterministic by not depending on the current storage of another
+      contract).
+
+    \item The smart contract (by synecdoche) is executed each time a
+      specific transaction is sent to its address.
+
+    \item The transaction may include some parameters.
+
+    \item Any call to a contract in a block is replicated by all the
+      nodes in the chain, to check whether the block is valid before
+      including it in their local view of the head of the chain.
+
+    \item Once the block is validated, it is broadcasted by the
+      underlying peer-to-peer, gossip network (as usual).
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Smart Contracts on Tezos}
+
+  \begin{itemize}
+
+    \item The validation of smart contracts therefore adds a
+      \textbf{delay} in the validation of a block: the execution time of
+      all the smart contracts in it must fit the interblock time for
+      the chain (about one minute on Tezos).
+
+    \item Therefore, each smart contract is allowed a given and fixed
+      quantity of computation, measured in \textbf{gas}.
+
+    \item Each instruction has an associated cost expected to be
+      proportional to the wall-clock time and an \textbf{ad hoc
+        estimation} is given by the node's client.
+
+    \item A \textbf{node} is a server process that is accessed by a
+      command-line client or RPCs. A node comprises a view of the
+      chain so far, the \textbf{context of the chain} (a map from
+      addresses to token amounts, used to validate transactions), and
+      the \textbf{mempool}.
+
+    \item When the execution exceeds the alloted gas, it is stopped,
+      its effect on the storage is rolled back, a failed transaction
+      is included in the block, and thus fees are collected to
+      \textbf{discourage spamming attacks}.
+
+    \item The economic protocol sets limits on gas per block and per
+      transaction.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Smart Contracts on Tezos}
+
+  \begin{itemize}
+
+    \item Each smart contract has a \textbf{code size} and a
+      \textbf{storage size}, which are allocated on every node on the
+      chain (in their context).
+
+    \item To limit the memory needed to synchronise the chain and
+      store it, a fee is set per byte and collected when a contract is
+      deployed (\emph{originated}, in Tezos parlance).
+
+    \item It is only at the normal termination of a contract that the
+      effects of a contract becomes atomically visible to the network:
+      the storage may appear modified and a list of operations may
+      have been returned (transactions, contract creations and
+      delegate settings) and validated.
+
+    \item In particular, a smart contract can transfer tokens to other
+      smart contracts, enabling the design of \textbf{complex
+        distributed applications} in Tezos.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{The design of Michelson}
+
+  \begin{itemize}
+
+    \item The language native to the Tezos blockchain for writing
+      smart contracts is \textbf{Michelson}, a Domain-Specific
+      Language (DSL) inspired by Lisp and Forth.
+
+    \item This unusual lineage aims at satisfying unusual constraints,
+      but entails some tensions in the design.
+
+    \item First, to measure stepwise gas consumption,
+      \textbf{Michelson is interpreted}.
+
+    \item On the one hand, to assess gas usage per instruction,
+      instructions should be simple, which points to \textbf{low-level
+        features} (a RISC-like language).
+
+    \item On the other hand, it was originally thought that users will
+      want to write in Michelson instead of lowering a language to
+      Michelson, because the gas cost would otherwise be harder to
+      predict.
+
+    \item This means that \textbf{high-level features} were deemed
+      necessary (like a restricted variant of Lisp lambdas, a way to
+      encode algebraic data types, as well as built-in sets, maps and
+      lists).
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{The design of Michelson}
+
+  \begin{itemize}
+
+    \item To avoid ambiguous and otherwise misleading contracts, the
+      layout of Michelson contracts has been constrained (e.g.,
+      indentation, no UTF-8), and a \textbf{canonical form} was
+      designed and enforced when storing contracts on the chain.
+
+    \item To avoid the origination of contracts that would fail due to
+      inconsistent assumptions on the storage and temporary values, a
+      \textbf{strong static type system} was designed for Michelson.
+
+    \item To reduce the size of the code, Michelson was designed as
+      \textbf{a stack-based language}, whence the lineage from Forth
+      and other concatenative languages like PostScript, Joy, Cat,
+      Factor etc. (Java bytecode would count too.)
+
+    \item Programs in those languages are \textbf{compact} because
+      they assume an implicit stack in which some input values are
+      popped, and output values are pushed, according to the current
+      instruction being executed.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{The semantics of Michelson}
+
+  \begin{itemize}
+
+    \item The semantics of each Michelson instruction is determined by
+      the change of a prefix of the stack, that is, a segment starting
+      at the top.
+
+    \item An abstraction of that change can be captured by the
+      \textbf{type of the instruction}.
+
+    \item For example, the instruction \textsf{DUP} has type
+      \(\alpha::A \rightarrow \alpha::\alpha::A\), meaning that if the
+      stack before the instruction is executed has a topmost item
+      (also called \emph{head}) of type~\(\alpha\), where the substack
+      (also called \emph{tail}) has type~\(A\), then the instruction
+      leaves a stack with two items of type~\(\alpha\), on top of a
+      stack of type~\(A\). (We use the OCaml notation for consing,
+      that is, pushing items.)
+
+    \item This does not specify entirely the semantics, only the
+      \textbf{static semantics}.
+
+    \item We need a \textbf{dynamic semantics}, also called
+      \emph{evaluation} or \emph{interpretation}, defined as a
+      transition system, which states what happens to values in the
+      stack. Here, the evaluation mimics exactly the typing judgement
+      above:
+\begin{mathpar}
+\inferrule
+    {\textsf{DUP} \; x::S \; \rightarrow \; x::x::S}
+    {}
+\end{mathpar}
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{The type system of Michelson}
+
+  \begin{itemize}
+
+    \item Whilst the types of instructions can be polymorphic, their
+      instantiations must be monomorphic, hence instructions are not
+      first-class values and cannot be partially interpreted.
+
+    \item This enables a simple \textbf{static type checking}, as
+      opposed to a complex type inference. It can be performed
+      efficiently: \textbf{contract type checking consumes gas}.
+
+    \item Basically, type checking aims at validating the composition
+      of instructions, therefore is key to safely composing contracts
+      (concatenation, activations).
+
+    \item Once a contract passes type checking, it cannot fail due to
+      inconsistent assumptions on the storage and other values (there
+      are no null values, no casts), but it can still fail for other
+      reasons: division by zero, token exhaustion, gas exhaustion, or
+      an explicit \text{FAILWITH} instruction. This property is called
+      \textbf{type safety}. Also, such a contract cannot remain stuck:
+      this is the \textbf{progress} property.
+
+    \item The existence of a formal type system for Michelson, of a
+      formal specification of its dynamic semantics (evaluation), of a
+      Michelson interpreter in Coq, of proofs in Coq of properties of
+      some typical contracts, all those achievements are instances of
+      \textbf{formal methods} in Tezos.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item The following example has been ripped off the paper
+      \emph{Introduction to the Tezos Blockchain}, V. Allombert,
+      M. Bourgoin, J. Tesson, HPCS, 2019, July 15–19, Dublin,
+      Ireland.
+
+    \item Disclaimer: They are my colleagues.
+
+    \item We want to write a smart contract in Michelson that records
+      votes of peers for their favourite candidate.
+
+    \item For the sake of simplificity, a candidate is denoted by a
+      string.
+
+    \item The vote is open to all peers for a fee, and they have to
+      pick one candidate in a fixed list.
+
+    \item The state of the stack at a given point will be written in a
+      comment starting with \texttt{\#}.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item We begin by defining the storage as a mapping from the
+      candidates (\textsf{string}) to the number of corresponding
+      votes (\textsf{int}):
+      \begin{alltt}
+        \textbf{storage} (map string int);
+      \end{alltt}
+
+    \item Then we specify the type of the parameter of the contract,
+       that is, the vote:
+      \begin{alltt}
+        \textbf{parameter} string;
+      \end{alltt}
+
+    \item The execution starts with a stack containing a single pair
+      made of the parameter and the storage:
+      \begin{alltt}
+        \textbf{code} \{
+          # (vote, storage)
+      \end{alltt}
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item First, we check if the caller sent us enough tokens to
+      vote, and, if not, we fail:
+      \begin{alltt}
+          AMOUNT;
+          # amount::(vote, storage)
+          PUSH mutez 5000;
+          # 5000::amount::(vote, storage)
+          IFCMPGT \{ PUSH string "Insufficient fee."; FAILWITH \} \{\};
+          # (vote, storage)
+      \end{alltt}
+
+    \item The instruction \texttt{AMOUNT} pushes onto the stack the
+      amount sent by the voter.
+
+    \item The instruction \texttt{PUSH} pushes a typed constant.
+
+    \item The instruction \texttt{IFCMPGT} compares the first two
+      numbers on the stack, and, if the topmost is greater than the
+      next, the first sequence (between braces) is executed, else the
+      second one (which is empty here because of \texttt{FAILWITH}).
+
+    \item The instruction \texttt{FAILWITH} reads the value on top of
+      the stack, terminates the execution, and signals an error
+      (denoted by the value) to the node and the client.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item In order to check the current number of votes for the same
+      candidate, we start by duplicating the topmost item:
+      \begin{alltt}
+          DUP;
+          # (vote, storage)::(vote, storage)
+      \end{alltt}
+
+    \item We then destructure the first pair:
+      \begin{alltt}
+          UNPAIR;
+          # vote::storage::(vote, storage)
+      \end{alltt}
+
+    \item We can now consult the map in storage for the current count:
+      \begin{alltt}
+          GET;
+          # (Some current | None)::(vote, storage)
+      \end{alltt}
+      The top of the stack is \texttt{None} if \texttt{vote} was not a
+      valid choice, and \texttt{(Some current)} if there were
+      \texttt{current} votes already.
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item If \texttt{None}, we must fail; otherwise, we increment the
+      number of votes:
+      \begin{alltt}
+          IF\_SOME \{ PUSH int 1; ADD; SOME \}
+                   \{ PUSH string "Unknown candidate."; FAILWITH \}
+          # Some (current+1) :: (vote, storage)
+      \end{alltt}
+
+    \item We need now to update the storage with the new vote. For
+      that, we need to fish out the vote:
+      \begin{alltt}
+          DIP \{ UNPAIR \};
+          # Some (current+1) :: vote :: storage
+      \end{alltt}
+      The instruction \texttt{DIP} applies its sequence of
+      instructions (here \texttt{UNPAIR}) to the item just below the
+      top.
+
+    \item Then we need to reorder the two first items, like so:
+      \begin{alltt}
+          SWAP;
+          # vote :: Some (current+1) :: storage
+      \end{alltt}
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item We can now update the map:
+      \begin{alltt}
+          UPDATE;
+          # storage'
+      \end{alltt}
+
+    \item All contracts must normally end by leaving in the stack a
+      pair made of a list of operations and the new storage.
+
+    \item In this instance, the list is empty because all we do is
+      update the internal storage of the contract. So we push an empty
+      list of operations and pair it with the new storage:
+      \begin{alltt}
+          NIL operation;
+          PAIR;
+          # ([], storage')
+        \}
+      \end{alltt}
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{The full Michelson contract}
+  \begin{alltt}
+\textbf{storage} (map string int);
+\textbf{parameter} string;
+\textbf{code} \{
+  AMOUNT;
+  PUSH mutez 5000;
+  IFCMPGT \{ PUSH string "Insufficient fee."; FAILWITH \} \{\};
+  DUP;
+  UNPAIR;
+  GET;
+  IF\_SOME \{ PUSH int 1; ADD; SOME \}
+            \{ PUSH string "Unknown candidate."; FAILWITH \}
+  DIP \{ UNPAIR \};
+  SWAP;
+  UPDATE;
+  NIL operation;
+  PAIR;
+\}
+  \end{alltt}
+
+\end{slide}
+
+\begin{slide}
+  \title{Assessment of the contract}
+
+  \begin{itemize}
+
+    \item We could improve upon this design by enforcing a deadline on
+      the ballot, or by granting the right to add new candidates in
+      exchange of a fee.
+
+    \item Anyhow, we had to modify, sometimes deeply, the stack in
+      order to fetch and prepare the data for the instructions.
+
+    \item Moreover, some instructions above were actually
+      \textbf{macros} (\texttt{IF\_SOME}, \texttt{IFCMPGT}), which are
+      actually expanded into a sequence of atomic instructions by the
+      Michelson parser, so the canonical contract on the chain is
+      longer.
+
+    \item Programming in \textbf{Michelson is fun} and might even save
+      the Caps Lock key from extinction.
+
+    \item \emph{But does it scale up to larger and involved contracts
+      with high stakes?}
+
+    \item This is where \textbf{LIGO comes into play}.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{LIGO}
+
+  \begin{itemize}
+
+    \item Like Michelson, \textbf{LIGO is a programming language for
+      writing smart contracts on Tezos.}
+
+    \item Unlike Michelson, LIGO is a language akin to what a
+      mainstream programmer would expect.
+
+    \item This means that LIGO features variables, expressions,
+      function calls, data types, pattern matching etc.
+
+    \item Nevertheless LIGO remains a DSL for the Tezos blockchain, so
+      not all the usual bells and whistles of a mainstream language
+      are available.
+
+    \item It is hosted here: \url{https://ligolang.org/}
+
+    \item It is an \textbf{open source, collective project} (under the
+      MIT licence).
+
+    \item Go and \textbf{try the tutorial}!
+
+    \item (If you guessed why the name ``Michelson'', you will guess
+      why ``LIGO''.)
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{LIGO}
+
+  \begin{itemize}
+
+    \item Perhaps the most striking feature of LIGO is that it comes
+      in \textbf{different concrete syntaxes}, and even
+      \textbf{different programming paradigms}.
+
+    \item In other words, LIGO is not defined by one syntax and one
+      paradigm, like imperative versus functional.
+
+    \item There is \textbf{PascaLIGO}, which is inspired by Pascal,
+      hence is an imperative language with lots of keywords, where
+      values can be locally mutated after they have been annotated
+      with their types (declaration).
+
+    \item There is \textbf{CameLIGO}, which is inspired by the pure
+      subset of OCaml, hence is a functional language with few
+      keywords, where values cannot be mutated, but still require type
+      annotations (unlike OCaml, whose compiler performs almost full
+      type inference).
+
+    \item \textbf{And more to come!} You can propose your own
+      front-end for LIGO and we can help with its integration in the
+      distribution.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A voting contract in PascaLIGO}
+
+  \begin{alltt}
+\textbf{type} store \textbf{is} map (string, nat)
+\textbf{type} return  \textbf{is} list (operation) * store
+
+\textbf{function} vote (\textbf{const} ballot : string; \textbf{var} store : store) : return \textbf{is}
+  \textbf{begin}
+    \textbf{if}   amount <= 5000mutez
+    \textbf{then} failwith ("Insufficient fee.")
+    \textbf{else case} store[ballot] \textbf{of}
+                         None -> failwith ("Unknown candidate.")
+          | Some (current) -> store[ballot] := current + 1n
+          \textbf{end}
+  \textbf{end with} ((\textbf{nil} : list (operation)), store)
+  \end{alltt}
+
+  \begin{itemize}
+
+    \item \textbf{Easier to understand}, even though the generated
+      Michelson is not so neat.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A voting contract in CameLIGO}
+
+  \begin{alltt}
+\textbf{type} store = (string, nat) map
+\textbf{type} return = operation list * store
+
+\textbf{let} vote (ballot, store : string * store) : return =
+  \textbf{if}   amount <= 5000mutez
+  \textbf{then} (failwith "Insufficient fee." : return)
+  \textbf{else match} Map.find\_opt ballot store \textbf{with}
+           None -> (failwith "Unknown candidate." : return)
+        | Some current ->
+             \textbf{let} store = Map.update ballot (Some (current + 1n)) store
+             \textbf{in} (\textbf{nil} : operation list), store
+  \end{alltt}
+
+\end{slide}
+
+\begin{slide}
+  \title{A crowdfunding contract in PascaLIGO}
+
+  \begin{itemize}
+
+    \item A simple crowdfunding contract can be called in three
+      manners:
+      \begin{enumerate}
+
+        \item a backer sends some funds before the deadline has
+          passed, and only once;
+
+        \item a backer claims their funds after the deadline has
+          passed and the goal has not been reached;
+
+        \item the owner withdraws the funds after the deadline has
+          passed and the goal has been reached;
+
+        \item all other cases are errors.
+
+      \end{enumerate}
+
+      \item First, we define the storage (or \emph{store}):
+  \begin{alltt}
+\textbf{type} store \textbf{is} \textbf{record}
+    goal      : tez;
+    deadline : timestamp;
+    backers  : map (address, tez);
+    funded   : bool;                  // Optional terminator semicolon
+  \textbf{end}
+\textbf{type} return \textbf{is} list (operation) * store
+  \end{alltt}
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A crowdfunding contract in PascaLIGO}
+
+  \begin{itemize}
+
+  \item The function to contribute to the crowdfunding:
+    \smallskip
+    \begin{alltt}
+\textbf{function} back (\textbf{var} param : unit; \textbf{var} store : store) : return \textbf{is}
+  \textbf{begin}
+    \textbf{if}   now > store.deadline
+    \textbf{then} failwith ("Past deadline.")
+    \textbf{else} \textbf{case} store.backers[sender] \textbf{of}
+             None -> store.backers[sender] := amount
+          | Some (x) -> \textbf{skip}
+          \textbf{end}
+  \textbf{end with} ((\textbf{nil}: list (operation)), store)
+    \end{alltt}
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A crowdfunding contract in PascaLIGO}
+
+  \begin{itemize}
+
+    \item The function to claim funds is as follows:
+    \smallskip
+      \begin{alltt}
+\textbf{function} claim (\textbf{var} param : unit; \textbf{var} store : store) : return \textbf{is}
+  \textbf{begin}
+    \textbf{var} op : list (operation) := \textbf{nil};
+    \textbf{if} now <= store.deadline \textbf{then} failwith ("Too early.") \textbf{else}
+    \textbf{case} store.backers[sender] \textbf{of}
+        None -> failwith ("Not a backer.")
+    | Some (asset) ->
+          \textbf{if} balance >= store.goal \textbf{or} store.funded
+          \textbf{then} failwith ("Goal reached: no refund.")
+          \textbf{else} \textbf{begin}
+                  \textbf{const} dest : contract (unit) = get_contract (sender);
+                  op := \textbf{list} transaction (Unit, asset, dest) \textbf{end};
+                  \textbf{remove} sender \textbf{from map} store.backers
+                \textbf{end}
+     \textbf{end}
+  \textbf{end with} (op, store)
+      \end{alltt}
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{A crowdfunding contract in PascaLIGO}
+
+  \begin{itemize}
+
+    \item The function to withdraw the funds is as follows:
+      \smallskip
+      \begin{alltt}
+\textbf{function} withdraw (\textbf{var} param : unit; \textbf{var} store : store) : return \textbf{is}
+  \textbf{begin}
+    \textbf{var} op : list (operation) := \textbf{nil};
+    \textbf{if} sender = owner \textbf{then}
+      \textbf{if} now >= store.deadline \textbf{then}
+        \textbf{if} balance >= store.goal \textbf{then}
+           \textbf{begin}
+             store.funded := True;
+             op := \textbf{list} transaction (unit, owner, balance)] \textbf{end};
+           \textbf{end}
+        \textbf{else} failwith ("Below target.")
+      \textbf{else} failwith ("Too early.")
+    \textbf{else skip}
+  \textbf{end with} (op, store)
+\end{alltt}
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Some peculiarities of LIGO}
+
+  \begin{itemize}
+
+    \item LIGO features multiple syntaxes and paradigms.
+
+    \item Even within PascaLIGO, two styles are possible: terse or
+      verbose. We illustrated the verbose style here. We plan to offer
+      automatic style checking and two-way conversion by
+      pretty\hyp{}printing.
+
+    \item LIGO features \textbf{high-order quotations}, but not
+      full-fledged closures.
+
+    \item This means that, at the call site, \textbf{the arguments
+      and the environment are always copied}, therefore any mutation
+      (in PascaLIGO) will have no effect on the caller's arguments or
+      the environment, except with built-in iterators.
+
+    \item Quotations can be passed as arguments to others.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Quotations in LIGO}
+
+\begin{alltt}
+\textbf{function} iter (\textbf{const} delta : int; \textbf{const} l : list (int)) : int \textbf{is}
+  \textbf{var} acc : int := 0;
+  \textbf{procedure} aggregate (\textbf{const} i : int) \textbf{is}
+    \textbf{begin}
+      acc := acc + i
+    \textbf{end}
+  \textbf{begin}
+    aggregate (delta);         // Has no effect on acc
+    list\_iter (l, aggregate); // Has an effect on acc
+  \textbf{end with} acc
+\end{alltt}
+
+\end{slide}
+
+\begin{slide}
+  \title{Tooling for LIGO}
+
+  \begin{itemize}
+
+    \item Several tools are currently being developed, aiming at
+      facilitating the adoption of LIGO.
+
+    \item \textbf{An IDE based on VSCode} has been made available,
+      featuring
+      \begin{itemize}
+
+        \item syntax highlighting,
+
+        \item one-click compilation to Michelson,
+
+        \item \emph{dry runs} to locally execute contracts on a
+          sandbox,
+
+        \item a reactive counter estimating the gas consumption.
+
+      \end{itemize}
+
+    \item The architecture of VSCode, with its Language Server
+      Protocol, hopefully opens the door to plugins written in any
+      programming language, e.g., static analysis in OCaml.
+
+    \item \textbf{A web-based IDE} with the same set of features.
+
+    \item \textbf{An SDK} to make it simple for developers to make
+      applications involving LIGO contracts, e.g., mobile smart
+      wallets or web applications.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Research \& Development on the LIGO compiler}
+
+  \begin{itemize}
+
+    \item We are working on a more \textbf{powerful type system} which
+      will enable the writing of more expressive contracts, featuring
+      more type inference (less annotations) and enabling a greater
+      variety of programming paradigms (e.g., object-oriented).
+
+    %% \item We are working on a \textbf{generic front-end} aimed at
+    %%   replacing the different front-ends (lexers and parsers) we
+    %%   currently have. We also experiment with in-contract syntax
+    %%   extensions.
+
+    \item We are writing a \textbf{certified backend in Coq}, that is,
+      a Michelson code generator proven correct and extracted to OCaml
+      from its specification.
+
+    \item Those endeavours are not just engineering, they are
+      instances of \textbf{applied research} and require a strong
+      background on programming language theory.
+
+    \item But... you are welcome to join our effort, research or
+      development, even if you do not have a PhD, of course.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{The team behind LIGO}
+  \begin{itemize}
+
+    \item I wrote ``we'' and I introduced myself as working for
+      Nomadic Labs.
+
+    \item Nomadic Labs has been helping with spinning off LIGO into a
+      company, which I will formally join next month. Both companies
+      are funded by the Tezos Foundation.
+
+    \item \textbf{We are an international team.}
+
+    \item Five of us are based in Paris, and eight are contractors
+      spread around the globe, all working as one team (it is not just
+      about deliverables).
+
+    \item I became the COO, but I also coach new hires and work on an
+      experimental parser.
+
+    \item If you are passionate about compilers, distributed
+      applications on the blockchain, the web, please get in touch
+      with us.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Marigold}
+
+  \begin{itemize}
+
+    \item The LIGO project is the first stage of a larger project
+      called \textbf{Marigold}.
+
+    \item Marigold aims at \textbf{accelerating transactions},
+      including smart contracts, with \textbf{layer-2 innovations}
+      (sometimes not adequately called \emph{off-chain} or
+      \emph{side-chain} solutions).
+
+    \item We plan to amend the Tezos protocol itself to create
+      \textbf{tokens (Non Fungible Tokens) with Plasma}, which could
+      be done with smart contracts, but much slower.
+
+    \item This is possible because Tezos features a
+      \textbf{metaconsensus protocol}, which empowers peers to propose
+      amendments (i.e., source code) and submit their patches to a
+      vote.
+
+    \item For LIGO, we already proposed some Michelson instructions to
+      make the code generated by the LIGO compiler faster (fetching
+      and committing data deep within the stack).
+
+    \item Cryptoeconomics Labs (Japan)
+      (\url{https://www.cryptoeconomicslab.com}) work on a
+      \textbf{general Plasma}, that is, a Plasma that is extended to
+      encompass a larger class of contracts than just tokens, and of
+      interest to Marigold.
+
+  \end{itemize}
+
+\end{slide}
+
+\end{document}

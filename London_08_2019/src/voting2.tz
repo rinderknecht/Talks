@@ -1,0 +1,32 @@
+{ parameter string ;
+  storage (map string nat) ;
+  code { DUP ;
+         CDR ;
+         PUSH mutez 5000 ;
+         AMOUNT ;
+         COMPARE ;
+         LE ;
+         IF { PUSH string "Insufficient fee." ; FAILWITH }
+            { DIP { DUP } ;
+              SWAP ;
+              CAR ;
+              DIP { DUP } ;
+              GET ;
+              IF_NONE
+                { PUSH string "Unknown candidate." ; FAILWITH }
+                { DIP 2 { DUP } ;
+                  DIG 2 ;
+                  CAR ;
+                  DIP { DUP ; PUSH nat 1 ; ADD ; SOME ; DIP { DIP { DUP } ; SWAP } } ;
+                  UPDATE ;
+                  DIP { DIP { DUP } ; SWAP ; DROP } ;
+                  SWAP ;
+                  DROP ;
+                  DIP { DROP } ;
+                  PUSH unit Unit } } ;
+         DROP ;
+         DUP ;
+         NIL operation ;
+         PAIR ;
+         DIP { DROP 2 } } }
+
