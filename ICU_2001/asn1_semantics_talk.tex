@@ -1,0 +1,785 @@
+%%-*-latex-*-
+
+\documentclass[12pt]{article}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{stmaryrd}
+\usepackage{xspace}
+\usepackage{url}
+\usepackage{zzslides}
+
+\input{ast_commands}
+\input{inference-commands}
+
+%%\newcommand{\ASN}{\mbox{ASN.1}\xspace}
+
+\landscape
+%%\numbersection
+
+\begin{document}
+
+\zztitle{A Set-based Semantics for Validating \ASN Specifications}
+
+\zzauthor{Christian Rinderknecht}
+
+\organization{\large Network Architecture Laboratory\\
+Information and Communications University\\
+58-4 Hwaam-dong, Yuseong-gu, Daejeon\\
+305-732, South Korea\\
+\texttt{rinderkn@icu.ac.kr}}
+\date{March 28, 2002}
+
+\reminder{Network Architecture Laboratory Seminar}
+
+\titlepage
+
+\section{Plan}
+\begin{slide}
+\btitle{\textsf{Plan}}
+
+\begin{itemize}
+
+  \item Introduction
+ 
+  \item Short Presentation of \ASN
+
+  \item Issues in Validation
+
+  \item A Constraint-based Solution
+
+  \item Conclusion
+
+\end{itemize}
+
+\bigskip \bigskip \bigskip \bigskip \bigskip \bigskip
+
+\end{slide}
+
+\section{Introduction}
+\begin{slide}
+\btitle{Introduction}
+
+Abstract Syntax Notation One (\ASN) is a standard language for
+defining data types whose values may be exchanged across a network
+between two communicating applications, independently from the
+possible heterogeneity of the peers.\\
+
+It is used in network management, secure email, mobile
+telephony, air traffic control, voice and video over
+the Internet, electronic commerce, digital certificates, secure email,
+radio paging, interactive television, financial service systems,
+biometrics, ATM transactions, 800-number call routing to local
+carriers (USA), plane take-offs and landings, Federal Express tracking
+network, Microsoft Internet Explorer, NetMeeting, Outlook, wireless
+applications from Nokia, Ericsson and Motorola, databases (genetics,
+libraries), diagnostic monitoring systems (car factories), subway
+equipments, etc.\\
+
+The Encoding Rules specify how to serialize an \ASN value.
+
+\end{slide}
+
+
+\section{\ASN and the Compilation Chain}
+\begin{slide}
+
+\epsfxsize=17cm
+\epsfbox{compilation}
+
+\end{slide}
+
+\section{Short Presentation of \ASN}
+\begin{slide}
+\btitle{\textsf{Short Presentation of \ASN}}
+
+\noindent
+\textbf{Basic types}
+
+\begin{itemize}
+
+  \item \verb+ok BOOLEAN ::= TRUE+
+
+%%  \item The \texttt{NULL} type has only one value, also noted
+%%        \texttt{NULL};
+
+  \item 
+
+\begin{verbatim} 
+zero INTEGER ::= 0 
+DayInTheYear ::= INTEGER {first(1), last(356)}
+newYearsEve DayInTheYear ::= last
+\end{verbatim}
+
+  \item 
+\begin{verbatim}
+SynchroIndicator ::= ENUMERATED {serial, parallel}
+synchro SynchroIndicator ::= serial
+\end{verbatim}
+
+  \item
+
+\begin{verbatim}
+pi REAL ::= 3.14159
+micron REAL ::= {mantissa 1, base 10, exponent -6}
+\end{verbatim}
+
+  \item 
+
+\begin{verbatim}
+byte BIT STRING ::= 'OD'H  -- or '00001110'B
+T ::= BIT STRING {msb(7), lsb(0)}
+v T ::= {msb, lsb}  -- or '10000001'B
+\end{verbatim}
+
+%%  \item The \texttt{OCTET STRING} type is similar to the \texttt{BIT
+%%        STRING} for eight-bit multiples strings.
+
+%%  \item The \texttt{OBJECT IDENTIFIER} and \texttt{RELATIVE-OID} types
+%%        aim at referencing other \ASN modules (a set of type
+%%        and value declarations) at an international level, by means of
+%%        a path in a standard tree.
+
+  \item For historical reasons, there are many string types.
+
+\end{itemize}
+
+%%\continued
+\bigskip
+
+\noindent
+\textbf{Constructed types}
+
+\begin{itemize}
+
+  \item The \texttt{SET} type corresponds to the record-like
+        structures in programming languages:
+
+\begin{verbatim}
+PersonInfo ::= SET {age INTEGER,married BOOLEAN}
+i PersonInfo ::= {married FALSE, age 32}
+\end{verbatim}
+
+        but also some fields can be marked as optional or having a
+        default value:
+
+\begin{verbatim}
+Point ::= SET {x REAL DEFAULT 0, y REAL DEFAULT 0}
+origin Point ::= {}           -- or {x 0.0, y 0.0}
+\end{verbatim}
+
+%%\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+
+%%\continued
+
+        A real example:
+
+\begin{verbatim}
+DataAcknowledgementTPDU ::= SET {
+  destRef        Reference,
+  yr-tu-nr       TPDUnumber,
+  checkSum       CheckSum OPTIONAL,
+  subSeqNr       SubSequenceNumber DEFAULT 0,
+  flowControlCnf FlowControlConfirmation OPTIONAL}
+\end{verbatim}
+
+
+%%  \item The \texttt{SEQUENCE} type is the same as the \texttt{SET}
+%%        type, except that the values for the fields must be given in
+%%        the same order as they are declared:
+%%\begin{verbatim}
+%%PersonInfo ::= SEQUENCE {age INTEGER,married BOOLEAN}
+%%i PersonInfo ::= {married FALSE, age 32}    -- WRONG!
+%%\end{verbatim}
+
+%%\continued
+
+  \item The \texttt{SET OF} type corresponds to the mathematical
+        notion of sets with repetition:
+
+\begin{verbatim}
+T ::= SET OF INTEGER
+empty T ::= {}
+small T ::= {7, 9, 1, 1, 3}
+\end{verbatim}
+
+%%  \item The \texttt{SEQUENCE OF} type corresponds to the dynamic
+%%        arrays or lists of some programming languages. It is similar
+%%        to the \texttt{SET OF} type, except that the elements will be
+%%        encoded in the specified order.
+
+%%\continued
+\pagebreak
+
+  \item The \texttt{CHOICE} type corresponds to a \textsf{union} in
+        C or a \textsf{case} in Pascal.
+
+\begin{verbatim}
+T ::= CHOICE {x REAL, y BOOLEAN}
+u T ::= x : 0.5
+v T ::= y : FALSE
+\end{verbatim}
+
+%%\continued
+
+        The Protocol Data Units (PDU) are \texttt{CHOICE} types,
+        because they model all the possible queries and responses
+        between two peers. A \texttt{CHOICE} type may be recursive,
+        like the other constructed types. One real example (a Network
+        Management Protocol) is:
+
+\begin{verbatim}
+CMISFilter ::= CHOICE {
+  item  FilterItem,
+  and   SET OF CMISFilter,
+  or    SET OF CMISFilter,
+  not   CMISFilter}
+\end{verbatim}
+
+\end{itemize}
+
+%%\continued 
+\pagebreak
+
+\textbf{Subtyping constraints}\\
+
+\ASN offers a very involved subtyping paradigm consisting of
+constraints upon recursive types, that restricts their corresponding
+sets of values in a set-theoretic manner, but also in a structural
+way.
+
+\begin{itemize}
+
+  \item \textsf{Interval Constraint}: the \texttt{INTEGER},
+        \texttt{REAL} and (almost all) string types have totally
+        ordered values, hence allowing interval definitions. For
+        instance:
+
+\begin{verbatim}
+PositiveOrZeroInteger ::= INTEGER (0..MAX)
+PositiveInteger ::= INTEGER (0<..MAX)
+NegativeOrZeroInteger ::= INTEGER (MIN..0)
+NegativeInteger ::= INTEGER (MIN..<0)
+PositiveReal ::= REAL (0<..PLUS-INFINITY)
+NegativeReal ::= REAL (MINUS-INFINITY..<0)
+RealInterval ::= REAL (4e-5..1e-4)
+\end{verbatim}
+
+%%\continued
+\pagebreak
+
+  \item \textsf{Value Constraint}: to restrict the set of values of a
+        type to be a singleton:
+
+\begin{verbatim}
+Wednesday ::= Day (wednesday)
+\end{verbatim}
+
+  \item \textsf{Union Constraint}: the new subtype contains the
+        values of the first subtype and of the second subtype (keyword
+        \texttt{UNION} or symbol \texttt{|}):
+
+\begin{verbatim}
+Day ::= ENUMERATED {monday, tuesday, wednesday, 
+                    thursday, friday, saturday, sunday}
+WeekEnd ::= Day (saturday | sunday)
+\end{verbatim}
+
+  \item \textsf{Alphabet Constraint}: the strings can be restricted to
+        be built upon a given alphabet:
+
+\begin{verbatim}
+CapitalAndSmall ::= 
+  IA5String (FROM ("A".."Z" | "a".."z"))
+CapitalOrSmall ::= 
+  IA5STring (FROM ("A".."Z") | FROM ("a".."z"))
+\end{verbatim}
+
+%%\continued
+\pagebreak
+
+  \item \textsf{Size Constraint}: the values of string types may be
+        constrained to a given sizes, introducing a constraint by the
+        keyword \texttt{SIZE}:
+
+\begin{verbatim}
+Exactly31BitsString ::= BIT STRING (SIZE (31))
+StringOf31BitsAtTheMost ::= BIT STRING (SIZE (0..31))
+NonEmptyString ::= BIT STRING (SIZE (1..MAX))
+\end{verbatim}
+
+The size constraint can also apply to \texttt{SET OF} types. In that
+case, the semantics is very different: the values of the types are
+sets whose \emph{cardinals} are specified by the size constraint:
+
+\begin{verbatim}
+SetOf5Strings ::= SET (SIZE(5)) OF PrintableString
+SetOfStringsOf5Char::= SET OF PrintableString (SIZE(5))
+\end{verbatim}
+
+%%\continued
+\pagebreak
+
+  \item \textsf{Intersection Constraint}: the new subtype contains the
+        values that belong to the two subtypes (keyword
+        \texttt{INTERSECTION} or symbol \texttt{\symbol{94}}):
+
+\begin{verbatim}
+FrenchPhoneNumber ::= 
+  NumericString (FROM ("0".."9") ^ SIZE (10))
+\end{verbatim}
+
+\bigskip\bigskip
+
+  \item \textsf{Inclusion Constraint}: to restrict a subtype to have
+        only the values of a given subtype (optional keyword
+        \texttt{INCLUDES}):
+
+\begin{verbatim}
+LongWeekEnd ::= Day ((INCLUDES (WeekEnd)) | monday)
+Bis ::= Day (WeekEnd | monday)
+\end{verbatim}
+
+%%\continued 
+\pagebreak
+
+  \item \textsf{Complement Constraint}: to restrict the values of a
+        type to \emph{not} belong to another subtype:
+
+\begin{verbatim}
+Lipogramme ::= IA5String (FROM (ALL EXCEPT ("e" | "E")))
+\end{verbatim}
+
+\bigskip\bigskip
+
+  \item \textsf{Constraint on \texttt{SET OF}}: to restrict the
+        elements of a \texttt{SET OF} value:
+
+\begin{verbatim}
+TextBlock ::= SET OF VisibleString
+AddressBlock ::= TextBlock (WITH COMPONENT (SIZE(1..32)))
+\end{verbatim}
+
+%%\continued
+\pagebreak
+
+  \item \textsf{Partial Constraint}: to restrict \emph{some} fields
+        of a \texttt{SET} or \texttt{CHOICE}:
+
+\begin{verbatim}
+Quadruple ::= SET {
+  alpha ENUMERATED {in, out} OPTIONAL,
+  beta  IA5String OPTIONAL,
+  gamma SET OF INTEGER,
+  delta BOOLEAN DEFAULT TRUE}
+\end{verbatim}
+
+we can derive a subtype whose component \verb+alpha+ is always present
+and equals \verb+in+, and the component \verb+gamma+ always has
+five elements:
+\begin{verbatim}
+Quadruple1 ::=
+  Quadruple (WITH COMPONENTS {..., 
+                              alpha (in) PRESENT,  
+                              gamma (SIZE (5))})
+\end{verbatim}
+
+%%\continued
+\pagebreak
+
+\noindent
+This subtype has the same values as:
+\begin{verbatim}
+Quadruple1 ::= SET {
+  alpha ENUMERATED {in, out} (in),
+  beta  IA5String OPTIONAL,
+  gamma SET SIZE (5) OF INTEGER,
+  delta BOOLEAN DEFAULT TRUE}
+\end{verbatim}
+
+%%  \item \textsf{Complete Constraint}: to restrict \emph{all} fields of
+%%        a \texttt{SET} or \texttt{CHOICE}:
+%%
+%%\begin{verbatim}
+%%Quadruple1 ::=
+%%  Quadruple (WITH COMPONENTS {alpha (in),
+%%                              gamma (SIZE (5)),
+%%                              delta})
+%%\end{verbatim}
+%%
+%%\continued
+%%
+%%\noindent
+%%This subtype has the same values as:
+%%
+%%\begin{verbatim}
+%%Quadruple1 ::= SET {
+%%  alpha ENUMERATED {in, out} (in),
+%%  gamma SET SIZE (5) OF INTEGER,
+%%  delta BOOLEAN DEFAULT TRUE}
+%%\end{verbatim}
+
+\end{itemize}
+
+\end{slide}
+
+\section{Issues in Validation}
+\begin{slide}
+\btitle{\textsf{Issues in Validation}}
+
+\ASN types are considered as sets of values, thus types must have at
+least one (finite) value.\\
+
+Because of the great expressivity of \ASN, the compilers are not
+likely to fully check arbitrary combinations of subtyping
+constraints!\\
+
+Vendors' argument: ``This is hardly a real problem because
+those critical specifications are rarely found in practice.'' \\
+
+My argument: ``Why not solve completely the problem (for X.680) and
+get a better product?''
+
+\bigskip \bigskip \bigskip \bigskip \bigskip
+
+%%\continued
+\pagebreak
+
+\textbf{Preliminaries}\\
+
+First, we rewrite every X.680 specification
+into a subset of X.680 which has the same expressiveness as X.680,
+though having less ambiguities and syntactical constructs (formal
+definitions are easier too).\\
+
+Especially, for each value declaration, we extract the given type and
+create a corresponding type declaration for it. We also create another
+type declaration where the previous type is \emph{constrained} in
+order to contain the originally declared value. For instance:
+
+\begin{tabular}{rcl}
+   \verb+y INTEGER (0..9) ::= 1+
+   & $\longrightarrow$ 
+   & $\left\{
+       \begin{tabular}{l} 
+           \verb+y A ::= 1+ \\
+           \verb+A ::= INTEGER (0..9)+ \\
+           \verb+B ::= A (y)+
+        \end{tabular}
+     \right.$
+\end{tabular}
+
+where \verb+A+ and \verb+B+ are fresh type references.
+
+%%\continued
+\pagebreak
+
+\textbf{Problems}\\
+
+At this stage it can happen that
+
+\begin{enumerate}
+  
+  \item \label{finiteness} the types may have only infinite
+        values, as \texttt{T ::= SET \{a T\}};
+
+  \item \label{type_conformance} some value declarations may be
+        ill-typed, as \texttt{v REAL ::= ""};
+
+  \item \label{type_compatibility} especially, some value references
+        may be ill-typed, as\\
+        \verb+a VisibleString ::= b    b INTEGER ::= 0+;
+
+  \item \label{constraint_consistence} the subtype constraints may
+        be inconsistent: \texttt{T ::= REAL (SIZE(7))};
+
+  \item \label{subtype_non_emptyness} the subtypes may be empty, as\\
+        \texttt{T ::= SET ((SIZE (1)) \symbol{94} (SIZE (2))) OF REAL};
+        
+  \item \label{solvability} the subtypes may have no value set:
+        \texttt{T ::= REAL (ALL EXCEPT T)}. 
+
+\end{enumerate}
+
+%%\continued
+\pagebreak
+
+\vspace*{1cm}
+
+In other words, the issues to settle are respectively:
+
+\begin{enumerate}
+
+  \item the finiteness problem;
+ 
+  \item the typechecking problem;
+
+  \item the type compatibility problem;
+
+  \item the constraint consistence problem;
+
+  \item the non-emptyness problem;
+
+  \item the solvability problem.
+
+\end{enumerate}
+
+%%\continued
+\pagebreak
+
+\textbf{Problem analysis}
+
+\begin{itemize}
+
+  \item type compatibility $\subseteq$ typechecking;
+
+  \item constraint consistence, non-emptyness $\subseteq$ solvability
+        (the system is solved when we construct explicitly the values
+        of each subtype);
+
+  \item typechecking $\subseteq$ solvability (we added initially a new
+        type declaration for each value declaration).
+
+\end{itemize}
+
+So, finiteness and solvability are enough to get a full validation of
+X.680.
+
+\end{slide}
+
+
+
+\section{A Constraint-based Solution}
+\begin{slide}
+\btitle{A Constraint-based Solution}
+
+\textbf{Well-founded Types}\\
+
+A \emph{well-founded type} is a type uniquely defined and which has at
+least one finite value.\\
+
+We give an algorithm to check whether a type is
+well-founded. Basically, it analyses precisely the recursions.\\
+
+Note: the well-foundedness of a type does \emph{not} imply the
+well-foundedness of its subtypes:
+
+\begin{verbatim}
+  T ::= CHOICE {a T, b REAL}
+  U ::= T (WITH COMPONENTS {..., b ABSENT})
+\end{verbatim}
+
+type \verb+T+ is well-founded but \verb+U+ is not.
+
+%%\continued
+\pagebreak
+
+\textbf{Set Constraints}\\
+
+Sets constraints are inclusions between expressions interpreted over
+the domain of sets of trees which may be recursively defined.\\
+
+The \ASN types, by having a tree structure (technically, they are
+rational trees), fit perfectly in the usual domain of set
+constraints.\\
+
+A set constraint has the form $\alpha \subseteq \beta$, where $\alpha$
+and $\beta$ are \emph{set expressions}. Examples are \textsf{0} (the
+empty set), \textsf{1} (the set of all terms), $\alpha$ (a set-valued
+variable), $c(\alpha, \beta)$ (a constructor application), and the
+union, intersection or complement of set expressions. Given a set of
+constructors ${\cal C}$, where each $c \in {\cal C}$ has arity $a(c)$,
+set expressions are defined by the grammar:
+
+$$\E ::= \textsf{0} \mid \textsf{1} \mid \alpha \mid c (\E_1, \ldots,
+\E_{a(c)}) \mid \E_1 \cup \E_2 \mid \E_1 \cap \E_2 \mid \neg \E_1$$
+
+\pagebreak
+
+\textbf{Common Application}\\
+
+Set constraints are used in program analysis: sets of terms describe
+the possibly computed values. Set constraints are generated from the
+program text and solving the former yields some useful information
+about the latter (e.g. type-ckecking or optimisation).\\
+
+For example, consider a program with two uses of a variable
+$v$. Assume that from one use we determine that $v$ must be a number
+(i.e. $v \subseteq \textsf{Int} \, \cup \, \textsf{Float}$) and from
+the other use that $v$ cannot be an integer (i.e. $v \subseteq
+\neg\textsf{Int}$). Combining these constraints, we can infer that $v$
+must be a floating point number (i.e. $v \subseteq (\textsf{Int} \,
+\cup \, \textsf{Float}) \cap \neg\textsf{Int} = \textsf{Float}$).
+
+\pagebreak
+
+\textbf{Application to \ASN}\\
+
+In order to apply the set constraints to \ASN we only define specific
+constructors $c$ that model all the subtyping constraints:
+
+\bigskip
+
+\ocamlkwd{type} \ocamltypename{construct}$_{1}$ = 
+  \ocamlconstr{[}\Null{} $\mid$ \kwdTRUE{} $\mid$
+  \kwdFALSE\ocamlconstr{]}
+
+\noindent
+\ocamlkwd{and} \ocamltypename{construct}$_{2}$ = \\
+\hspace*{3mm}
+\ocamlconstr{[}\Enum{} \ocamlkwd{of} \ocamltypename{string}
+$\mid$ \Regexp{} \ocamlkwd{of} \ocamltypename{string}
+$\mid$ \ocamltypename{integer}
+$\mid$ \ocamltypename{real}
+$\mid$ \ocamltypename{construct}$_{1}$\ocamlconstr{]}
+
+\noindent
+\ocamlkwd{and} \ocamltypename{real\_interval} =\\
+\hspace*{3mm} 
+\ocamlconstr{[}\wildcard \wildcard \asnkwdconstr{..} \wildcard
+\wildcardof \ocamltypename{real\_bound} $\times$ \ocamltypename{in\_out} 
+$\times$ \ocamltypename{in\_out} $\times$ \ocamltypename{real\_bound}\ocamlconstr{]}
+
+\noindent
+\ocamlkwd{and} \ocamltypename{real\_bound} =
+\ocamlconstr{[}\ocamltypename{real} 
+$\mid$ \MinInfReal{} 
+$\mid$ \PlusInfReal \ocamlconstr{]}
+
+\noindent
+\ocamlkwd{and} \ocamltypename{closed\_int\_interval} = 
+\ocamlconstr{[}\Interval{} \ocamlkwd{of} \ocamltypename{int\_bound}
+$\times$ \ocamltypename{int\_bound}\ocamlconstr{]}
+
+\noindent
+\ocamlkwd{and} \ocamltypename{int\_bound} =
+\ocamlconstr{[}\ocamltypename{integer}{} 
+$\mid$ \MinInfInt{}
+$\mid$ \PlusInfInt \ocamlconstr{]}
+
+\smallskip
+
+\noindent
+\ocamlkwd{and} \ocamltypename{list} = 
+\ocamlconstr{[}\Cons{} \ocamlkwd{of} $\E$ $\times$ \ocamltypename{list}
+$\mid$ \Nil \ocamlconstr{]}
+
+\noindent
+\ocamlkwd{and} \ocamltypename{map} =
+\ocamlconstr{[}\Bind{} \ocamlkwd{of} \ocamltypename{identifier}
+$\times$ $\E$ $\times$ \ocamltypename{map} $\mid$ \Nil \ocamlconstr{]}
+
+\smallskip
+
+\noindent
+\ocamlkwd{and} \ocamltypename{construct} =
+       \ocamlconstr{[}\ocamltypename{list} 
+$\mid$ \ocamltypename{map}
+$\mid$ \wildcard\/ $\pmb{:}$ \wildcardof
+           \ocamltypename{label} $\times$ $\E$\\
+\hspace*{3mm}
+$\mid$ \ocamltypename{real\_interval}
+$\mid$ \ocamltypename{closed\_int\_interval}
+$\mid$ \ocamltypename{construct}$_{2}$\ocamlconstr{]}
+
+\pagebreak
+
+As a special case, we define some useful set constants:
+
+\medskip
+
+\noindent
+$\ocamlkwd{let} \,\, \mathbb{N} = \Interval \, (\MinInfInt,
+\PlusInfInt)$\\
+$\ocamlkwd{and} \,\, \mathbb{N}^{+} = \Interval \, (\PosInt \, (0),
+\PlusInfInt)$\\
+$\ocamlkwd{and} \,\, \mathbb{R} = \MinInfReal \, \pmb{<}
+\asnkwdconstr{..} \pmb{<} \, \PlusInfReal$
+
+\bigskip\bigskip\bigskip
+
+Now the problem is to extract set constraints from each subtype, such
+as their solving provide a mapping from the subtype to its set of
+values: this is a \emph{denotational semantics} of \ASN.\\
+
+As far as validation is concerned, if some constraints are unsolvable
+or the set of solutions is empty, them the specification must be
+rejected.
+
+\pagebreak
+
+\btitle{Constraint Collection}
+
+\textbf{From Types}\\
+
+\begin{tabular}{rcl}
+$\llbracket{\kwdINTEGER}\rrbracket_{\alpha}$
+  & = & $(\alpha \CEeq \mathbb{N})$\\ 
+$\llbracket{\kwdREAL}\rrbracket_{\alpha}$
+  & = & $\alpha \CEeq \mathbb{R}$\\ 
+$\llbracket{\kwdBOOLEAN}\rrbracket_{\alpha}$
+  & = & $\alpha \CEeq \kwdTRUE \,\, \SEcup \,\, \kwdFALSE$\\
+$\llbracket{\kwdENUMERATED \, [a]}\rrbracket_{\alpha}$
+  & = & $\alpha \CEeq \Enum \, (a)$\\
+$\llbracket{\kwdENUMERATED \, (a \CONS b \CONS
+  \textnormal{I})}\rrbracket_{\alpha}$
+  & = & $\ocamlkwd{let} \,\, \beta \,\, \textnormal{\emph{be a fresh
+         variable}}$\\
+  &   & $\ocamlkwd{in} \,\, \llbracket{\kwdENUMERATED \, (b \CONS
+        \textnormal{I})}\rrbracket_{\beta}$ \\
+  &   & \hspace*{8mm}
+        $\wedge \,\,\,  \alpha \CEeq \Enum \, (a) \, \SEcup \, \beta$\\
+\end{tabular}
+
+\bigskip
+
+\emph{et cetera}. \\
+
+
+\textbf{From Subtypes}\\
+
+Similarly, constraints are collected from (proper) subtypes.
+
+
+\pagebreak
+
+\btitle{Constraint Solving}
+
+Aiken and Wimmers proposed the first solving algorithm for the class
+of constraints we are using: \\
+
+\bibliographystyle{plain}
+\bibliography{asn1_semantics_talk}
+\nocite*{}
+
+\end{slide}
+
+\section{Conclusion}
+\begin{slide}
+\btitle{Conclusion}
+
+\begin{itemize}
+
+  \item First formal and complete semantics of \ASN (X.680). It is
+        complementary to the usual syntax-driven informal approach.
+
+  \item First algorithm for the full validation of \ASN (X.680).
+
+  \item Full validation of \ASN means full interoperability at the
+        data level between network equipments.
+
+  \item The algorithm is given in a meta-language whose semantics
+        already exists and there is a programming language for it
+        (namely Objective Caml, cf.
+        \url{http://www.ocaml.org} and \url{http://caml.inria.fr/}).
+
+  \item Best site about \ASN: \url{http://asn1.elibel.tm.fr/}
+
+\end{itemize}
+
+\end{slide}
+
+
+
+\end{document}

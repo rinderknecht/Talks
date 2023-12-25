@@ -1,0 +1,351 @@
+\section{Annexes}
+\begin{slide}
+\begin{block} {Annexes} \end{block}
+\end{slide}
+
+
+\begin{slide}
+\begin{block} {Packed Encoding Rules (PER)} \end{block}
+
+\begin{itemize}
+  \item Le but est de réduire l'information de contrôle (ie. de type)
+        dans les codes.
+
+  \item Philosophie des PER
+        \begin{itemize}
+           \item Tri canonique des champs de structures en fonction de
+                 leurs étiquettes.
+           \item Certains codes ont un {\em bit-map} pour gérer les
+                 éventuels champs optionnels et par défaut. 
+           \item Utilisation des contraintes de sous-typage pour
+                 obtenir des codes plus courts (ex. valeurs de {\tt
+                 INTEGER (0|1)} codées avec un bit).
+        \end{itemize}
+\end{itemize}
+
+\continued
+
+\begin{itemize}
+  \item Avantage: Le ratio ``contenu utile/contrôle'' très grand.
+
+  \item Inconvénients:
+        \begin{itemize}
+           \item Norme très complexe par rapport aux BER, et donc mal
+                 comprise, même par les membres de l'ISO.
+
+           \item Beaucoup plus de réécritures sur les spécifications et
+                 plus d'hypothèses pour le décodage (par rapport aux
+                 BER). 
+        \end{itemize}
+\end{itemize}
+
+\end{slide}
+
+
+
+
+\begin{slide}
+\begin{block} {Usages d'ASN.1} \end{block}
+\begin{itemize}
+  \item HTTP-Next Generation
+  \item CMIP (Network administration)
+  \item RNIS (Digital phone services)
+  \item ATM (Asynchronous Transfert Mode)
+  \item X.400 (Message handling system)
+  \item X.500 (Phone repository)
+  \item MHEG, T.120, H.245 (Multimedia conferencing)
+  \item Switching systems (Routers)
+  \item Mobile phones (Connection, switching)
+  \item SDL, Estelle (Protocol specification languages)
+  \item TTCN (Protocol testing language)
+  \item Delivery tracking (Federal Express)
+  \item World-wide financial transactions (Reuter)
+  \item Reactive power control in electric utilities
+\end{itemize}
+
+\begin{itemize}
+  \item Air-ground \& ground-ground comm (KLM, UA, International Civil
+Aviation Organization)
+  \item Power quality monitoring over the Internet
+  \item Diagnostic monitoring systems in auto plants
+  \item Future printer job management (DEV, HP, IBM, Sun, Xerox)
+  \item Subway of Berlin
+  \item VHDL (Electronic circuit design language)
+  \item NCBI (Genetic database)
+  \item Office Automation (EDI, ODA)
+  \item Image processing (IPI)
+  \item Brewing of beer
+\end{itemize}
+\end{slide}
+
+
+
+
+\begin{slide}
+\begin{block} {L'équivalence de valeurs (exemple de règle)} \end{block}
+
+\deduction 
+  \Phi \lhd [\textsf{Field} (\textrm{label}, \textrm{T}')] \sqcup \Phi'
+  \cr
+  V_0 \lhd [(\textrm{label}, v'_0)] \sqcup V'_0
+  \cr
+  V_1 \lhd [(\textrm{label}, v'_1)] \sqcup V'_1
+  \cr
+  \Gamma, \textrm{T}'\vdash v'_0 \sim v'_1
+  \cr
+  \Gamma, \textsf{SET} (\Phi') \vdash \bob V'_0 \bcb \sim \bob V'_1 \bcb
+  ------------------------------------------------------------------------
+  \Gamma, \textsf{SET} (\Phi) \vdash \bob V_0 \bcb \sim \bob V_1 \bcb
+\end
+
+\end{slide}
+
+
+
+
+\begin{slide}
+\begin{block} {Présentation d'ASN.1} \end{block}
+
+\noindent {\bf Types de base}
+
+\begin{itemize}
+  \item 
+\begin{verbatim}
+NumberOfCustomers ::= INTEGER
+current NumberOfCustomers ::= 1000000
+\end{verbatim}
+
+  \item
+\begin{verbatim}
+DayInTheYear ::= INTEGER {first(1), last(356)}
+newYearsEve DayInTheYear ::= last
+\end{verbatim}
+
+
+  \item
+\begin{verbatim}
+Synchro-Indicator ::= ENUMERATED {serial(1), parallel(2)}
+synchro Synchro-Indicator ::= serial
+\end{verbatim}
+
+
+  \item
+\begin{verbatim}
+SwitchStatus ::= BOOLEAN
+\end{verbatim}
+
+
+  \item
+\begin{verbatim}
+padding NULL ::= NULL
+\end{verbatim}
+
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}
+\begin{block} {Types Construits} \end{block}
+
+\begin{itemize}
+  \item {\bf Construction par répétition}
+        \begin{itemize}
+          \item 
+\begin{verbatim}
+A ::= SET OF INTEGER
+empty A::= {}
+small A ::= {7, 9, 1, 1, 3}
+\end{verbatim}
+
+          \item 
+\begin{verbatim}
+B ::= SEQUENCE OF INTEGER
+\end{verbatim}
+        \end{itemize}
+
+  \item {\bf Construction par agrégation} 
+        \begin{itemize}
+\item
+\begin{verbatim}
+PersonInfo ::= SET {
+                 age     INTEGER,
+                 married BOOLEAN}
+i PersonInfo ::= {married FALSE, age 28}
+\end{verbatim}
+
+  \item 
+\begin{verbatim}
+PersonInfo ::= SEQUENCE {
+                 age     INTEGER,
+                 married BOOLEAN}
+i PersonInfo ::= {married FALSE, age 28} -- KO!
+i PersonInfo ::= {age 28, married FALSE} -- OK!
+\end{verbatim}
+        \end{itemize}
+
+  \item 
+\begin{verbatim}
+Coordinates ::= SEQUENCE {x REAL, y REAL}
+origin Coordinates ::= {x 0, y 0}
+\end{verbatim}
+
+  \item 
+\begin{verbatim}
+Coordinates ::= SET {x REAL, y REAL}
+\end{verbatim}                         
+
+Comment le récepteur distinguera les deux champs? Avec les {\em
+étiquettes}:
+
+\begin{verbatim}
+Coordinates ::= SET {x [0] REAL, y [1] REAL}
+\end{verbatim}
+
+  \item Tous les champs de {\tt SET} doivent avoir des étiquettes
+        distinctes. 
+
+  \item L'étiquetage n'affecte pas la syntaxe des valeurs.
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}
+\begin{itemize}
+  \item 
+\begin{verbatim}
+Coordinates ::= SEQUENCE {
+                  x REAL DEFAULT 0, 
+                  y REAL DEFAULT 0}
+origin Coordinates ::= {}
+\end{verbatim}
+...est équivalent à: 
+\begin{verbatim}
+origin Coodinates ::= {x 0, y 0}
+\end{verbatim}
+
+  \item
+\begin{verbatim}
+DataAcknowledgementTPDU ::= SET {
+  destRef        [0] Reference,
+  yr-tu-nr       [1] TPDUnumber,
+  checkSum       [2] CheckSum OPTIONAL,
+  subSeqNr       [3] SubSequenceNumber DEFAULT 0,
+  flowControlCnf [4] FlowControlConfirmation OPTIONAL
+}
+\end{verbatim}
+
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\begin{itemize}
+  \item
+\begin{verbatim}
+Illegal ::= SEQUENCE {
+              x REAL OPTIONAL,
+              y REAL
+            }
+\end{verbatim}
+  \item Une suite de champs {\tt OPTIONAL} et le champ suivant
+        doivent avoir des étiquettes distinctes.
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\begin{itemize}
+  \item {\bf Construction par union} \\
+        (semblable à {\tt union} du langage C)
+\begin{verbatim}
+T ::= CHOICE {
+        x REAL,
+        y INTEGER,
+        z BOOLEAN
+      }
+v1 T ::= x : {50, 10, -1}
+v2 T ::= z : TRUE
+\end{verbatim}
+
+  \item 
+\begin{verbatim}
+Illegal ::= CHOICE {
+              a CHOICE {aa INTEGER, ab BOOLEAN},
+              b CHOICE {ba BOOLEAN, bb NULL}
+            }
+\end{verbatim}
+
+  \item Tous les champs de {\tt CHOICE} doivent avoir des étiquettes
+        distinctes, en parcourant en profondeur le type.
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\begin{block} {Récursivité} \end{block}
+\begin{itemize}
+  \item Les types récursifs sont autorisés et... probables:
+\begin{verbatim}
+CMISFilter ::= CHOICE {
+  item  [8] FilterItem,
+  and   [9] IMPLICIT SET OF CMISFilter,
+  or   [10] IMPLICIT SET OF CMISFilter,
+  not  [11] CMISFilter
+}
+\end{verbatim}
+
+  \item Les valeurs récursives sont illégales (sur notre proposition à
+        l'ISO). 
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\begin{block} {Sous-typage} \end{block}
+
+\begin{itemize}
+
+  \item 
+\begin{verbatim}
+PositiveInt ::= INTEGER (0<..MAX)
+PositiveReal ::= REAL (0<..PLUS-INFINITY)
+Small-primes ::= INTEGER (2 | 3 | 5 | 7)
+\end{verbatim}
+
+\item
+\begin{verbatim}
+Word-32bits ::= BIT STRING (SIZE (0..31))
+Morse ::= PrintableString (FROM ("." | "-" | " "))
+Social-Insurance ::= 
+       NumericString (SIZE (13)) (FROM ("0".."9"))
+\end{verbatim}
+
+  \item
+\begin{verbatim}
+A ::= SET OF PrintableString (SIZE (5))
+B ::= SET (SIZE (5)) OF PrintableString
+\end{verbatim}
+\end{itemize}
+
+\continued
+
+\begin{itemize}
+
+  \item 
+\begin{verbatim}
+C ::= SET {
+        a INTEGER,
+        b NumericString
+      } (WITH COMPONENTS {..., a (0|1)})
+\end{verbatim}
+
+...est équivalent à:
+
+\begin{verbatim}
+C ::= SET {
+        a INTEGER (0|1),
+        b NumericString
+      }
+\end{verbatim}
+
+\end{itemize}
+
+\end{slide}
+

@@ -1,0 +1,167 @@
+%%-*-latex-*-
+
+%% New commands for typesetting Inference Rules
+%%
+
+\newcommand{\Path}{{\cal P}} %%{\textrm{P}}
+%%\newcommand{\Pt}{\textrm{P}_{\textrm{t}}}
+%%\newcommand{\Ph}{\textrm{P}_{\textrm{h}}}
+
+\newcommand{\E}{\textnormal{E}}
+
+\newcommand{\denotC}[4]{\llbracket #2 \rrbracket_{#3}(#4)}
+
+\newcommand{\card}[1]{\mid\!#1\!\mid}
+
+\newcommand{\domain}[1]{\langle #1 \rangle}
+
+\newcommand{\TypeEnv}{\Gamma}
+\newcommand{\ValueEnv}{\Delta}
+
+\newcommand{\wild}{\mbox{\large \raisebox{0.5mm}{\_}}\xspace}
+\renewcommand{\colon}{\textsf{\textbf{\,:\,}}}
+
+%% Boolean Operators
+%%
+\newcommand{\BOOLand}{\mbox{\scriptsize \, $\wedge$ \,}}
+\newcommand{\BOOLor}{\mbox{\scriptsize \, $\vee$ \,}}
+
+%% Operators on Set Expressions (SE)
+%%
+\newcommand{\SEmu}{\dot{\mu}}
+\newcommand{\SEcap}{\dot{\cap}}
+\newcommand{\SEbigcap}{\dot{\bigcap}}
+\newcommand{\SEcup}{\dot{\cup}}
+\newcommand{\SEbigcup}{\dot{\bigcup}}
+\newcommand{\SEdiff}{\dot{\backslash}}
+\newcommand{\SEneg}{\dot{\neg}}
+\newcommand{\SEdiam}{\dot{\Diamond}}
+\newcommand{\SEbot}{\dot{\textnormal{\textsf{0}}}}
+\newcommand{\SEtop}{\dot{\textnormal{\textsf{1}}}}
+
+\newcommand{\eval}[2]{[#1,#2]}
+
+%% Operators on Powerset Expressions (PSE)
+%%
+\newcommand{\PSEsum}{\oplus}
+\newcommand{\PSEprod}{\otimes}
+\newcommand{\PSEdiff}{\ominus}
+
+%% Operators on Constraints Expressions (CE)
+%%
+\newcommand{\CEmu}{\mbox{\raisebox{-0.5mm}{$\stackrel{\pmb{..}}{\mu}$}}}
+\newcommand{\CEand}{\mbox{\scriptsize \, $\stackrel{\pmb{..}}{\wedge}$ \,}}
+\newcommand{\CEor}{\mbox{\scriptsize \, $\stackrel{\pmb{..}}{\vee}$ \,}}
+\newcommand{\CEbigand}{\stackrel{\pmb{..}}{\bigwedge}}
+\newcommand{\CEsubseteq}{\stackrel{\pmb{..}}{\subseteq}}
+\newcommand{\ddsubseteq}[1]{\CEsubseteq_{\mbox{\raisebox{-0.6mm} {$\scriptscriptstyle \textnormal{#1}$}}}}
+\newcommand{\CEsubseteqI}{\ddsubseteq{I}}
+\newcommand{\CEsubseteqR}{\ddsubseteq{R}}
+\newcommand{\CEsubseteqS}{\ddsubseteq{S}}
+\newcommand{\CEeq}{\stackrel{\pmb{..}}{=}}
+\newcommand{\ddeq}[1]{\CEeq_{\mbox{\raisebox{-0.6mm} {$\scriptscriptstyle \textnormal{#1}$}}}}
+\newcommand{\CEeqI}{\ddeq{I}}
+\newcommand{\CEeqR}{\ddeq{R}}
+\newcommand{\CEeqS}{\ddeq{S}}
+\newcommand{\CEeqF}{\ddeq{F}}
+
+%% Operators on Powerset Constraint Expressions (PSCE)
+%%
+\newcommand{\PSCEeq}{\ddeq{P}}
+
+
+%% Operators on Patterns
+%%
+\newcommand{\PAarrow}{\,\, {\boldsymbol\rightarrow}}
+
+
+
+\newcommand{\disjunion}{%
+\setbox0=\hbox{$\sqcup$}%
+\setbox1=\hbox{\toto{\boldmath{+}}}%
+\dimen0=\the\wd0%
+\dimen1=\the\wd1%
+\advance\dimen0 by\the\dimen1%
+\divide\dimen0 by2%
+\mathbin{\vbox{\hphantom{$\sqcup$}\nointerlineskip\hbox{\box0\kern -\dimen0\raise 0.6mm\box1}}}}
+
+%% Operators on Caml Lists
+%%
+\newcommand{\CONS}{\!::\!}
+\newcommand{\Append}{\, \mbox{\sf \small @} \,}
+
+%% Other Stuff
+%%
+
+%\SList{T}{i}{n} => {T}$_{1 <= i <= n}$
+\newcommand{\SList}[3]{\mbox{\{#1\}$_{\scriptscriptstyle{1} \scriptscriptstyle{\leqslant} #2 \scriptscriptstyle{\leqslant} #3}$}}
+
+%\OList{T}{i}{n} => [T]$_{1 <= i <= n}$
+\newcommand{\OList}[3]{\mbox{[#1]$_{\scriptscriptstyle{1} \scriptscriptstyle{\leqslant} #2 \scriptscriptstyle{\leqslant} #3}$}}
+
+\newcommand{\REAL}{\textrm{"REAL"}}
+\newcommand{\INTEGER}{\textrm{"INTEGER"}}
+
+\newcommand{\emptyL}{\mbox{\rm [\,]\,}}
+\newcommand{\emptyStr}{""}
+
+%%\newcommand{\Field}[1]{\mbox{{\sf Field} ($l_#1$, $\tau_#1$, T$_#1$, $\sigma_#1$, $s_#1$)}}
+
+\newcommand{\CHOICE}[2]{\kwdCHOICE \, \OList{($l_#1$, ($\tau_#1$, T$_#1$, $\sigma_#1$)}{#1}{#2}}
+
+\newcommand{\SET}[2]{\kwdSET \, \OList{\Field{#1}}{#1}{#2}}
+\newcommand{\SEQUENCE}[2]{\kwdSEQUENCE \, \OList{\Field{#1}}{#1}{#2}}
+
+\newcommand{\wildCHOICE}{\kwdCHOICE \,\!\wild}
+\newcommand{\wildSET}{\kwdSET \,\!\wild}
+\newcommand{\wildSEQUENCE}{\kwdSEQUENCE \,\!\wild}
+\newcommand{\wildINTEGER}{\kwdINTEGER \,\!\wild}
+\newcommand{\wildENUMERATED}{\kwdENUMERATED \,\!\wild}
+\newcommand{\wildTRef}{\asnkwdconstr{TRef}\,\!\wild}
+\newcommand{\wildVRef}{\asnkwdconstr{VRef}\,\!\wild}
+\newcommand{\wildSelect}{\wild \!<\! \wild}
+\newcommand{\wildBITSTRING}{\kwdBITSTRING \, \wild}
+\newcommand{\wildSETOF}{\kwdSETOF \, \wild}
+\newcommand{\wildSEQUENCEOF}{\kwdSEQUENCEOF \, \wild}
+\newcommand{\emptyINTEGER}{\kwdINTEGER $\emptyL$}
+\newcommand{\emptyENUMERATED}{\kwdENUMERATED $\emptyL$}
+\newcommand{\emptyBITSTRING}{\kwdBITSTRING $\emptyL$}
+\newcommand{\emptySET}{\kwdSET $\emptyL$}
+\newcommand{\emptySEQUENCE}{\kwdSEQUENCE $\emptyL$}
+
+\newcommand{\AS}{\, \mbox{\bf as} \,}
+
+\newcommand{\vdashL}{\vdash\hspace*{-2.5mm}_{\scriptscriptstyle {\cal L}} \,}
+\newcommand{\vdashT}{\vdash\hspace*{-2.5mm}_{\scriptscriptstyle {\cal T}} \,}
+\newcommand{\vdashC}{\vdash\hspace*{-2.5mm}_{\scriptscriptstyle {\cal C}} \,}
+\newcommand{\vdashD}{\vdash\hspace*{-2.5mm}_{\scriptscriptstyle {\cal D}} \,}
+\newcommand{\vdashCOMP}{\vdash\hspace*{-2.5mm}_{\scriptscriptstyle {\rm comp}} \,}
+\newcommand{\vdashAUTO}{\vdash\hspace*{-2.5mm}_{\scriptscriptstyle {\rm auto}} \,}
+\newcommand{\bouchon}[1]{\vdash\hspace*{-2.5mm}_{\scriptscriptstyle #1} \,\,}
+\newcommand{\Bouchon}[1]{\Vdash\hspace*{-2.5mm}_{\scriptscriptstyle #1} \,\,}
+
+\newcommand{\listminus}{-}
+\newcommand{\listin}{\in}
+\newcommand{\listinter}{\sqcap}
+\newcommand{\listunion}{\sqcup}
+
+\newcommand{\permutation}[2]{#1 \,\, \mbox{\em est une permutation sur} \,\, #2}
+\newcommand{\perm}[1]{#1 \,\, \mbox{\em est une permutation}}
+\newcommand{\noother}{{\bf when} \,\, \mbox{\em no other rule match}}
+
+\newcommand{\poe}{\preccurlyeq}
+\newcommand{\bob}{\mbox{\boldmath $\{$}}
+\newcommand{\bcb}{\mbox{\boldmath $\}$\,}}
+
+
+\newcommand{\Wide}{\, \sqsubseteq \,}
+\newcommand{\PAR}{\,\,\|\,\,}
+
+\newcommand{\nlhd}{\not{\hspace*{-1mm}\lhd}\hspace*{1mm}}
+
+\newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}
+
+
+%%\font\toto=cmr5 scaled 700
+
+\newcommand{\rulename}[1]{$\langle\textnormal{\textsf{#1}}\rangle$}

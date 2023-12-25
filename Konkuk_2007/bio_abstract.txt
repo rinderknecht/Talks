@@ -1,0 +1,32 @@
+Biography
+
+Christian Rinderknecht, Ph.D., is an Assistant Professor at the
+department of Internet and Multimedia in the College of
+Telecommunications of Konkuk University (Seoul).
+
+His main research interests are (1) the application of formal methods
+to software engineering, (2) XML technologies as found in document
+processing and databases and (3) data engineering to enable the
+interoperability of heterogeneous distributed systems.
+
+The Ariadne thread is a focus on designing and making useful tools to
+support the engineer or the end-user, with a keen eye on formal
+modeling in order to ensure reliability.
+
+
+Abstract
+
+The topic presented today is work in progress, a collaboration with
+Dr. Nic Volanschi, who initiated the research and implemented a
+prototype. (See http://mygcc.free.fr/)
+
+Programme checking technology is now mature but not used on a large
+scale by developers. One of the reasons is the decoupling of checking
+tools from the development tools, in particular the compiler. We
+explore the integration of simple user-defined checks into the
+compiler, a technique known as _meta-compilation_. Usually, the checks
+are specified as a list of programme patterns expressed in the source
+language, but this approach is technically difficult to implement
+because the patterns are parsed before being matched against the
+programme. Instead, we propose a lighter and language-independent
+alternative that we call _unparsed patterns_.

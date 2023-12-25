@@ -1,0 +1,663 @@
+%%-*-latex-*-
+
+\documentclass[12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{fp-inferencesystem}
+\usepackage[latin1]{inputenc}
+\usepackage{latexsym}
+\usepackage{stmaryrd}
+
+\usepackage{zzslides}
+\usepackage{graphicx}
+
+\landscape
+\numbersection
+
+\newcommand{\bob}{\mbox{\boldmath $\{$}}
+\newcommand{\bcb}{\mbox{\boldmath $\}$\,}}
+\newcommand{\nlhd}{\not{\hspace*{-2mm}\lhd}\hspace*{2mm}}
+\newcommand{\wild}{\mbox{\huge \_}\,}
+
+\begin{document}
+
+\zztitle{Une formalisation d'ASN.1}
+ 
+\zzauthor{Christian Rinderknecht}
+  
+\zzorganization{\ }
+ 
+\date{2 décembre 1998}
+ 
+\reminder{Soutenance de thèse de doctorat}
+     
+\titlepage
+\def\continuedname{suite}
+
+
+\section{Plan}
+\begin{slide}
+\btitle{\texttt{Plan}}
+
+\begin{itemize}
+  \item Communication hétérogène entre machines distantes: langage \mbox{ASN.1}
+  \item Pourquoi formaliser \mbox{ASN.1}?
+  \item Formalisation et résultats
+  \item Perspectives
+\end{itemize}
+
+\bigskip \bigskip \bigskip \bigskip \bigskip \bigskip
+
+\end{slide}
+
+\section{Communication, hétérogénéité et ASN.1}
+\begin{slide}
+La variété des architectures et des langages de programmation rend
+nécessaire la définition d'un format de données universel pour
+communiquer. \\
+
+{\em Abstract Syntax Notation One} (\mbox{ASN.1}) est un langage de
+{\em spécification} qui ne permet que la définition de types et de
+valeurs (pas de programmation). \\
+
+Il est normalisé par l'ISO. \\
+
+\mbox{ASN.1} est complété par des {\em codages} qui transforment les 
+valeurs \mbox{ASN.1} en suites de bits:
+
+\begin{itemize}
+
+   \item {\em Basic Encoding Rules} (BER)
+
+   \item {\em Packed Encoding Rules} (PER)
+
+\end{itemize}
+
+\end{slide}
+
+
+\section{Fragments d'ASN.1}
+\begin{slide}
+
+\begin{itemize}
+
+  \item {\bf Construction par répétition}
+
+\begin{verbatim}
+A ::= SET OF INTEGER
+empty A::= {}
+small A ::= {7, 9, 1, 1, 3}
+\end{verbatim}
+
+  \item {\bf Construction par agrégation} 
+
+\begin{verbatim}
+Coordinates ::= SET {x INTEGER, y INTEGER}
+point Coordinates ::= {x 45, y 23}
+\end{verbatim}                         
+
+Comment le récepteur distinguera les deux champs? Avec les {\em
+étiquettes}:
+
+\begin{verbatim}
+Coordinates ::= SET {x [0] INTEGER, y [1] INTEGER}
+\end{verbatim}
+
+  \item Tous les champs de {\tt SET} doivent avoir des étiquettes
+        distinctes. 
+
+  \item Les étiquettes peuvent être calculées par le compilateur
+        \mbox{ASN.1} 
+
+  \item L'étiquetage n'affecte pas la syntaxe des valeurs.
+\end{itemize}
+
+\continued
+
+\begin{itemize}
+
+  \item {\bf Construction par union} \\
+
+\begin{verbatim}
+T ::= CHOICE {
+        x REAL,
+        y INTEGER,
+        z BOOLEAN
+      }
+v T ::= z : TRUE
+\end{verbatim}
+
+  \item 
+\begin{verbatim}
+Illegal ::= CHOICE {
+              a CHOICE {aa INTEGER, ab BOOLEAN},
+              b CHOICE {ba BOOLEAN, bb NULL}
+            }
+\end{verbatim}
+
+  \item Tous les champs de {\tt CHOICE} doivent avoir des étiquettes
+        distinctes, en parcourant en profondeur le type.
+\end{itemize}
+
+
+
+\end{slide}
+
+
+\section{ASN.1 et la chaîne de compilation}
+\begin{slide}
+\begin{center}
+\includegraphics[scale=0.9]{compilation.eps}
+\end{center}
+\end{slide}
+
+
+
+
+\section{Problématique}
+
+\btitle{\texttt{Problèmes}}
+\begin{slide}
+
+\begin{itemize}
+
+   \item Pas de livres sur ASN.1
+
+   \item Normes volumineuses et complexes
+
+   \item Normes {\em de plus en plus} volumineuses et complexes
+
+   \item Compilateurs non conformes à la norme
+
+\end{itemize}
+
+\bigskip \bigskip \bigskip \bigskip \bigskip \bigskip
+
+\end{slide}
+
+
+
+\begin{slide}
+\btitle{\texttt{Exemples}}
+
+\begin{itemize}
+
+   \item Une spécification incorrecte est mal rejetée~: \\
+         \verb+T ::= T+ \ \ produit \ \ \verb+typedef T T;+ \\ 
+         avant d'être rejetée par le compilateur...C! \\
+
+   \item Une spécification correcte est rejetée:
+\begin{verbatim}
+T ::= SET (WITH COMPONENT (0) 
+          | WITH COMPONENT (1)) OF INTEGER
+
+\end{verbatim}
+
+           \item Une spécification incorrecte est acceptée:\\
+                 \verb+a INTEGER (0<..9) ::= 0+
+\end{itemize}
+
+\end{slide}
+
+
+
+\begin{slide}
+\btitle{\texttt{Incomplétudes de la norme}}
+
+\begin{itemize}
+
+  \item L'abréviation de valeurs \\
+        \verb+a T1 ::=+ <{\em ici une valeur de type \verb+T1+} \hspace*{-1mm}>\\
+        \verb+b T2 ::= a+ \\
+        Quelle condition sur \verb+T1+ et \verb+T2+? \\
+
+  \item Termes récursifs
+
+\begin{verbatim}
+T ::= SET OF T
+x T ::= {x}
+y T ::= {{}} 
+\end{verbatim}
+
+\end{itemize}
+
+\end{slide}
+
+
+
+\section{Pourquoi formaliser \mbox{ASN.1}}
+\begin{slide}
+\btitle{\texttt{Attitudes possibles}}
+
+\begin{itemize}
+
+  \item <<Cas improbables en pratique>>
+
+        \begin{itemize}
+
+          \item Pas forcément évident pour les
+                spécifications normalisées (ex. la norme X.500 --
+                l'annuaire -- présente des types récursifs).
+
+          \item Risqué pour les spécifications privées.
+
+        \end{itemize} \vspace*{10mm}
+
+  \item <<Un bon outil est fondé sur une bonne sémantique>> \\
+          Description formelle des structures du langage.
+
+\end{itemize}
+\end{slide}
+
+
+
+\begin{slide}
+\btitle{\texttt{Avantages de la formalisation}}
+
+          \begin{enumerate}
+
+             \item Pour les comités de normalisation
+
+                   \begin{enumerate}
+
+                      \item Recherche d'incomplétudes,
+                            d'ambigüités, d'incohérences et de
+                            restrictions inutiles. 
+
+                      \item Si un codage est formalisé aussi, des
+                            preuves de propriétés (ex. correction)
+                            sont envisageables.  
+
+                   \end{enumerate}
+
+             \item Pour les spécifieurs \bigskip \\
+                   La formalisation peut aussi définir les algorithmes
+                   de la phase d'analyse d'un compilateur
+                   \mbox{ASN.1}.
+
+          \end{enumerate}
+
+\end{slide}
+
+
+\section{La formalisation}
+\begin{slide}
+\btitle{\texttt{Simplifications et hypothèses}}
+
+\begin{itemize}
+
+  \item Nous occultons la couche applicative (et sa syntaxe concrète,
+        ie. son langage de programmation). Ainsi nous supposons que
+
+        \begin{itemize}
+ 
+           \item les valeurs sont en \mbox{ASN.1} avant d'être codées.
+
+           \item le décodage se fait vers \mbox{ASN.1}.
+
+        \end{itemize}
+
+  \item Nous définissons des codes de moins bas-niveau que les bits.
+
+\end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\btitle{\texttt{Objectif}}
+\begin{center}
+\includegraphics{schema2.eps}
+\end{center}
+\end{slide}
+
+
+\begin{slide}
+\btitle{\texttt{Difficultés}}
+
+\begin{enumerate}
+
+  \item Les codages normalisés sont des applications partielles
+        (ie. s'appliquent à un sous-ensemble d'\mbox{ASN.1}). \\
+
+  \item Les nombreuses constructions \mbox{ASN.1} impliquent que
+
+        \begin{itemize}
+           
+           \item les relations logiques ont un très grand nombre de
+                 règles.
+
+
+           \item l'équivalence de valeurs n'est pas intuitive.
+
+        \end{itemize}
+
+\end{enumerate}
+
+\bigskip \bigskip \bigskip
+
+\end{slide}
+
+
+
+\begin{slide}
+\btitle{\texttt{Nouvelle donne}}
+
+\begin{enumerate}
+
+  \item Nous réécrivons \mbox{ASN.1} vers le domaine des BER et
+        définissons des classes d'équivalence de codes.
+
+  \item Nous réécrivons encore la spécification \mbox{ASN.1} vers un
+        noyau, pour rendre les preuves plus simples (environnements
+        canoniques).
+
+  \item L'équivalence des valeurs dans ce noyau est l'identité modulo
+        l'ordre de certains sous-termes (types \textsf{SET} et
+        \textsf{SET OF}).
+
+\end{enumerate}
+
+\end{slide}
+
+
+\begin{slide}
+\btitle{\texttt{Nouvel objectif}}
+\begin{center}
+\includegraphics{schema6.eps}
+\end{center}
+\end{slide}
+
+
+\begin{slide}
+\textbf{Remarques}
+
+\begin{itemize}
+
+  \item Les réécritures vérifient la bonne formation
+        des constructions \mbox{ASN.1} en les simplifiant.
+
+  \item $v^{*}$ possède un code, donc il faut prouver en sus: 
+        $$\llbracket v^{*} : \textrm{T}^{*}\rrbracket_{_{\textrm{\small BER}}}
+        \sim \llbracket v : \textrm{T}\rrbracket_{_{\textrm{\small BER}}}$$
+
+\end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\btitle{\texttt{Nouvel objectif équivalent}}
+\begin{center}
+\includegraphics{schema7.eps}
+\end{center}
+\end{slide}
+
+
+\begin{slide}
+\btitle{\texttt{Précisément}}
+
+\noindent Formalisme: règles d'inférence. \\
+
+\noindent Définissons
+
+\begin{itemize}
+
+  \item la spécification $\boldsymbol{\Gamma}$ dans le noyau d'\mbox{ASN.1}. 
+
+  \item une valeur $\boldsymbol{v}$ et un type {\bf T} dans $\boldsymbol{\Gamma}$.
+
+%  \item une étiquette $\boldsymbol{\tau}$.
+
+  \item un contrôle des types, noté $\boldsymbol{\Gamma \vdash v :
+        \textrm{\bf T}}$
+      
+  \item le codage BER, noté $\boldsymbol{\Gamma \vdash v :
+        \textrm{\bf T} \Rightarrow \overline{v}}$
+
+  \item le décodage BER, noté $\boldsymbol{\Gamma \models \overline{v} : 
+        \textrm{\bf T} \rightarrow v'}$
+
+  \item l'équivalence de valeurs, notée $\boldsymbol{\Gamma,
+        \textrm{\bf T} \vdash v
+        \sim v'}$
+ 
+\end{itemize}
+
+
+\continued
+
+
+\noindent Nous voulons alors prouver la {\em correction du codage BER}: \\
+
+\begin{tabular}{ll|l}
+& {\bf Théorème} & \hspace*{10mm} {\bf Taille} \\
+Soient & $v, \textrm{T} \in \Gamma$ & 199 règles (réécriture vers $\Gamma$) \\
+Si     & $\Gamma \vdash v : \textrm{T}$ & 18 règles \\
+et     & $\Gamma \vdash v : \textrm{T}
+         \Rightarrow \overline{v}$ & 21 règles (BER) \\
+alors  & $\Gamma \models \overline{v} : \textrm{T}
+         \rightarrow v'$ & 21 règles \\
+et     & $\Gamma, \textrm{T} \vdash v \sim v'$ & 5 règles \\
+\end{tabular}
+
+\bigskip \bigskip
+
+\noindent Taille de la preuve: 70 pages du manuscrit.
+
+\end{slide}
+
+
+\begin{slide}
+{\bf Remarques}
+\begin{itemize}
+
+  \item Les BER plongent toute l'information de contrôle (ie. les types
+        des valeurs) dans les codes, mais ignorent les contraintes de
+        sous-typage. 
+
+        \begin{itemize}
+
+          \item Avantage: Intuitif.
+
+          \item Inconvénient: Le ratio <<contenu utile/contrôle>> est
+                faible. 
+
+        \end{itemize}
+
+  \item La preuve est en fait divisée en quatre parties: 
+
+        \begin{enumerate} 
+
+           \item Unicité du contrôle (syntaxique) des types
+
+           \item Unicité du codage
+
+           \item Unicité du contrôle sémantique des types ($\Rightarrow$ décodage)
+
+           \item Correction proprement dite
+
+        \end{enumerate}
+
+%  \item Les réécritures vers le noyau pourraient éliminer le maximum
+%        d'étiquettes (codes de taille minimale).
+ 
+\end{itemize}
+\end{slide}
+
+
+
+
+\begin{slide}
+\btitle{\texttt{Unicité du contrôle des types et du codage}}
+
+\begin{verbatim}
+  T ::= CHOICE {a REAL, a BOOLEAN}
+  x T ::= a : 0
+\end{verbatim}
+
+\noindent Pour contrôler le type de \verb+x+ il faut peut-être
+rebrousser chemin (non-déterminisme). Le codage peut être incohérent:
+$$\llbracket\verb+x+ : \verb+T+\rrbracket_{_{\textrm{\small BER}}} = 
+\llbracket\verb+0+ : \verb+REAL+\rrbracket_{_{\textrm{\small BER}}} \,\,\, \text{\bf ou} \,\,\, \llbracket\verb+0+ : \verb+BOOLEAN+\rrbracket_{_{\textrm{\small BER}}}$$
+
+\noindent Solution: {\em Contraindre les labels pour impliquer
+toujours l'unicité} (suffisant) ou fusionner contrôle des types et codage.
+
+\end{slide}
+
+
+
+\begin{slide}
+\btitle{\texttt{Unicité du décodage}}
+
+\begin{verbatim}
+  T ::= CHOICE {a [5] INTEGER, b [5] INTEGER}
+  x T ::= a : 0
+\end{verbatim}
+
+\noindent Le décodage peut être incohérent car il n'est pas une fonction:
+$$\llbracket \verb+x+ : \verb+T+\rrbracket_{_{\textrm{\small BER}}} =
+\llbracket(\verb+a+ : \verb+0+) : \verb+T+\rrbracket_{_{\textrm{\small BER}}} =
+ \llbracket(\verb+b+ : \verb+0+) : \verb+T+\rrbracket_{_{\textrm{\small BER}}}$$
+
+\noindent Solution: {\em Contraindre les étiquettes pour impliquer
+toujours l'unicité} (suffisant).
+
+\end{slide}
+
+
+
+\section{Résultats}
+\begin{slide}
+\btitle{\texttt{Résultats}}
+
+\noindent Nous avons
+
+\begin{itemize}
+  \item formalisé tout ASN.1 (norme X.680) ainsi que les BER.
+
+  \item découvert des incomplétudes, des restrictions inutiles et des
+        maladresses coûteuses dans la conception d'ASN.1.
+
+  \item participé aux comités ISO sur ASN.1 pour corriger et faire
+        évoluer la norme.
+
+  \item prouvé la correction des BER.
+
+  \item réalisé un analyseur de spécifications ASN.1 qui a été employé
+        dans l'industrie (Southwestern Bell, Standard\&Security, CNET):
+        \textsf{Asno}.
+\end{itemize}
+\end{slide}
+
+
+\section{Outil}
+\begin{slide}
+\btitle{\texttt{Asno}}
+
+\begin{itemize}
+
+  \item \textsf{Asno} est fondé sur la formalisation.
+
+  \item Écrit en Objective Caml (langage fonctionnel).
+
+  \item Grammaire normalisée d'ASN.1 en YACC:
+
+        \begin{itemize}
+
+           \item[$\sim$] 1000 conflits décaler/réduire.
+
+           \item[$\sim$] 100 conflits réduire/réduire.
+
+        \end{itemize}
+
+        Réécriture vers une forme LL(1) et preuve de l'équivalence des
+        langages reconnus.
+
+        L'analyseur syntaxique reconnait exactement la grammaire
+        normalisée (extensions dynamiques de syntaxe incluses).
+
+  \item \textsf{Asno} est diffusé gratuitement par l'INRIA.
+
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}
+\btitle{\texttt{Utilisations d'\textsf{Asno}}}
+
+
+\begin{itemize}
+
+  \item South-Western Bell (compagnie de téléphone états-unienne):
+
+        \begin{itemize}
+  
+          \item Évaluation très positive (conformité de l'outil).
+
+          \item Intégration dans des outils maison (gestion de bases
+                de données de protocoles). 
+
+        \end{itemize}
+
+  \item Standard \& Security (compagnie privée britannique):
+
+        \begin{itemize}
+
+          \item Aide à la spécification de protocoles (avant la
+                compilation): messages d'erreur détaillés et finesse
+                d'analyse.
+
+        \end{itemize}
+
+  \item CNET (France Télécom):
+
+        \begin{itemize}
+
+           \item Réutilisation pour le développement d'outils.
+
+        \end{itemize}
+
+  \item Université de Barcelone
+
+        \begin{itemize}
+
+          \item Apprentissage d'ASN.1 et des macros SNMP (gestion de
+                réseaux). 
+
+        \end{itemize}
+
+\end{itemize}
+
+\end{slide}
+
+
+\section{Perspectives}
+\begin{slide}
+\btitle{\texttt{Perspectives}}
+\begin{itemize}
+
+  \item Formaliser la traduction d'\mbox{ASN.1} vers les types d'un
+        langage de programmation dont la sémantique est connue (pour
+        dériver une partie de la phase finale d'un compilateur
+        \mbox{ASN.1}). 
+
+  \item Reprendre le travail avec une formalisation des PER.
+
+  \item Nous avons aussi simplifié, par réécritures, les contraintes
+        de sous-typage pour les valider. Les BER ignorent ces
+        contraintes mais pas les PER qui s'en servent pour la
+        minimisation des codes: il s'agirait de poursuivre les
+        réécritures pour que les PER soient optimales en ce sens.
+
+\end{itemize}
+\end{slide}
+
+%\input{annexe}
+
+\end{document}

@@ -1,0 +1,110 @@
+% $Header: /home/pauillac/formel1/fpottier/cvs/seminaire/fp-inferencesystem.sty,v 1.1 1998/05/15 14:18:02 fpottier Exp $
+%
+% This is a simple LaTeX2e package to typeset possibly labeled inference rules and systems of such rules.
+% Inference trees are not supported.
+% Author: François Pottier (inspired by code from Xavier Leroy and other unknown authors)
+% Creation: October 1st, 1997
+
+\NeedsTeXFormat{LaTeX2e}[1996/12/01]
+\ProvidesPackage{fp-inferencesystem}[1997/10/01]
+
+% ---------------------------------------------------------------------------------------------------------------------
+% USER-ADJUSTABLE PARAMETERS
+
+% By default, the premises and conclusion come too near the inference rule, so they have to be offset. This parameter
+% determines how far. You shouldn't have to change it unless you are using large fonts.
+
+\def\assertionoffset{0.2em}
+
+% This parameter determines the horizontal distance between a near label and its rule. You shouldn't have to change
+% it unless you are using large fonts.
+
+\def\nearlabeloffset{0.5em}
+
+% ---------------------------------------------------------------------------------------------------------------------
+% USER-ACCESSIBLE COMMANDS: typesetting a single, possibly labeled, inference rule or axiom.
+
+% \deduction typesets an inference rule. It accepts two parameters separated by a line of dashes (at least 4
+% dashes must be used) and it is closed by \end. 
+% \axiom typesets an axiom (a rule consisting only of one truism).
+%
+% Inside each parameter to \deduction or \axiom, \cr can be used to pile up assertions.
+% If several assumptions on the same line are needed, use spacing instructions such as \qquad. Each parameter
+% is implicitly in math mode. The macros can be used indifferently in or out of math mode.
+%
+% The inference rule (i.e. the horizontal line itself) comes out vertically centered on the current line, which
+% means that any text following the rule is at the same height as the inference rule. This is perfect for labels.
+% A label is added next to an inference rule or to an axiom by using \neardeductionlabel.
+%
+% Example of a stand-alone, labeled type inference rule:
+%
+% \deduction
+%   \Gamma\vdash e_1 : \tau_2\rightarrow\tau \qquad \Gamma\vdash e_2 : \tau_2
+%   -------------------------------------------------------------------------
+%   \Gamma\vdash e_1 \, e_2 : \tau
+% \end
+% \neardeductionlabel{\sc App}
+
+\def\deduction#1----#2\end{
+  \ensuremath{
+    \frac
+      {\begin{array}{c}#1\crcr\noalign{\vskip\assertionoffset}\end{array}}
+      {\begin{array}{c}\noalign{\vskip\assertionoffset}\gobbledashes #2\end{array}}
+  }
+}
+
+\def\axiom#1\end{
+  \ensuremath{
+    #1
+  }
+}
+
+\def\neardeductionlabel#1{\hskip\nearlabeloffset\text{#1}}
+
+% ---------------------------------------------------------------------------------------------------------------------
+% USER-ACCESSIBLE COMMANDS: typesetting a series of labeled rules.
+
+% The 'inferencesystem' environment is used to typeset a series of labeled inference rules.
+% The rules have their centers aligned, while the labels have their left sides aligned.
+%
+% Example of such a panel:
+%
+% \begin{inferencesystem}
+% \axiom
+%   \Gamma\vdash 0 : \text{\tt int}
+% \end
+% \deductionlabel{\sc (Zero)}
+%
+% \deduction
+%   \Gamma\vdash e_1 : \tau_2\rightarrow\tau \qquad \Gamma\vdash e_2 : \tau_2
+%   -------------------------------------------------------------------------
+%   \Gamma\vdash e_1 \, e_2 : \tau
+% \end
+% \deductionlabel{\sc (App)}
+% 
+% \deduction
+%    \Gamma + [x : \tau] \vdash e : \tau'
+%    ------------------------------------
+%    \Gamma\vdash \lambda x.e : \tau\rightarrow\tau'
+% \end
+% \lastdeductionlabel{\sc (Abs)}
+% \end{inferencesystem}
+
+\def\deductionlabel#1{&\text{#1}\\\\}
+\def\lastdeductionlabel#1{&\text{#1}\\}
+
+\newenvironment{inferencesystem}
+  {$\begin{array}{cl}\\}
+  {\end{array}$}
+
+% ---------------------------------------------------------------------------------------------------------------------
+% INTERNAL COMMANDS
+
+% This macro gobbles any dashes that follow it, effectively causing them to disappear.
+% Here's how it works:
+%   \gobbledashes <token> expands to \gobbledashes if the <token> is a dash
+%                                 to <token> otherwise
+% which means that any number of dashes following the macro will be recursively gobbled.
+
+\def\gobbledashes#1{\ifx-#1\let\next=\gobbledashes\else\let\next=#1\fi\next}
+

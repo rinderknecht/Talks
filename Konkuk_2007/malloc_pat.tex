@@ -1,0 +1,20 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\newcommand{\mknode}[1]{\TR{\texttt{#1}}}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=22pt,nodesep=2pt]{\mknode{=}}{
+  \mknode{\%X}
+  \pstree{\mknode{malloc}}{
+    \mknode{\%Y}
+  }
+}
+\endTeXtoEPS
+
+\end{document}

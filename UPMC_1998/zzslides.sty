@@ -1,0 +1,829 @@
+%% zzslides.sty
+%% E-mail:  Zhengyou.Zhang@sophia.inria.fr
+%% Last modified: 
+%% 10/11/95 (command \numbersection added and do not call zzslidescore.sty)
+%% 22/08/95 (environment `lslide' (landscape slide) added)
+%% An example is given in a separate file `zzslides-ex.tex'
+%% This file contains several customs for slides
+%% Based on lslide.sty - version 2.0.1 (April 1992) by Young U. Ryu
+%\expandafter\ifx\csname zzslides.sty\endcsname\relax
+%\expandafter\def\csname zzslides.sty\endcsname{}
+%\else\message{---already loaded}\endinput\fi
+%\def\filename{zzslides.sty}
+%%% end of file header
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{zzslides}
+                [1995/11/10 v2.1 zzslides]
+\DeclareOption*{\PassOptionsToPackage\CurrentOption{graphics}}
+\ProcessOptions
+\RequirePackage{graphics}
+
+% if epsf.sty is not yet loaded
+\expandafter\ifx\csname epsfbox\endcsname\relax
+  \usepackage{epsfig}
+\fi
+\DeclareGraphicsRule{epsi}{eps}{epsi}{}
+
+% ajust the dimensions
+\def\landscape{%
+    \sloppy
+    \textwidth 8.8in
+    \textheight 6in
+    \topmargin -.6in 
+    \oddsidemargin -.18in
+    \evensidemargin\oddsidemargin
+    \addtolength{\topmargin}{0.8cm} 
+    \addtolength{\oddsidemargin}{1.5cm}
+    \addtolength{\textwidth}{0.5cm}
+    \special{landscape}} %% Thisworks with Rokicki's dvips
+
+\def\portrait{%
+    \sloppy
+    \textwidth 6in 
+    \textheight 8.8in 
+    \topmargin -.65in 
+    \oddsidemargin -.3in
+    \evensidemargin\oddsidemargin
+    \addtolength{\topmargin}{1.5cm}
+    \addtolength{\textwidth}{1.7cm}
+    \addtolength{\textheight}{-1.4cm}
+    }
+
+% default
+\portrait
+
+%
+% Frame for the whole page
+% \@my@box@frame{thinkness}{hspace}{vspace}{...}
+%
+\newdimen \@tempdimc 
+\newdimen \@tempdimd
+
+\def\@my@box@frame#1#2#3#4{\vbox{%
+    \setbox\@tempboxa\hbox{#4}%
+    \@tempdima#3
+    \advance\@tempdima #1 \advance\@tempdima \dp\@tempboxa
+    \hbox{\lower \@tempdima%
+          \hbox{\vbox{\hrule depth0pt height #1%
+                      \hbox{\vrule depth0pt width #1%
+                            \hskip#2%
+                            \vbox{\vskip#3 \box\@tempboxa\vskip#3}%
+                            \hskip#2%
+                            \vrule depth0pt width #1}
+                      \hrule depth0pt height #1}}}}}
+
+%
+% Shadow Frame for the whole page:
+% \@my@shadow@box@frame{frame thinkness}{shade thickness}{hspace}{vspace}{...}
+%
+
+\def\@my@shadow@box@frame#1#2#3#4#5{\vbox{%
+    \setbox\@tempboxa\hbox{#5}%
+    \@tempdima#4
+    \advance\@tempdima #1 \advance\@tempdima \dp\@tempboxa
+    \setbox\@tempboxa%
+     \hbox{\lower \@tempdima%
+          \hbox{\vbox{\hrule depth0pt height #1%
+                      \hbox{\vrule depth0pt width #1%
+                            \hskip#3%
+                            \vbox{\vskip#4 \box\@tempboxa\vskip#4}%
+                            \hskip#3%
+                            \vrule depth0pt width #1}
+                      \hrule depth0pt height #1}}}%
+     \@tempdimc\ht\@tempboxa \advance\@tempdimc-#2
+     \advance\@tempdimc\@tempdima
+     \@tempdimd\wd\@tempboxa
+     \hbox{\box\@tempboxa\relax%
+           \lower\@tempdima\hbox{\vrule width#2 height\@tempdimc depth0pt}}
+    \nointerlineskip\moveright#2
+    \vbox{\hrule height#2 width\@tempdimd depth0pt}}}
+%
+% Oval frame: by Tomoki Shiratori
+% \@my@oval@frame{thickness}{hspace}{vspace}{...}
+%     thickness = \thinlines or \thicklines
+
+\def\@my@oval@frame#1#2#3#4{\vbox{%
+   #1%
+   \setbox0 = \vbox{%
+        \vskip#3\relax
+        #4\relax
+        \vskip#3\relax}%
+   \@tempdimc \ifdim \ht0 >\wd0 \wd0\else \ht0 \fi%
+   \divide\@tempdimc 10\relax
+   \@getcirc{\@tempdimc}%
+   \@tempdimc\ht0%
+   \advance\@tempdimc -\@tempdima%
+   \advance\@tempdimc 2\@wholewidth%
+   \@tempdimd .5\@tempdima \advance\@tempdimd -\@wholewidth%
+   \setbox0 = \hbox{%
+       \raise\@tempdimd\hbox{\vrule height\@tempdimc width\@wholewidth}%
+       \hskip#2\relax
+       \box0\relax
+       \hskip#2\relax
+       \raise\@tempdimd\hbox{\vrule height\@tempdimc width\@wholewidth}}%
+   \@tempdimd\wd0 \@tempdimc\@tempdimd%
+   \advance\@tempdimc -\@tempdima%
+   \vskip -.5\@tempdima \vskip\@wholewidth%
+   \hbox to\@tempdimd{%
+       \@tempcntb\@tempcnta \advance\@tempcntb 3\relax
+       {\@circlefnt \char\@tempcntb\kern -.5\@tempdima}%
+       \vbox{\hrule height\@wholewidth width\@tempdimc}%
+       {\@circlefnt \kern .5\@tempdima \kern -\@wholewidth \char\@tempcnta%
+        \kern -\@tempdima \kern\@wholewidth}}%
+   \vskip -.5\@tempdima%
+   \box0\relax
+   \vskip -.5\@tempdima%
+   \hbox to\@tempdimd{%
+       \@tempcntb\@tempcnta \advance\@tempcntb\tw@\relax
+       {\@circlefnt \char\@tempcntb\kern -.5\@tempdima}%
+       \vbox{\hrule height\@wholewidth width\@tempdimc}%
+       {\advance\@tempcntb\m@ne%
+        \@circlefnt \kern .5\@tempdima \kern -\@wholewidth \char\@tempcntb%
+        \kern -\@tempdima \kern \@wholewidth}}%
+   \vskip -.5\@tempdima \vskip\@wholewidth}}%
+%
+% Subsection frames
+%
+\def\boxsecframe{\def\sub@section@frame##1{\Fbox{3pt}{1pt}{##1}}}
+\def\shadowsecframe{\def\sub@section@frame##1{\SFbox{3pt}{1pt}{2pt}{##1}}}
+\shadowsecframe
+
+%
+% by modifying \fbox in latex.tex
+% \Fbox{box sep}{box rule width/height}{...}
+%
+\def\Fbox#1#2#3{\@my@box@frame{#2}{#1}{#1}{#3}}
+
+%
+% Places a shadow box
+% \SFbox{box sep}{box rule width/height}{shade rule width/height}{...}
+% 
+\def\SFbox#1#2#3#4{\@my@shadow@box@frame{#2}{#3}{#1}{#1}{#4}}
+
+%
+% modification of \@outputpage (from latex.tex)
+%
+\def\@outputpage{\begingroup\catcode`\ =10
+     \let\-\@dischyph \let\'\@acci \let\`\@accii \let\=\@acciii
+    \if@specialpage
+     \global\@specialpagefalse\@nameuse{ps@\@specialstyle}\fi
+     \if@twoside
+       \ifodd\count\z@ \let\@thehead\@oddhead \let\@thefoot\@oddfoot
+            \let\@themargin\oddsidemargin
+          \else \let\@thehead\@evenhead
+          \let\@thefoot\@evenfoot \let\@themargin\evensidemargin
+     \fi\fi
+     \shipout
+     \vbox{\normalsize \baselineskip\z@ \lineskip\z@
+           \let\par\@@par %% 15 Sep 87
+           \vskip \topmargin \moveright\@themargin
+           \my@frame{%
+           \vbox{\setbox\@tempboxa
+                   \vbox to\headheight{\vfil \hbox to\textwidth
+                                       {\let\label\@gobble \let\index\@gobble
+                                         \@thehead}} %% 22 Feb 87
+                 \dp\@tempboxa\z@
+                 \box\@tempboxa
+                 \vskip \headsep
+                 \box\@outputbox
+                 \baselineskip\footskip
+                 \hbox to\textwidth{\let\label\@gobble
+                           \let\index\@gobble  %% 22 Feb 87
+                           \@thefoot}}%
+           }% end of my@frame
+           }%
+           \global\@colht\textheight
+           \endgroup\stepcounter{page}\let\firstmark\botmark}
+
+% I choose the ovalframe
+\def\ovalspace{0.4em}%the horizontal space between text and the ovalframe
+\def\my@frame#1{\@my@oval@frame{\thicklines}{\ovalspace}{.3em}{#1}}
+
+%
+% Heading and Footing
+%  In part, from fancyheading.sty
+%
+
+\def\lhead#1{\gdef\@elhead{#1}\gdef\@olhead{#1}}
+\def\chead#1{\gdef\@echead{#1}\gdef\@ochead{#1}}
+\def\rhead#1{\gdef\@erhead{#1}\gdef\@orhead{#1}}
+
+\def\lfoot#1{\gdef\@elfoot{#1}\gdef\@olfoot{#1}}
+\def\cfoot#1{\gdef\@ecfoot{#1}\gdef\@ocfoot{#1}}
+\def\rfoot#1{\gdef\@erfoot{#1}\gdef\@orfoot{#1}}
+\def\@slidehead#1#2#3#4#5{#1\hbox to\textwidth%
+    {\vbox{\hbox{\rlap{\parbox[b]{\textwidth}%
+    {\raggedright#2\strut}}\hfill\parbox[b]{\textwidth}%
+    {\centering#3\strut}\hfill\llap{\parbox[b]{\textwidth}%
+    {\raggedleft#4\strut}}}}}#5}
+
+\def\@slidefoot#1#2#3#4#5{#1\hbox to\textwidth%
+    {\vbox{\hbox{\rlap{\parbox[t]{\textwidth}%
+    {\raggedright#2\strut}}\hfill\parbox[t]{\textwidth}%
+    {\centering#3\strut}\hfill\llap{\parbox[t]{\textwidth}%
+    {\raggedleft#4\strut}}}}}#5}
+
+% I difine the pagestyle \ps@slide to add a line between the foot and the text
+% This line can be inhibited by the command \nofootline
+\newdimen\my@wid
+\def\ps@slide{%
+    \def\@oddhead{\@slidehead\relax\@olhead\@ochead\@orhead\hss}%
+    \def\@oddfoot{\my@wid = \textwidth%
+\advance\my@wid\ovalspace \advance\my@wid\ovalspace%
+\kern -\ovalspace%
+\vbox{\ifx\f@@tline\@empty\relax\else
+  \hrule width\my@wid\fi \vskip2pt% this line produce overfull message
+\hbox to\my@wid{\hskip\ovalspace\@slidefoot\relax\@olfoot\@ocfoot\@orfoot\hss}%
+\vskip 1pt}}%
+    \def\@evenhead{\@slidehead\hss\@elhead\@echead\@erhead\relax}%
+    \def\@evenfoot{\my@wid = \textwidth%
+\advance\my@wid\ovalspace \advance\my@wid\ovalspace%
+\kern -\ovalspace%
+\vbox{\ifx\f@@tline\@empty\relax\else
+  \hrule width\my@wid\fi \vskip2pt% this line produce overfull message
+\hbox to\my@wid{\hskip\ovalspace\@slidefoot\hss\@elfoot\@ecfoot\@erfoot\relax}%
+\vskip 1pt}}%
+    }
+
+\def\nofootline{\gdef\f@@tline{}}
+\def\f@@tline{True}
+\def\footline{\gdef\f@@tline{True}}
+
+% \ps@empty for other pages
+\def\ps@empty{%
+    \def\@oddhead{\@slidehead\relax\space\space\space\hss}%
+    \def\@oddfoot{\@slidefoot\relax\space\space\space\hss}%
+    \def\@evenhead{\@slidehead\hss\space\space\space\relax}%
+    \def\@evenfoot{\@slidefoot\hss\space\space\space\relax}%
+    }
+
+\ps@slide
+
+%% create box for logo
+\newsavebox\logobox
+\def\thelogobox{\usebox\logobox}
+
+%% build the logo box (empty here)
+\sbox{\logobox}{\setlength{\epsfxsize}{3.5cm}}
+
+% My customs for head and foot
+\newdimen\my@secwidth
+\lhead{{{\hspace{0.5cm}{\bf \thepage}\hspace{0.8cm}%
+  \my@secwidth=\textwidth \advance\my@secwidth-7cm
+  \parbox{\my@secwidth}{\headsize\bf\sectionnumber\sf\sectiontitle}}}}
+\chead{\relax}   % empty
+\rhead{{\raisebox{0.2cm}[0.3cm][0.2cm]{\thelogobox}}\hspace{1cm}}
+\lfoot{{\footsize{\hspace{0.5cm}\sl\slidetitle}}}
+\cfoot{\relax}   % empty
+\rfoot{{\footsize{\bf\slideauthor}\hspace{0.5cm}}}
+% sizes for the head and foot
+\def\headsize{\normalsize}
+\def\footsize{\normalsize}
+% \nologo \nopagenumber
+\def\nologo{\rhead{\relax}}
+\def\nopagenumber{\lhead{{{\hspace{0.5cm}%
+  \my@secwidth=\textwidth \advance\my@secwidth-6cm
+  \parbox{\my@secwidth}{\headsize\sf \sectiontitle}}}}}
+%
+% section and subsection
+%
+\newcounter{sec@ctr}
+% section counter begins at 0
+\setcounter{sec@ctr}{0}
+% \numbersection will number the sections in the head
+\def\numbersection{\gdef\numb@rs@c{True}}
+\gdef\numb@rs@c{}
+\def\sectionnumber{\ifx\numb@rs@c\@empty\relax%default to nothing
+  \else\Roman{sec@ctr}.\thinspace\fi}
+% No one here like a separate section heading page
+% So I retain only the section title
+\def\section{\@ifnextchar[{\@@Section}{\@Section}}
+\def\@Section#1{\def\sectiontitle{#1}
+  \addtocounter{sec@ctr}{1}
+  \Add@@secitem{toc}{\thesec@ctr}{#1}}
+\def\@@Section[#1]#2{\def\sectiontitle{#1}
+  \addtocounter{sec@ctr}{1}
+  \Add@@secitem{toc}{\thesec@ctr}{#1}}
+\def\sectiontitle{\relax}
+
+\def\Add@@secitem#1#2#3{\if@filesw \begingroup
+\let\label\@gobble \let\index\@gobble \let\glossary\@gobble
+\def\protect##1{\string##1
+   \space}\@temptokena{\thepage}%
+\edef\@tempa{\write \@auxout{\string\@writefile{#1}{\protect
+     \secitem{#2}{#3}{\the\@temptokena}}}}\@tempa
+   \if@nobreak \ifvmode\nobreak\fi\fi\endgroup\fi}
+
+% I use a special font for subsection
+% and allow to split automatically the title if too long
+\def\subsection#1{\subsec@begin@vspace
+                  \Add@@subsecitem{toc}{\thesec@ctr}{#1}
+                  \setbox\@tempboxa\hbox{\hspace*{1.5cm}\headft #1}
+                  \hspace*{\fill}
+                  \ifdim \wd\@tempboxa >\hsize
+                     \dimen254=\hsize \advance\dimen254 by -1.5cm
+                     \sub@section@frame{\parbox{\dimen254}{\centering\headft #1}}
+                  \else
+                     \sub@section@frame{\headft #1}
+                  \fi
+                  \hspace*{\fill}
+                  \subsec@end@vspace}
+\def\Add@@subsecitem#1#2#3{\if@filesw \begingroup
+\let\label\@gobble \let\index\@gobble \let\glossary\@gobble
+\def\protect##1{\string##1
+   \space}\@temptokena{\thepage}%
+\edef\@tempa{\write \@auxout{\string\@writefile{#1}{\protect
+     \subsecitem{#2}{#3}{\the\@temptokena}}}}\@tempa
+   \if@nobreak \ifvmode\nobreak\fi\fi\endgroup\fi}
+
+% I leave the user to decide whether the title should be uppercase or not
+% I use the font \titleft
+\def\title{\@ifnextchar[{\@@Title}{\@Title}}
+\def\@Title#1{\def\slide@title{{\titleft#1}}
+              \def\slidetitle{{#1}}}
+\def\@@Title[#1]#2{\def\slide@title{{\titleft#2}}
+              \def\slidetitle{{#1}}}
+% I use the font \headft
+\def\author{\@ifnextchar[{\@@Author}{\@Author}}
+\def\@@Author[#1]#2{\def\slide@author{{\headft#2}}%
+                    \def\slideauthor{#1}}
+\def\@Author#1{\def\slide@author{{\headft#1}}
+               \def\slideauthor{#1}}
+%
+\def\organization#1{\def\authororga{#1}}
+% \email
+\def\email#1{\def\@email{#1}}
+\def\@email{}
+% \reminder
+\def\reminder#1{\def\@reminder{#1}}
+\def\@reminder{}
+% \date
+\def\date#1{\def\slidedate{#1}}
+\def\slidedate{\today}
+%
+% titlepage
+%
+\def\titlepage{\thispagestyle{empty}
+    \vspace*{\fill}
+    \begin{center}
+    \Hugesize \slide@title \\ [2em]
+    \Normalsize\slide@author \\ [1em]
+    \Normalsize\authororga \\ [1em]
+    \ifx\@empty\@email\relax\else{\Normalsize\tt E-mail: \@email} \\ [1em]\fi
+    \Normalsize\slidedate
+    \end{center}
+    \vspace*{\fill}
+    \ifx\@empty\@reminder\relax\else\noindent{\parbox{\hsize}{\centering\small\sl\@reminder}}\fi
+    \setcounter{page}{0}
+    \clearpage}
+
+
+%
+% tables of contents
+%
+\def\slidecontentsname{OUTLINE}
+\def\sectioncontentsname{CONTENTS}
+
+\newcounter{@@@dum@@@}
+\setcounter{@@@dum@@@}{0}
+\newcounter{dummy@ctr}
+\setcounter{dummy@ctr}{0}
+
+\def\slidecontents{\@ifnextchar*{\@@slidecontents}{\@slidecontents}}
+
+\def\@slidecontents{\openin1 \jobname.toc \ifeof1 \typeout
+           {No file \jobname.toc}\else\closein1\relax
+           \def\secitem##1##2##3{%
+               \ifnum\value{@@@dum@@@}=0%
+                  \setcounter{@@@dum@@@}{1}%
+                  \begin{citemize}\contsize\fi
+                  \item[{\ifx\numb@rs@c\@empty$\bullet$%
+                  \else\setcounter{dummy@ctr}{##1}{\bf \Roman{dummy@ctr}.}\fi}]
+                  \contfont{##2} \dotfill\ \contfont{##3}\ignorespaces}
+           \def\subsecitem##1##2##3{\ignorespaces}
+           \clearpage
+           \thispagestyle{empty}
+           \addtocounter{page}{-1}
+           \subsec@begin@vspace
+           \hspace*{\fill}
+           \sub@section@frame{\Largesize\slidecontentsname}
+           \hspace*{\fill}
+           \subsec@end@vspace
+           \input{\jobname.toc}
+           \ifnum\value{@@@dum@@@}=1%
+              \setcounter{@@@dum@@@}{0}%
+              \end{citemize}\fi
+           \vspace*{\fill}
+           \clearpage
+           \fi}
+
+\def\@@slidecontents*{\openin1 \jobname.toc \ifeof1 \typeout
+           {No file \jobname.toc}\else\closein1\relax
+           \def\secitem##1##2##3{%
+               \ifnum\value{@@@dum@@@}=0%
+                  \setcounter{@@@dum@@@}{1}%
+                  \begin{citemize}\contsize\fi
+                  \item[{\ifx\numb@rs@c\@empty$\bullet$%
+                  \else\setcounter{dummy@ctr}{##1}{\bf \Roman{dummy@ctr}.}\fi}]
+                  \contfont{##2} \hspace{\fill}}
+           \def\subsecitem##1##2##3{\ignorespaces}
+           \clearpage
+           \thispagestyle{empty}
+           \addtocounter{page}{-1}
+           \subsec@begin@vspace
+           \hspace*{\fill}
+           \sub@section@frame{\Largesize\slidecontentsname}
+           \hspace*{\fill}
+           \subsec@end@vspace
+           \input{\jobname.toc}
+           \ifnum\value{@@@dum@@@}=1%
+              \setcounter{@@@dum@@@}{0}%
+              \end{citemize}\fi
+           \vspace*{\fill}
+           \clearpage
+           \fi}
+
+\def\sectioncontents{\@ifnextchar*{\@@sectioncontents}{\@sectioncontents}}
+
+\newcounter{@@@dummy@@@}
+\setcounter{@@@dummy@@@}{0}
+
+\@ifundefined{checkmark}%
+    {\def\mycheckmark{\surd}}%
+    {\def\mycheckmark{\checkmark}}
+
+\def\mysecpointer{\Rightarrow}
+
+% hand pointer
+\def\hand{\font\handsfont=hands scaled\magstep5
+  \def\handright{{\handsfont \char"41}}
+  \def\handleft{{\handsfont \char"42}}
+  \def\mysecpointer{\mbox{\handright}\,}
+  }
+
+% \sectioncontents, I use \headft
+\def\@sectioncontents{\openin1 \jobname.toc \ifeof1 \typeout
+           {No file \jobname.toc}\else\closein1\relax
+           \def\secitem##1##2##3{%
+               \ifnum\value{@@@dum@@@}=0%
+                  \setcounter{@@@dum@@@}{1}%
+                  \begin{citemize}\contsize\fi
+               \ifnum\value{@@@dummy@@@}=1%
+                  \setcounter{@@@dummy@@@}{0}%
+                  \end{ccitemize}\fi
+               \item[\setcounter{dummy@ctr}{\value{sec@ctr}}
+                  \stepcounter{dummy@ctr}
+                  \ifnum\value{dummy@ctr}>##1$\mycheckmark\;\bullet$%
+                     \else\ifnum\value{dummy@ctr}=##1$\mysecpointer\bullet$%
+                     \else$\bullet$\fi\fi] %
+                     \contfont{##2} \qquad \contfont{[##3]}\ignorespaces}
+           \def\subsecitem##1##2##3{%
+               \setcounter{dummy@ctr}{\value{sec@ctr}}\stepcounter{dummy@ctr}
+               \ifnum\value{dummy@ctr}=##1%
+                  \ifnum\value{@@@dummy@@@}=0
+                     \setcounter{@@@dummy@@@}{1}
+                     \begin{ccitemize}\contsizesize\fi
+                  \item[{\subhft --}] \contfont{##2} \hspace*{\fill}\fi}
+           \clearpage
+           \thispagestyle{empty}
+           \addtocounter{page}{-1}
+           \subsec@begin@vspace
+           \hspace*{\fill}
+           \sub@section@frame{{\headft\sectioncontentsname}}
+           \hspace*{\fill}
+           \subsec@end@vspace
+           \input{\jobname.toc}
+           \ifnum\value{@@@dummy@@@}=1%
+              \setcounter{@@@dummy@@@}{0}%
+              \end{ccitemize}\fi
+           \ifnum\value{@@@dum@@@}=1%
+              \setcounter{@@@dum@@@}{0}%
+              \end{citemize}\fi
+           \vspace*{\fill}
+           \clearpage
+           \fi}
+
+\def\@@sectioncontents*{\openin1 \jobname.toc \ifeof1 \typeout
+           {No file \jobname.toc}\else\closein1\relax
+           \def\secitem##1##2##3{%
+               \ifnum\value{@@@dum@@@}=0%
+                  \setcounter{@@@dum@@@}{1}%
+                  \begin{citemize}\contsize\fi
+               \ifnum\value{@@@dummy@@@}=1%
+                  \setcounter{@@@dummy@@@}{0}%
+                  \end{ccitemize}\fi
+               \item[\setcounter{dummy@ctr}{\value{sec@ctr}}
+                  \stepcounter{dummy@ctr}
+                  \ifnum\value{dummy@ctr}>##1$\mycheckmark\;\bullet$%
+                     \else\ifnum\value{dummy@ctr}=##1$\mysecpointer\bullet$%
+                     \else$\bullet$\fi\fi] \contfont{##2} \hspace{\fill}}
+           \def\subsecitem##1##2##3{%
+               \setcounter{dummy@ctr}{\value{sec@ctr}}\stepcounter{dummy@ctr}
+               \ifnum\value{dummy@ctr}=##1%
+                  \ifnum\value{@@@dummy@@@}=0
+                     \setcounter{@@@dummy@@@}{1}
+                     \begin{ccitemize}\contsizesize\fi
+                  \item[{\subhft --}] \contfont{##2} \hspace{\fill}\fi}
+           \clearpage
+           \thispagestyle{empty}
+           \addtocounter{page}{-1}
+           \subsec@begin@vspace
+           \hspace*{\fill}
+           \sub@section@frame{{\headft\sectioncontentsname}}
+           \hspace*{\fill}
+           \subsec@end@vspace
+           \input{\jobname.toc}
+           \ifnum\value{@@@dummy@@@}=1%
+               \setcounter{@@@dummy@@@}{0}%
+               \end{ccitemize}\fi
+           \ifnum\value{@@@dum@@@}=1%
+               \setcounter{@@@dum@@@}{0}%
+               \end{citemize}\fi
+           \vspace*{\fill}
+           \clearpage
+           \fi}
+\def\citemize{\list{\relax}%
+    {\leftmargin=3em
+     \rightmargin=.5em
+     \labelwidth=2.5em
+     \labelsep=.5em
+     \def\makelabel##1{\hss\llap{##1}}}}
+\let\endcitemize =\endlist
+
+\def\ccitemize{\list{\relax}%
+    {\leftmargin=1em
+     \rightmargin=0em
+     \labelwidth=.5em
+     \labelsep=.5em
+     \def\makelabel##1{\hss\llap{##1}}}}
+\let\endccitemize =\endlist
+%
+% modifications to enumerate env.
+%
+\def\labelenumi{\theenumi.}
+        \def\theenumi{\arabic{enumi}}
+\def\labelenumii{\theenumi.\theenumii.}
+        \def\theenumii{\arabic{enumii}}
+        \def\p@enumii{\theenumi.}
+\def\labelenumiii{\theenumi.\theenumii.\theenumiii.}
+        \def\theenumiii{\arabic{enumiii}}
+        \def\p@enumiii{\theenumi.\theenumii.}
+\def\labelenumiv{\theenumi.\theenumii.\theenumiii.\theenumiv.}
+        \def\theenumiv{\arabic{enumiv}}
+        \def\p@enumiv{\theenumi.\theenumii.\theenumiii.}
+
+\def\enumerate{\ifnum \@enumdepth >3 \@toodeep\else
+      \advance\@enumdepth \@ne
+      \edef\@enumctr{enum\romannumeral\the\@enumdepth}\list
+      {\csname label\@enumctr\endcsname}{\usecounter{\@enumctr}
+      \labelsep =  .2em
+      \ifnum \@enumdepth = 1
+             \labelwidth = 1em
+             \leftmargin=\leftskip
+             \advance\leftmargin1.8em
+      \else \ifnum \@enumdepth = 2
+                   \labelwidth = 1.6em
+                   \leftmargin = 1.8em  %\leftmargin = \labelwidth+\labelsep
+            \else \ifnum \@enumdepth = 3
+                         \labelwidth = 2.4em
+                         \leftmargin = 2.6em
+                  \else
+                         \labelwidth = 3.2em
+                         \leftmargin = 3.4em
+                  \fi
+            \fi
+      \fi
+      \def\makelabel##1{\rlap{##1}\hss}}\fi}
+
+%% \begin{block}{Title of the block}
+%% \Item[title of the item]
+%%    text of the item
+%% ....
+%% \end{block}
+%% if the first argument, i.e., `Title of the block' is empty,
+%% last subsection is assumed with `\continuedname' attached 
+\newenvironment{block}[1]{\rmfamily \par\ifx#1\@empty\else%
+  \gdef\blocktitle{#1} %saved for ulterior use in continued
+  \subsection{#1}\fi\par}%
+{\par\vspace*{\fill}}
+
+\newdimen\bul@dim
+\def\Item{\removelastskip\bigskip\par\rule{1ex}{1ex}\makebox[0.2cm]{}%
+    \@ifnextchar[{\@Item}{\@Item[]}}
+\def\@Item[#1]{\setbox\@tempboxa\hbox{\rule{1ex}{1ex}\makebox[0.2cm]{}}%
+    \bul@dim=\wd\@tempboxa\noindent\hangindent\bul@dim\hangafter1%
+    \ifx#1\@empty\else{\subhft\mbox{}#1}\fi\space\space}
+
+\def\blocktitle{}
+
+% Redefinitions of labels
+\def\labelitemi{\bf --}
+\def\labelitemii{$\ast$}
+\def\labelitemiii{$\cdot$}
+% Redefinition of \@listI so that lists leave an appropriate right margin
+\def\@listI{\leftmargin\leftmargini \parsep 5\p@ plus2.5\p@ minus\p@
+\topsep 10\p@ plus4\p@ minus6\p@
+\itemsep 5\p@ plus2.5\p@ minus\p@
+\rightmargin \defaultskip}
+
+% if your block is very long, just add \continued
+% at the place to split, then a new page starts with
+% the same name together with `(\continuedname)'
+\def\continuedname{continued}
+\def\continued{\par\vspace*{\fill}\newpage % starts a new page
+  \setbox\@tempboxa\hbox{\hspace*{1.5cm}
+    \large{\sf \blocktitle} ({\sl \continuedname})}
+  \hspace*{\fill}
+  \ifdim \wd\@tempboxa >\hsize
+    \dimen254=\hsize \advance\dimen254 by -1.5cm
+    \Fbox{3pt}{0.6pt}{\parbox{\dimen254}{\large
+        \centering {{\sf \blocktitle} ({\sl \continuedname})}}}
+  \else
+    \Fbox{3pt}{0.6pt}{\large{\sf \blocktitle} ({\sl \continuedname})}
+  \fi
+  \hspace*{\fill}\subsec@end@vspace\par}
+
+%
+% modifications to document env.
+%
+
+\let\@@@@document\document
+\def\document{\@@@@document
+    \Normalsize}
+\let\@@end@@document\enddocument
+\def\enddocument{%
+\if@filesw \newwrite\tf@toc
+  \immediate\openout\tf@toc=\jobname.toc
+  \typeout{Writing toc file \jobname.toc}\fi
+    \@@end@@document}
+
+%
+% slide environment
+%
+\newdimen\defaultskip
+\defaultskip=1em
+\def\slide{\@ifnextchar[{\@@Slide}{\@Slide}}
+\def\@Slide{\@@Slide[0pt]}
+\def\@@Slide[#1]{\slide@begin@vspace
+           \begingroup
+           \advance\leftskip\defaultskip
+           \advance\rightskip\defaultskip
+           \advance\leftskip#1
+           \advance\rightskip#1
+           \advance\leftmargini\leftskip}
+\def\endslide{\par\endgroup
+              \slide@end@vspace
+              \clearpage}
+
+%
+% Page vertical spacing types
+%
+\def\vertcenter{%
+    \def\subsec@begin@vspace{\vspace*{\fill}}
+    \def\subsec@end@vspace{\vspace*{\fill}}
+    \def\slide@begin@vspace{\vspace*{\fill}}
+    \def\slide@end@vspace{\vspace*{\fill}}%
+    }
+\def\vertgroup{%
+    \def\subsec@begin@vspace{\relax}
+    \def\subsec@end@vspace{\vspace*{2em}}
+    \def\slide@begin@vspace{\vspace*{\fill}}
+    \def\slide@end@vspace{\vspace*{\fill}}%
+    }
+\def\verttop{%
+    \def\subsec@begin@vspace{\relax}
+    \def\subsec@end@vspace{\vspace*{2em}}
+    \def\slide@begin@vspace{\relax}
+    \def\slide@end@vspace{\relax}%
+    }
+% \vertcenter vs. \verttop
+\vertcenter   % vertical centering
+
+% Fonts
+\font \headft               = ecss10 scaled \magstep5
+\font \subhft               = cmcssbx10 scaled\magstep4
+\font \emphft               = cmcssi10 scaled\magstep4
+\font \bfitft               = cmcbxti10 scaled\magstep4
+\font \contft               = ecss10 scaled\magstep4
+\font \titleft              = cmcssbx10 scaled 2986
+\DeclareOldFontCommand{\em}{\normalfont\itshape}{\mathit}
+% bold letter in math: \bold{A}
+\ifx\bold\undefined
+\newcommand{\bold}[1]{\mathbf{#1}}
+\fi
+%
+% Font sizes
+%
+\def\Hugesize{\Huge}   % in art12.sty, \Huge = \huge
+\def\Largesize{\huge}  % in art11.sty, \Huge > \huge
+\def\Normalsize{\LARGE}
+\def\Smallsize{\Large}
+\def\contsize{\LARGE}
+\def\contsizesize{\Large}
+\def\smallcontentsfonts{%
+    \def\contsize{\Large}
+    \def\contsizesize{\large}}
+
+\def\smallerfonts{%
+    \def\Hugesize{\huge}
+    \def\Largesize{\LARGE}
+    \def\Normalsize{\Large}
+    \def\Smallsize{\large}
+    \def\contsize{\Large}
+    \def\contsizesize{\large}
+    \def\smallcontentsfonts{%
+        \def\contsize{\large}
+        \def\contsizesize{\normalsize}}%
+\font \headft               = dcss8 scaled \magstep5
+\font \subhft               = cmcssbx10 scaled\magstep3
+\font \emphft               = cmcssi10 scaled\magstep3
+\font \bfitft               = cmcbxti10 scaled\magstep3
+\font \contft               = ecss10 scaled\magstep3
+\font \titleft              = cmcssbx10 scaled \magstep4
+    }
+
+\DeclareTextFontCommand{\contfont}{\sffamily}
+
+% I do not know how to clear the overful message
+\hfuzz=4.7pt
+
+% 
+% note environment
+% one can put the notes of the slide here
+%
+\newenvironment{note}{\def\my@frame##1{##1}
+  \begingroup
+  \let\original@frame\my@frame
+  \thispagestyle{empty}
+  \addtocounter{page}{-1}
+  \parskip 10pt
+  \def\baselinestretch{1}\Smallsize
+  }{\par\endgroup\clearpage
+  \let\my@frame=\original@frame}
+
+
+%
+% I do not know why, but I should redefine \protect as \string
+% instead of \@unexpandable@protect; otherwise, there is a problem
+% with \caption
+%
+\def\protected@write#1#2#3{%
+      \begingroup
+       \let\thepage\relax
+       #2%
+       \let\protect\string
+       \edef\reserved@a{\write#1{#3}}%
+       \reserved@a
+      \endgroup
+      \if@nobreak\ifvmode\nobreak\fi\fi
+}
+
+%
+% Environment lslide for a particular lanscape slide in a set of portrat
+% slides; if one wants to set all slides in landscape, use \landscape
+%
+\let\LS@makecol=\@makecol
+\let\LS@makefcolumn=\@makefcolumn
+\def\LS@rot{%
+  \setbox\@outputbox\vbox{\hbox{\rotatebox{90}{\box\@outputbox}}}}
+\def\lslide{%
+  \begingroup
+  \vsize=\textwidth
+  \hsize=\textheight
+  \linewidth=\hsize
+  \columnwidth=\hsize
+  \@colroom=\vsize
+  \textheight=\vsize
+  \@colht=\vsize
+  \def\@makecol{\LS@makecol\LS@rot}%
+  \def\@makefcolumn##1{\LS@makefcolumn{##1}\LS@rot}
+  \@ifnextchar[{\@@Slide}{\@Slide}}
+\def\endlslide{%
+  \par\endgroup
+  \slide@end@vspace
+  \clearpage
+  \endgroup
+  \global\@colht=\textheight
+  \global\vsize=\textheight
+  \global\@colroom=\textheight}
+
+% no parindent
+\parindent 0pt
+
+% hyphenation off. Comment the following line if you want hyphenation on
+%\pretolerance=10000
+
+% right-justification off
+% Comment the following two lines if you want right-justification on
+%\@rightskip\@flushglue
+%\rightskip\@rightskip
+
+\newcommand{\zztitle}[1]{\title{\rmfamily\textbf{#1}}}
+\newcommand{\zzauthor}[1]{\author{\rmfamily{#1}}}
+\newcommand{\zzorganization}[1]{\organization{\rmfamily{#1}}}
+\newcommand{\btitle}[1]{\begin{block}{\Huge #1}\end{block}}
+
+\endinput
+%% 
+%% End of file `zzslides.sty'.
+

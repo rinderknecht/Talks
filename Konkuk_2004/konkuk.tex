@@ -1,0 +1,738 @@
+%%-*-latex-*-
+
+\NeedsTeXFormat{LaTeX2e}[1996/12/01]
+
+\documentclass[english]{seminar}
+
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{url}
+\usepackage{mathpartir}
+\usepackage{amssymb,amsmath}
+\usepackage{ae,aecompl}
+\usepackage{color}
+
+\input{cpp}
+\input{slides_look}
+\input{asn1}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newcommand{\id}[1]{\textsf{#1}}
+\newcommand{\coding}[4]{#1 \vdash #2 : #3 \rightarrow #4}
+\newcommand{\decoding}[3]{{\cal D}(#1,#2,#3)}
+
+%---------------------------------------------------------------------
+% Title
+%
+\begin{document}
+
+\division{debut}{\url{christian_rinderknecht@yahoo.fr}}%
+         {Konkuk University, Seoul, October 18th, 2004}
+
+\begin{slide}
+\grandtitre{Illustrated professional overview}
+
+\bigskip
+
+\centerline{Christian Rinderknecht}
+
+\end{slide}
+
+\centerslidesfalse
+
+%---------------------------------------------------------------------
+% In short
+%
+\begin{slide}
+\titre{In short}
+
+\begin{itemize}
+
+  \item Ph.D. at INRIA (Rocquencourt) in the Cristal team
+  (\url{http://cristal.inria.fr}) from 1993 to 1997. Application of
+  formal techniques to \ASN, a specification language used in
+  telecommunications (design and development of a compiler front-end
+  and soundness proof of an encoding rule). \myblue{Theoretical
+  computer science background.}
+
+  \item Alternating academic and industrial positions, with common
+  point the modelisation of technical problems, conception of
+  solutions and software development. From Sep. 2001 to Sep. 2002,
+  researcher at \emph{Information and Communications University}
+  (Daejeon).
+
+  \item From 2003 until Sep. 2004, assistant professor at a French
+  private engineering school (\url{http://www.devinci.fr}).
+
+%  \item Wish to settle down in Korea.
+
+\end{itemize}
+
+\end{slide}
+
+%---------------------------------------------------------------------
+% Research topics
+%
+\begin{slide}
+\titre{Research topics}
+
+\begin{itemize}
+
+  \item Protocol engineering in telecoms (INT, ICU, de Vinci):
+  specification analysis, formal design review, methods and software
+  tools for automated test suite generation. ($\approx$ four years)
+
+  \item Software development cycle (Alcatel, PolySpace): compilation,
+  static program analysis, tests, code quality ($\approx$ two years).
+
+  \item At \emph{Léonard de Vinci}, XML-based web-site frameworks
+  supporting e-learning, but not exclusively. ($\approx$ one year)
+
+  \item In all cases, my work was to lead and apply some research, the
+  approach was rigourous (sometimes formal), often guided by the
+  \myblue{``language'' aspect of the problems}.
+
+\end{itemize}
+
+\end{slide}
+
+%---------------------------------------------------------------------
+% Projects and collaborations
+%
+\begin{slide}
+\titre{Projects and collaborations}
+
+\begin{itemize}
+
+  \item During my Ph.D. I collaborated closely with France Telecom
+  R\&D. Since then I have been in contact with the \ASN Project leader
+  at the International Telecommunication Union (ITU).
+
+  \item At the French National Institute of Telecommunications (INT) I
+  took part to two national projets, involving both academic and
+  industrial partners.
+
+  \item At \emph{Léonard de Vinci}, I was a member of the European
+  project \textsc{Kaleidoscope} (e-learning, XML frameworks, semantic
+  web, ontologies etc.) and of the AIDA seminar
+  (\emph{Interdisciplinary Approach for Interactive Learning
+  Environments}).
+
+\end{itemize}
+
+\end{slide}
+
+
+%---------------------------------------------------------------------
+% Teaching
+%
+\begin{slide}
+\titre{Teaching}
+
+\begin{itemize}
+
+  \item During my Ph.D. (1993-1996), I teached at univ. René Diderot
+  (Paris VII) to undergraduates: algorithmics, Pascal, \cpp, linear
+  algebra, integral calculus. I designed and tutored student projects,
+  prepared exams etc.
+
+  \item Teaching assistant at \emph{Institut Supérieur d'Électronique
+  de Paris}, an engineering school: \cpp{} programming (1993-1996).
+
+  \item Teaching assistant in algorithmics and functional programming
+  with Caml (1996-1997).
+
+\end{itemize}
+
+\end{slide}
+
+%---------------------------------------------------------------------
+% Teaching (bis)
+%
+\begin{slide}
+\titre{Teaching (continued)}
+
+\begin{itemize}
+
+  \item Professional courses: Pascal (1993) and \cpp{} (1999).
+
+  \item At INT, an engineering school: supervision of last-year
+  projects and tutoring of a master student; teaching of
+  \emph{Semantics Definition Language} (SDL) to students and
+  professionals (in Spanish), from 1998 to 2000.
+
+  \item At \emph{Léonard de Vinci}, I taught software engineering,
+  introduction to formal methods, Java programming, Objective Caml
+  (functional programming), Unix shell, \textsc{gnu} development
+  tools, compiler generation, introduction to protocol engineering. I
+  supervised student's projects and training periods in companies.
+
+\end{itemize}
+
+\end{slide}
+
+%---------------------------------------------------------------------
+% ICU
+%
+\begin{slide}
+\titre{Visiting Professor at Information and Communications University (2001-2002)}
+
+\vspace*{-5pt}
+
+\begin{itemize}
+
+  \item Full-time research position. I published a journal paper about
+  \ASN. I learnt new issues in mobile networks, like \emph{ad hoc}
+  networking.
+
+  \item \emph{Abstract Syntax Notation One} (\ASN) is a standard
+  language for definition of types whose values may be exchanged at
+  run-time by communicating applications, independently of the
+  possible heterogeneity of the peers. Applications: network equipment
+  management (SNMP), e-mail (X.400), mobile telephony, real-time
+  multimedia communication over the internet (MHEG, H.225, H.245,
+  H.323), fax over the internet (T.38), cryptographic protocols (SET,
+  OpenSSL, PKCS~7, Kerberos, biometrics) and databases (X.500
+  directory, Z39.50 (U.S. Library of Congress), DNA repositories).
+
+  \item I solved formally the important problem of validating \ASN
+  specifications by borrowing technical concepts from another field
+  (set constraints).
+
+\end{itemize}
+
+\end{slide}
+
+
+%---------------------------------------------------------------------
+% Léonard de Vinci
+%
+\begin{slide}
+\titre{Assistant Professor at \emph{Léonard de Vinci} (2003-2004)}
+
+\begin{itemize}
+
+  \item I published two papers on two very different topics: 
+
+  \begin{itemize}
+
+    \bitem a question-answering mining web-platform,
+
+    \bitem the formal design review of \ASN and BER.
+
+  \end{itemize}
+
+  \item \ASN is a high-level data (\emph{versus} control) notation for
+  protocols
+
+  \item consisting of data and type definitions
+
+  \item and network concepts modeling features (like PDUs),
+
+  \item embedded in other specification languages like SDL (control),
+  MSC (functional requirements), TTCN (test suites) etc.
+
+  \item also used without formal control specification by protocol
+  designers and tool implementors, e.g. SNMP, OpenSSL.
+
+\end{itemize}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% What are the Basic Encoding Rules (BER)?
+%
+\begin{slide}
+\titre{What are the Basic Encoding Rules (BER)?}
+
+\begin{itemize}
+
+  \item The BER are a set of rules defining the serialization into
+  bits of \ASN values;
+
+  \item the bit frames (\emph{codes} or \emph{encodings}) have a
+  uniform structure: a triple made of a \emph{tag}, a \emph{length}
+  and some \emph{contents};
+
+  \item the tag field is extracted from the data type,
+
+  \item the contents field is extracted from the data itself,
+
+  \item the length field is computed over the contents field,
+
+  \item the structure allows embedding of sub-frames (in the contents
+  field)
+
+  \item and an \emph{indefinite length} form, as a sender's option.
+
+\end{itemize}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% How do ASN.1 and the BER interact?
+%
+\begin{slide}
+\titre{How do \ASN and the BER interact?}
+
+\begin{itemize}
+
+  \item Both peers share a common \ASN specification and agree upon
+  the usage of the BER;
+
+  \item each peer compile the \ASN specification to a set of type
+  declarations and a set of coders/decoders (codecs) for each type;
+
+  \item the target language may be different depending on the peer;
+
+  \item the coders transform a value into a stream of bits according
+  to the BER,
+
+  \item the decoders transform a stream of bits into a value according
+  to the BER (or reject it as ill-formed);
+
+  \item these pieces of source code are compiled and linked separately
+  against the corresponding communicating applications.
+
+\end{itemize}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% So, what is wrong?
+%
+\begin{slide}
+\titre{So, what is wrong?}
+
+\begin{itemize}
+
+  \item In the last few years, the press has reported several alleged
+  vulnerabilities
+
+  \item relating \ASN and the BER to SNMP and OpenSSL
+
+  \item about improper decoding (and rejection) of ill-formed BER
+  encodings
+
+  \item leading to buffer overflows,
+
+  \item unspecified (non-deterministic) behaviours,
+
+  \item stack corruptions,
+
+  \item hence possible denials of service.
+
+  \item Further study proved that all the problems lay actually in
+  \emph{implementations}:
+
+  \item \myblue{we want to show that \ASN and the BER are, themselves,
+  well designed.}
+
+\end{itemize}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Modeling
+\begin{slide}
+\titre{Modeling (assumptions and encoding)}
+
+\vspace*{-6pt}
+
+We start making some assumptions that abstract away low-level details
+and help us capturing the design principles of the BER:
+
+\begin{itemize}
+
+  \item values are given in \ASN, not in the application language (in
+  fact they are produced in memory at run-time);
+
+  \item codes are tuples, not bit series, in order to easily reason by
+  induction on their structure;
+
+  \item the network is reliable (no alteration of codes).
+
+\end{itemize}
+
+BER codes may not be unique for a given value, due to possible
+sender's options (e.g. encoding of booleans or unordered sets).
+
+\begin{proposition}
+All the BER encodings of a given value, according to a given type, are
+equivalent.
+\end{proposition}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% BER decoding
+%
+\begin{slide}
+\titre{Modeling (decoding)}
+
+\begin{itemize}
+
+  \item The BER standard (26~pages of English) does not define the
+  decoding at all.
+
+  \item We believe that the receiver is the peer most concerned with
+  the sound design of the BER: \myblue{the composition of encoding and
+  decoding yields a value equivalent to the original one}.
+
+  \begin{theorem}[Soundness]
+    Let $v$ be a value of type \T. Then the BER decoding of \emph{any}
+    BER encoding of $v$ is equivalent to $v$.
+  \end{theorem}
+
+  Hence we need an equivalence relationship between values
+  (thus independent from the BER).
+
+\end{itemize}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Soundness property
+%
+\begin{slide}
+\titre{Soundness property}
+
+\centerline{\includegraphics[width=.85 \textwidth]{model-1.eps}}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Equivalence entailment
+%
+\begin{slide}
+\titre{Equivalence entailment}
+
+As a consequence, in order to prove the soundness property, it appears
+that we need to link logically the two equivalence relationships we
+defined separately on codes and values.
+
+\begin{proposition}[Equivalence entailment]
+Let $c_1$ and $c_2$ be two equivalent codes. Then the decoding of
+$c_1$ is equivalent to the decoding of $c_2$ assuming the same type.
+\end{proposition}
+
+One equivalence rely solely on the BER and the other one is inherent
+to \ASN. Hence \myblue{this proposition is the link between the design
+of \ASN and the design of the BER}.
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Core ASN.1
+% 
+\begin{slide}
+\titre{Core \ASN}
+
+\vspace*{-4pt}
+
+\begin{itemize}
+
+  \item The BER only apply to a subset \ASN (whose definition spans 
+  188~pages).
+
+  \item This suggests that the whole \ASN can be reduced to an inner
+  subset which has the same expressivity, we call \myblue{BER domain}.
+
+  \item In fact it is even possible to reduce further the BER domain
+  to a smaller subset, we call \myblue{\core}, in which formal
+  reasoning is easier.
+
+  \item The formal definition of these reductions is achieved by means
+  of a series of rewriting rules that preserve the set of values of
+  the specifications (or of a given type).
+
+  \item We can easily check some useful properties in \core and
+  enforce e.g.
+
+  \begin{theorem}[BER termination]
+    The encoding of \core values with the BER always terminates.
+  \end{theorem}
+
+\end{itemize}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Core ASN.1 and soundness property
+%
+\begin{slide}
+\titre{Core \ASN and soundness property}
+
+\centerline{\includegraphics[width=.85 \textwidth]{model-2.eps}}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Getting formal
+%
+\begin{slide}
+\titre{Getting formal}
+
+We define the encoding with a \emph{system
+of inference rules}. These are logical implications $P_1 \wedge P_2
+\wedge \ldots \wedge P_n \Rightarrow C$ graphically represented as
+\begin{mathpar}
+\inferrule{P_1\\ P_2\\ \ldots\\ P_n}{C} 
+\end{mathpar}
+where the $P_i$ are the
+\emph{premises} and $C$ is the \emph{conclusion}. When there is no
+premise, $C$ is an \emph{axiom} and is simply noted $C$.
+
+\myblue{An inference rule can be interpreted also from a computational
+point of view}: in order to compute $C$, we need to compute the $P_i$
+first (order is left unspecified).
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Inference rules (continued)
+%
+\begin{slide}
+\titre{Inference rules (continued)}
+
+The rules and axioms can contain unquantified variables
+(\emph{free variables}). In this case they are implicitly universally
+quantified ($\forall$) at the beginning. For instance
+\[
+\inferrule
+  {P_1(x)\\ P_2(y)}
+  {P(x,y)}\;\TirName{\textsc{Prop}}
+\]
+actually denotes the property \textsc{Prop} which is $\forall
+x,y.P_1(x) \, \wedge \, P_2(y) \Rightarrow P(x,y)$. 
+
+A system of inference rules is a non-ordered set of inference rules.
+
+Given a system applying to one or more relations, these are defined as
+the smallest relations satisfiying the rules.
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Smallest relations
+% 
+\begin{slide}
+\titre{Smallest relations}
+
+Let the following rules applying to the predicates
+$\id{Even}(n)$ and $\id{Odd}(n)$:
+
+\vspace*{-18pt}
+
+\begin{mathpar}
+\inferrule{}{\id{Even}(0)}
+\and
+\inferrule{\id{Odd}(n)}{\id{Even}(n+1)}
+\and
+\inferrule{\id{Even}(n)}{\id{Odd}(n+1)}
+\end{mathpar}
+
+\vspace*{-6pt}
+
+By definition, we understand them as the propositions
+
+\vspace*{-20pt}
+
+\begin{gather*}
+\id{Even}(0)\\
+\forall n.\id{Odd}(n) \Rightarrow \id{Even}(n+1)\\
+\forall n.\id{Even}(n) \Rightarrow \id{Odd}(n+1)\\
+\end{gather*}
+
+\vspace*{-18pt}
+
+Many predicates satisfy these conditions, e.g. $\id{Even}(n)$ and
+$\id{Odd}(n)$ true for all $n$. But the smallest satisfactory
+predicates (the ones true the less often) are $\id{Even}(n) \triangleq
+(n \mod{2} = 0)$ and $\id{Odd}(n) \triangleq (n \mod{2} = 1)$.
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Proof trees 
+%
+\begin{slide}
+\titre{Proof trees}
+
+A theorem is a judgement, i.e. a formal statement, a formula.
+
+A proof of a theorem is a tree whose root (the conclusion) is the
+theorem, the inner nodes are the conclusions of its subtrees and the
+leaves are axioms. Such a tree is called a \emph{proof tree}. The
+conclusion is drawn at the bottom of the page. For instance, here is
+the proof of $\id{Odd}(3)$ with the previous system:
+
+\begin{mathpar}
+\inferrule
+  {\inferrule
+     {\inferrule
+        {\id{Even}(0)}
+        {\id{Odd}(1)}
+     }
+     {\id{Even}(2)}
+  }
+  {\id{Odd}(3)}
+\end{mathpar}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Back to our model
+% 
+\begin{slide}
+\titre{Back to our model}
+
+\begin{itemize}
+
+  \item Let us note \myblue{$\coding{\Gamma}{v}{\T}{c}$} the judgement
+  ``In the environment $\Gamma$, the value $v$ is encoded into the
+  code $c$, following the type \T{}.''  (The environment models the
+  \ASN module.)
+
+  \item Let us note \myblue{$\decoding{\Gamma}{c}{\T}$} the decoding
+  of $c$ in the environment $\Gamma$ according to type \T{}.
+
+  \item We already noted \myblue{$v_1 \approx v_2$} the equivalence of
+  values $v_1$ and $v_2$
+
+  \item and \myblue{$c_1 \sim c_2$} the equivalence of codes $c_1$ and
+  $c_2$.
+
+\end{itemize}
+
+The next step consists in defining these relations by means of systems
+of inference rules.
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Formal model 
+%
+\begin{slide}
+\titre{Formal model}
+
+\vspace*{-5pt}
+
+We can now rephrase formally our propositions:
+
+\begin{itemize}
+
+  \item Proposition ``All the BER encodings of a given value,
+  according to a given type, are equivalent.'' becomes
+
+  \begin{proposition}
+    If $\coding{\Gamma}{v}{\T}{c_1}$ and $\coding{\Gamma}{v}{\T}{c_2}$
+    then $c_1 \sim c_2$.
+  \end{proposition}
+
+  \item Proposition ``The decoding of two equivalent codes lead to two
+  equivalent values.'' becomes
+
+  \begin{proposition}[Equivalence entailment]
+    $c_1 \sim c_2 \Longrightarrow \decoding{\Gamma}{c_1}{\T} \approx
+    \decoding{\Gamma}{c_2}{\T}$
+  \end{proposition}
+
+  \item Theorem ``Let $v$ be a value of type \T. Then the BER decoding
+  of \emph{any} BER encoding of $v$ is equivalent to $v$.'' becomes
+
+  \begin{theorem}[Soundness]
+    If $\coding{\Gamma}{v}{\T}{c}$ then $\decoding{\Gamma}{c}{\T}
+    \approx v$.
+  \end{theorem}
+
+\end{itemize}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% Final steps
+% 
+\begin{slide}
+\titre{Formal methods for the customer}
+
+\begin{itemize}
+
+  \item We prove the soundness theorem with a technique called
+  \myblue{structural induction} (on the height of the proof trees) and
+  \myblue{case analysis}.
+
+  \item In case we are a standardization organisation or a tool seller
+  we can say to the BER users: ``The formal design review concludes
+  you can be pretty confident on the technology you use.''
+
+  \item If we want a higher level of confidence, we can go further by
+  refining our model, i.e. stating explicitly what was abstracted away
+  and weakening assumptions.
+
+\end{itemize}
+
+\end{slide}
+
+% ------------------------------------------------------------------------
+% 
+%
+\begin{slide}
+\titre{Formal methods for the software company}
+
+\begin{itemize}
+
+  \item In case we are a tool implementor, the \emph{reliable}
+  back-end of an \ASN compiler can be derived from the previous
+  work. Indeed our model, being based on inference rules, is actually
+  close to an \myblue{operational model}, i.e. a real implementation,
+  \myblue{based on a functional language}.
+
+  \item In this case we do not need to publicise to our customer the
+  usage of formal methods: these will ensure that the kernel of our
+  software conforms to a formal specification, hence will have less
+  bugs and will be easier to maintain, in the end.
+
+  \item In industries other than the software industry, such formal
+  design reviews are part of the normal process, e.g. the study of
+  electromagnetic fields interference for the new Incheon subway line.
+
+\end{itemize}
+
+\end{slide}
+
+%% \begin{slide}
+%% \titre{Nouveaux axes de recherche}
+
+%% Symbiose entre le \emph{web} et les \textsc{bd}: les sites \emph{web}
+%% reposent de plus en plus sur des \textsc{bd}, les collections de pages
+%% chaînées du \emph{web} sont une \textsc{bd} tentante.
+
+%% Il faut réinventer une approche \textsc{bd} du \emph{web} car celui-ci
+%% contient des données dites semi-structurées, c-à-d. auto-descriptives
+%% et irrégulières. Domaines affines:
+
+%% \begin{itemize}
+
+%%   \item systèmes de types et analyse par contraintes des langages de
+%%         requêtes,
+
+%%   \item syntaxes de transfert (codages pour une faible bande passante),
+
+%%   \item interfonctionnement de systèmes hétérogènes (p. ex. ASN.1-XML),
+
+%%   \item réingénierie des sites \emph{web} (migration, XML
+%%         \emph{wrappers}), 
+
+%%   \item protocoles pour les nouveaux terminaux mobiles (assistants
+%%         numériques).
+
+%% \end{itemize}
+
+%% \end{slide}
+
+\end{document}

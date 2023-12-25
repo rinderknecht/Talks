@@ -1,0 +1,714 @@
+%%-*-latex-*-
+
+\documentclass[compress,dvips,xcolor={dvipsnames},t]{beamer}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{mathpartir}
+\usepackage{amssymb,amsmath}
+\usepackage{hyphenat}
+\usepackage{array}
+\usepackage{url}
+
+% Hyperlinks in PDF
+%
+%\usepackage{fppdf}
+\usepackage{color}
+
+% Input files
+%
+%\input{slides_look}
+%\input{seminar.bug}
+%\input{seminar.bg2}
+\input{cpp}
+
+\newtheorem{proposition}{Proposition}
+%\newtheorem{theorem}{Theorem}
+
+\newcommand\Ada{\textsf{Ada}\xspace}
+\newcommand\Clang{\textsf{C}\xspace}
+\newcommand\Yacc{\textsf{Yacc}\xspace}
+\newcommand\Linux{\textsf{Linux}\xspace}
+\newcommand\GCC{\textsf{GCC}\xspace}
+\newcommand\GNAT{\textsf{GNAT}\xspace}
+\newcommand\GNU{\textsf{GNU}\xspace}
+
+\newcommand\el{[\,]}
+\newcommand\cstr[2]{\textsf{#1}(#2)}
+\newcommand\subterms[1]{t_{#1}}
+\newcommand\cons[2]{[{#1}\mid{#2}]}
+
+%---------------------------------------------------------------------
+% Title
+%
+\title{Theory and Practice of Unparsed Patterns for Metacompilation}
+\author{Christian Rinderknecht \and Nic Volanschi}
+\date{Konkuk University, Seoul, \\ 23 May 2007}
+
+\begin{document}
+
+\frame{\maketitle}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Foreword}
+
+%\raggedslides[0pt]
+
+I am \textcolor{blue}{Christian Rinderknecht}, an Assistant Professor
+at the department of Internet and Multimedia in the College of
+Telecommunications of Konkuk University.
+
+My main research interests are
+\begin{itemize}
+
+  \item the application of formal methods to software engineering, 
+
+  \item XML technologies as found in document processing and
+    databases,
+
+  \item protocol engineering of heterogeneous distributed systems.
+
+\end{itemize}
+The Ariadne thread is a focus on designing and making useful
+\textbf{tools} to support the engineer or the end-user, with a keen
+eye on formal modeling in order to add confidence about the
+implementations (by proving correctness, completeness etc.).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Foreword (cont'd)}
+
+%\raggedslides[0pt]
+
+My purpose today is to introduce myself and propose my collaboration
+on future projects in Mechanical Engineering.
+
+The topic of this talk is not directly related to Mechanical
+Engineering, but it illustrates how I am interested in the design and
+the making of tools for the engineer.
+
+I will keep my presentation extremely simple, but questions are always
+welcome.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Executive summary}
+
+%\raggedslides[0pt]
+
+\begin{itemize}
+
+  \item I am a tool\hyp{}maker kind of person
+
+  \item with an unusual theoretical touch in order to be sure the
+    hacks are sound;
+
+  \item there are no dirty jobs: code writing, parsing, wrappers,
+    system administration, middleware, tool and data integration
+    etc. are all fine with me;
+
+  \item Dr. Samy Missoum (University of Arizona) and I are willing to
+    collaborate on a distributed MDO platform (perhaps based on Globus
+    Toolkit).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{The talk itself}
+
+%\raggedslides[0pt]
+
+This is work in progress.
+
+The ideas presented here were initiated by Dr. Nic Volanschi
+\begin{center}
+\url{http://mygcc.free.fr}
+\end{center}
+who implemented them in a working prototype for \cpp{} and \Ada and
+published two papers about it.
+
+My contribution here is the theory.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Plan}
+
+%\raggedslides[0pt]
+
+\begin{enumerate}
+
+  \item Compilation revisited
+
+  \item Metacompilation
+
+  \item Unparsed patterns
+
+  \item A glimpse at the theory
+
+\end{enumerate}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Software development tools}
+
+%\raggedslides[0pt]
+
+The software engineers have many kinds of tools at their disposal:
+\begin{itemize}
+
+  \item text editors and graphical interfaces,
+
+  \item Integrated Development Environments (IDE),
+
+  \item compilers,
+
+  \item profilers,
+
+  \item debuggers,
+
+  \item model checkers,
+
+  \item code checkers, etc.
+
+\end{itemize}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Checking programmes}
+
+%\raggedslides[0pt]
+
+Programme checking technology is now mature but not used on a large
+scale by developers. Why?
+
+One of the reasons is the decoupling of checking tools from the
+development tools, in particular the compiler.
+
+We explore here the integration of simple user\hyp{}defined checks
+into the compiler, a technique known as
+\textcolor{blue}{meta\hyp{}compilation}.
+
+But first, we must recall what is the compilation chain.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Compilation chain}
+
+%\raggedslides[0pt]
+
+From an engineering point of view, the \textcolor{blue}{compiler} is
+one link in a chain of tools:
+\begin{center}
+\includegraphics[bb=71 587 405 721]{compilation_chain}
+\end{center}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{The analysis-synthesis model of compilation}
+
+%\raggedslides[0pt]
+
+There are two parts to compilation: \textcolor{blue}{analysis} and
+\textcolor{blue}{synthesis}.
+\begin{enumerate}
+ 
+  \item The analysis part breaks up the source programme into
+  constituent pieces of an \textcolor{blue}{intermediary representation} of the
+  programme.
+
+  \item The synthesis part constructs the target programme from this
+  intermediary representation.
+
+\end{enumerate}
+
+We shall focus here on the analysis stage.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Analysis}
+
+%\raggedslides[0pt]
+
+The analysis can itself be divided into three successive stages:
+\begin{enumerate}
+
+  \item \textbf{linear analysis,} in which the stream of characters
+    making up the source programme is read and grouped into
+    \textcolor{blue}{lexemes} that are sequences of characters having a
+    collective meaning (sets of lexemes with a common interpretation
+    are called \textcolor{blue}{tokens});
+
+  \item \textbf{hierarchical analysis,} in which tokens are grouped
+    hierarchically into nested collections (\textcolor{blue}{trees}) with a
+    collective meaning;
+
+  \item \textbf{semantic analysis,} in which certain checks are
+    performed to ensure the components of a programme fit together
+    meaningfully.
+
+\end{enumerate}
+We shall focus here on linear and hierarchical analysis.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Syntax analysis}
+\label{parse_tree_eg}
+%\hypertarget{hyper:parse_tree_eg}{}
+
+%\raggedslides[0pt]
+
+\vspace*{-4pt}
+
+Hierarchical analysis is called \textcolor{blue}{parsing} or \textcolor{blue}{syntax
+analysis}. It involves grouping the tokens of the source programme
+into grammatical phrases that are used by the compiler to synthesize
+output. Usually, the grammatical phrases of the source are represented
+by a \textcolor{blue}{parse tree} such as:
+\begin{center}
+\includegraphics[bb=71 603 338 721]{parse_tree_eg}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Syntax analysis (continued)}
+
+%\raggedslides[0pt]
+
+In the expression 
+\begin{verbatim}
+initial + rate * 60
+\end{verbatim} 
+the phrase
+\begin{verbatim}
+rate * 60
+\end{verbatim} 
+is a logical unit because the usual conventions of arithmetic
+expressions tell us that multiplication is performed prior to
+addition.
+
+Thus, because the expression 
+\begin{verbatim}
+initial + rate
+\end{verbatim}
+is followed by a \verb+*+, it is \textbf{not} grouped into the same
+subtree.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Syntax analysis (continued)}
+
+\label{ast_eg}
+
+%\raggedslides[0pt]
+
+The parse tree page~\pageref{parse_tree_eg} describes the syntactic
+structure of an input. A more common \emph{internal} representation of
+this syntactic structure is given by
+\begin{center}
+\includegraphics[bb=71 649 187 721]{ast_eg}
+\end{center}
+This is an \textcolor{blue}{abstract syntax tree} (or just \textcolor{blue}{syntax
+  tree}). It is a compressed version of the parse tree, where only the
+most important elements are retained for the semantic analysis.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{The phases of a compiler}
+
+\label{phases}
+
+%\raggedslides[0pt]
+
+Conceptually, a compiler operates in \textcolor{blue}{phases}, each of which
+transforms the programme from one representation to another. A typical
+decomposition of a compiler is as follows:
+\begin{center}
+\includegraphics[bb=71 618 421 721]{phases}
+\end{center}
+The first row makes up the analysis and the second the synthesis.
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Plan}
+
+%\raggedslides[0pt]
+
+\begin{enumerate}
+
+  \item Compilation revisited
+
+  \item \textcolor{red}{Metacompilation}
+
+  \item Unparsed patterns
+
+  \item A glimpse at the theory
+
+\end{enumerate}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Metacompilation}
+
+%\raggedslides[0pt]
+
+\textcolor{blue}{Metacompilation} is a technique that enables a compiler to
+take into account user\hyp{}defined checks, instead of using a
+different tool, perhaps at run\hyp{}time.
+
+If the code added to the compiler to support this feature is
+efficient, checking can be done at every compilation.
+
+Practically, it means that the programmer adds an option when calling
+the compiler on the command\hyp{}line or clicks in an IDE.
+
+Also, a user\hyp{}defined file can be passed to the compiler.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Pattern matching}
+
+%\raggedslides[0pt]
+
+One kind of simple user\hyp{}defined checks consists in writing a
+series of \textcolor{blue}{patterns}, which are then matched against the code.
+
+The purpose is to find whether some constructs are present in the
+code, in some contexts. The asserted presence or absence can be
+interpreted as an error or as a requirement.
+
+For example, in \Clang, one would like to check that a \texttt{malloc}
+is followed by a \texttt{free} before the function
+\texttt{return}. This supposes \textcolor{blue}{control flow analysis}, which
+is already provided by the compiler internals.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Pattern matching (cont'd)}
+
+%\raggedslides[0pt]
+
+The simple approach is that the patterns are written in the same
+language as the source language.
+
+But, in order to add expressiveness, \textcolor{blue}{meta\hyp{}variables} are
+added. Meta\hyp{}variables are variables that are expected to denote
+meaningful parts of the input programme. As such, they are not
+variables of the source language.
+
+For instance,
+{\small
+\begin{verbatim}
+buf = malloc(sizeof(int));
+%X = malloc(%Y);
+%L = %L -> next;
+\end{verbatim}
+}
+are patterns denoting \Clang statements, where \verb|%X|, \verb|%Y|
+and \verb|%L| are meta\hyp{}variables.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}[containsverbatim]
+\frametitle{Pattern matching (cont'd)}
+
+%\raggedslides[0pt]
+
+The usual process consists in 
+\begin{enumerate}
+
+  \item parsing the pattern into a pattern syntax tree,
+
+  \item matching it against the programme syntax tree (which
+    is already available).
+
+\end{enumerate}
+There is a match if the pattern syntax tree is a \textbf{subtree} of
+the programme syntax tree, assuming that meta\hyp{}variables match any
+subtree.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{Pattern matching (cont'd)}
+
+%\raggedslides[0pt]
+
+For example {\small\verb|%X = malloc(%Y);|} matches
+{\small\verb|buf = malloc(sizeof(int));|} because
+\begin{center}
+\includegraphics[bb=71 670 135 721]{malloc_pat}
+\quad matches \quad
+\includegraphics[bb=71 650 140 721]{malloc_prg}
+\end{center}
+The result of a match is a set of \textcolor{blue}{bindings} of
+meta\hyp{}variables to syntax subtrees. Here, \verb|%X| is bound to
+variable \texttt{buf} and \verb|%Y| is bound to \verb|sizeof(int)|.
+
+The set of bindings is called a \textcolor{blue}{substitution}. In
+general, applying the substitution to the pattern produces subtrees of
+the programme syntax tree.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Pattern matching (cont'd)}
+
+%\raggedslides[0pt]
+
+\textcolor{red}{What is the point?}
+
+This approach is technically difficult to implement precisely because
+\textbf{the available built\hyp{}in parser cannot handle the
+  meta\hyp{}variables}. Indeed, the patterns are not exactly expressed
+in the source language if they contain meta\hyp{}variables.
+
+When the parser has been built using standard tools (like \Yacc), it
+means that the grammar has to be modified and two modes of the parser
+(one for parsing programmes, one for parsing patterns) have to be
+implemented on top of it.
+
+Moreover, this technique has a \textbf{high cost in the worst case}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Pattern matching (cont'd)}
+
+%\raggedslides[0pt]
+
+The prototype written by Dr. Nic Volanschi has been integrated to \GCC
+and successfully found known bugs of a given version of the \Linux
+kernel.
+
+The purpose was to see if the unparsed patterns were enough expressive
+to catch a list of known bugs.
+
+Now, the goal is to find new bugs and also to target \Ada programmes,
+since \GCC already includes \GNAT (the \GNU \Ada compiler).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Plan}
+
+%\raggedslides[0pt]
+
+\begin{enumerate}
+
+  \item Compilation revisited
+
+  \item Metacompilation
+
+  \item \textcolor{red}{Unparsed patterns}
+
+  \item A glimpse at the theory
+
+\end{enumerate}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{Unparsed patterns}
+
+%\raggedslides[0pt]
+
+\textcolor{red}{What can we do?}
+
+Less. 
+
+Let us not parse the patterns and have a cost, in the worst case,
+which is proportional to the size of the syntax tree.
+
+Of course, the challenge is to retain enough expressiveness in these
+\textcolor{blue}{unparsed patterns}: they must be easy to work with and allow
+to filter as much as possible in order to satisfy the programmer.
+
+The patterns keep the same syntax for the programmer, only the
+matching algorithm is different.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{A glimpse at the theory}
+
+%\raggedslides[0pt]
+
+I made a \textcolor{blue}{formal model} to express the new pattern matching and
+some property we expect it to have.
+
+One of them is \textcolor{blue}{soundness}. This concept requires two levels of
+abstraction, like a specification and an algorithm, or two algorithms,
+one being considered more intuitive than the other.
+
+Here, the intuitive algorithm captures the concept of matching for
+trees: given a pattern made of syntax trees, these trees are matched
+orderly against the programme tree (they share the same leaves).
+
+This is exactly like the matching of parsed patterns, except they
+contain no meta\hyp{}variables. They are called \textcolor{blue}{ground
+  patterns}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{A glimpse at the theory (cont'd)}
+
+%\raggedslides[0pt]
+
+Then the soundness property states that, 
+\begin{itemize}
+
+  \item given a syntax tree and an unparsed pattern (possibly with
+    meta\hyp{}variables),
+
+  \item if the matching of the unparsed pattern is successful,
+
+  \item if the resulting substitution is applied back to the pattern,
+
+  \item then the resulting ground pattern is matched successfully
+    against the syntax tree.
+\end{itemize}
+In other words: the new pattern matching is sound with respect to the
+tree pattern matching.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{A glimpse at the theory (cont'd)}
+
+%\raggedslides[0pt]
+
+Another interesting property is the reverse of soundness:
+\textcolor{blue}{completeness}.
+
+It means that all matches found by the tree matching algorithm are
+found by the new pattern matching. (Not proved yet.)
+
+Another important task is to compute the \textcolor{blue}{worst\hyp{}case
+  complexity}, to make sure the algorithm is efficient.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+% 
+\begin{frame}
+\frametitle{A glimpse at the theory (cont'd)}
+
+%\raggedslides[0pt]
+
+The logical framework used to define the algorithm is
+\textcolor{blue}{inference rules}. It is an axiomatisation of the theory which
+allows both to define an algorithm and prove properties on it.
+\begin{mathpar}
+\inferrule*[right=\text{\sf ONE}]
+  {t \in {\cal H} \and \hat{p} \sqsubseteq [t]}
+  {\hat{p} \sqsubseteq t}
+
+\inferrule*{}{\el \sqsubseteq \el}
+\quad\TirName{\text{\sf EMP}}
+
+\inferrule
+  {t \in {\cal H} \and \hat{p} \sqsubseteq f}
+  {\cons{t}{\hat{p}} \sqsubseteq \cons{t}{f}}
+\,\TirName{\text{\sf EQ}}
+
+\inferrule*[right=\text{\sf SUB}]
+  {\cons{t}{\hat{p}} \sqsubseteq \subterms{c} \cdot f}
+  {\cons{t}{\hat{p}} \sqsubseteq \cons{c(\subterms{c})}{f}}
+\end{mathpar}
+
+
+\end{frame}
+
+% ===========================
+
+\end{document}

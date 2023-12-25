@@ -1,0 +1,302 @@
+%; whizzy none -dvi "xdvi -paper a4r -s 7"
+
+\NeedsTeXFormat{LaTeX2e}[1996/12/01]
+\documentclass[semrot]{seminar}
+%\usepackage{alltt}
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+\usepackage[T1]{fontenc}
+%\usepackage{ifthen}
+\usepackage[latin1]{inputenc}
+%\usepackage{stmaryrd}
+%\usepackage{url}
+%\usepackage{verbatim}
+\usepackage{xspace}
+%\usepackage[dvips,arrow,matrix]{xy}
+\usepackage{color}
+
+%\input{macros}
+
+\newcommand{\cpp}{\mbox{C \hspace*{-2.5mm} \raise 0.7mm\hbox{${\scriptscriptstyle ++}$}}\xspace}
+
+% ------------------------------------------------------------------------
+% Apparence des transparents.
+
+\slideframe{none}
+
+\newcommand{\affiche}[1]{%
+  \newpagestyle{#1}{\hfil\thepage}{\gauche\hfil\droite}%
+  \pagestyle{#1}%
+}
+\newcommand{\division}[3]{%
+  \gdef\gauche{#2}
+  \gdef\droite{#3}
+  \affiche{#1}
+}
+\newcommand{\sousdivision}[2]{%
+  \gdef\droite{#2}
+  \affiche{#1}
+}
+
+% ------------------------------------------------------------------------
+% Macros de contrôle de la structure et des couleurs.
+
+\newcommand{\grandtitre}[1]{\begin{center}\LARGE\textcolor[named]{BrickRed}{#1}\end{center}}
+\newcommand{\titre}[1]{\textcolor[named]{BrickRed}{{\sf#1}}\\}
+\newcommand{\statement}[1]{{\bf #1.}}
+
+\newcommand{\hilite}[1]{\textcolor{blue}{#1}}
+\newcommand{\hilitf}[1]{\textcolor[named]{BrickRed}{#1}}
+\newcommand{\insist}[1]{\hilite{\emph{#1}}}
+\newcommand{\light}{\color[gray]{.3}}
+
+% ------------------------------------------------------------------------
+% Page de titre.
+
+\begin{document}
+
+\division{debut}{Christian Rinderknecht}{16 janvier 2003}
+
+\begin{slide}
+\grandtitre{Présentation personnelle}
+\end{slide}
+
+\centerslidesfalse
+\renewcommand{\slidefuzz}{10pt}
+
+% ------------------------------------------------------------------------
+% Introduction
+
+\begin{slide}
+\titre{Parcours en raccourci}
+
+\begin{itemize}
+  \item Doctorat à l'INRIA au projet Cristal (1993-1997),
+        sous le signe de l'application de techniques formelles à un
+        langage télécom (réalisation d'un frontal de compilateur
+        \mbox{ASN.1}, preuves de correction d'un codage/décodage).
+
+  \item Depuis lors, alternance de postes académiques et industriels,
+        avec comme point commun la modélisation de problèmes nouveaux,
+        de solutions nouvelles et le développement de logiciels
+        (ingénieur de recherche).
+
+  \item Dernièrement (2001-2002), chercheur à l'\emph{Information and
+        Communications University} (Corée du Sud).
+
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\titre{Les thématiques}
+
+\begin{itemize}
+  \item Une thématique d'application fut l'ingénierie des protocoles
+        télécoms: spécification, méthodes et outils de production
+        de tests. (trois ans)
+
+  \item À Alcatel et PolySpace la thématique était le cycle de
+        développement du logiciel: compilation, analyse statique de
+        programmes, tests etc. (deux ans)
+
+  \item Dans tous les cas, ma mission était de mener et d'appliquer
+        une recherche, l'approche était rigoureuse (ou théorique),
+        souvent guidée par l'aspect «~langage~» des problèmes.
+
+\end{itemize}
+\end{slide}
+
+%% \begin{slide}
+%% \titre{Expérience à PolySpace Technologies S.A.}
+
+%% \begin{itemize}
+%%   \item \emph{Start-up} INRIA (Rocquencourt).
+  
+%%   \item Développement et vente d'un logiciel d'analyse statique de
+%%         code.
+
+%%   \item Mes missions: 
+
+%%         \begin{itemize}
+
+%%            \item maintenance et évolution de la base de test;
+
+%%            \item conception et développement;
+           
+%%            \item études clients, commerce technique ponctuel.
+
+%%         \end{itemize}
+%% \end{itemize}
+
+%% \end{slide}
+
+\begin{slide}
+\titre{Collaborations}
+
+\begin{itemize}
+
+  \item Durant le doctorat, collaboration étroite avec France Télécom
+        R\&D (Lannion) --- condition propice à la création du pôle de
+        compétence \mbox{ASN.1}.
+
+  \item À l'Institut National des Télécommunications (INT), j'ai
+        participé à deux projets \textsc{rnrt} (\textsc{castor} et
+        \textsc{platonis}), avec pour partenaires Alcatel, France
+        Télécom R\&D, Vérilog, le LaBRI, l'université de
+        Clermont-Ferrand.
+
+%%   \item À l'Institut National des Télécommunications, j'ai participé
+%%         au projet \textsc{rnrt castor}: conception d'un atelier de
+%%         services pour les plates-formes \textsc{corba} et Réseaux
+%%         Intelligents (en collaboration avec Alcatel, France Télécom
+%%         R\&D et Vérilog).
+
+%%   \item Toujours à l'\textsc{int}, j'ai participé au projet
+%%         \textsc{rnrt platonis} de plate-forme pour l'expérimentation
+%%         et la validation de protocoles et de services sur des
+%%         architectures mobiles (\textsc{wap}, \textsc{gprs}), en
+%%         particulier l'étude des terminaux et les méthodes formelles
+%%         pour le test d'interfonctionnement.
+
+\end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\titre{Enseignement}
+
+\begin{itemize}
+
+  \item Monitorat (1993-1996) à l'université René Diderot (Paris VII)
+        en IUP et DEUG: TD d'informatique (algorithmique, Pascal et
+        \cpp{}), d'algèbre linéaire, de calcul intégral; conception et
+        suivi des projets estudiantins, préparation des examens,
+        soutenances.
+
+  \item TD et quelques TP et cours à l'Institut Supérieur
+        d'Électronique de Paris: programmation \cpp. (1993-1996)
+
+  \item Colleur en informatique (algorithmique et programmation Caml)
+        en Math. Spé. (Lycée Stanislas). (1996-1997)
+
+  \item Formation continue Pascal (\textsc{ecf}, 1993) et \cpp{}
+        (\textsc{Unilog Formation}, 1999)
+
+  \item À l'INT: encadrement de projets de fin d'étude, d'un stagiaire
+        de DEA, TP en formation initiale et continue à SDL
+        (ponctuellement, 1998-2000)
+
+\end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\titre{\emph{Visiting Professor at Information and Communications University} (2001-2002)}
+
+\begin{itemize}
+
+  \item Recherche à plein temps (\mbox{ASN.1}, test
+        d'interfonctionnement) et étude de nouveaux sujets tels que
+        XML et les réseaux mobiles \emph{ad hoc}.
+
+        \emph{Abstract Syntax Notation One} (\mbox{ASN.1}) est un
+	langage normalisé pour la définition de types dont les valeurs
+	peuvent être échangées à travers un réseau entre deux
+	applications communicantes, indépendament de leur possible
+	hétérogénéité. Applications: gestion de réseaux, courriels
+	sécurisés, téléphonie mobile, voix sur IP, communications
+	sol-air, commerce électronique, et même bases de données
+	(\textsc{bd}).
+
+        J'ai résolu formellement l'important problème de la validation
+        des spécifications \mbox{ASN.1} en utilisant une technique
+        d'un domaine différent (les contraintes).
+
+\end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\titre{Nouveaux axes de recherche}
+
+Symbiose entre le \emph{web} et les \textsc{bd}: les sites \emph{web}
+reposent de plus en plus sur des \textsc{bd}, les collections de pages
+chaînées du \emph{web} sont une \textsc{bd} tentante.
+
+Il faut réinventer une approche \textsc{bd} du \emph{web} car celui-ci
+contient des données dites semi-structurées, c-à-d. auto-descriptives
+et irrégulières. Domaines affines:
+
+\begin{itemize}
+
+  \item systèmes de types et analyse par contraintes des langages de
+        requêtes,
+
+  \item syntaxes de transfert (codages pour une faible bande passante),
+
+  \item interfonctionnement de systèmes hétérogènes (p. ex. ASN.1-XML),
+
+  \item réingénierie des sites \emph{web} (migration, XML
+        \emph{wrappers}), 
+
+  \item protocoles pour les nouveaux terminaux mobiles (assistants
+        numériques).
+
+\end{itemize}
+
+\end{slide}
+
+
+
+\begin{slide}
+\titre{Axes d'enseignement}
+
+\begin{itemize}
+
+  \item algorithmique, langages de programmation, compilation;
+
+  \item environnements de développement Windows;
+
+  \item environnement de développement Unix (\textsf{make},
+        \textsf{cvs}, \textsf{emacs}, \textsf{sh}, \textsf{perl}
+        etc.).
+
+  \item \emph{middleware} (SOAP, .NET);
+
+  \item XML;
+
+  \item ingénierie des protocoles.
+
+\end{itemize}
+
+\end{slide}
+
+
+
+\begin{slide}
+\titre{Conclusion}
+
+\begin{itemize}
+  
+  \item Formation doctorale à l'INRIA (recherche appliquée);
+
+  \item enseignement à l'université et dans le privé;
+
+  \item expérience dans l'ingénierie de recherche;
+
+  \item publications des travaux réalisés.
+
+\end{itemize}
+
+\end{slide}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

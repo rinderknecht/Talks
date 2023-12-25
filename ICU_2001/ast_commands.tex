@@ -1,0 +1,157 @@
+%%-*-latex-*-
+
+%% ASN.1 Acronyms
+%%
+\newcommand{\ASN}{\mbox{ASN.1}\xspace}
+
+\newcommand{\OCaml}{\textrm{OCaml}\xspace}
+
+
+%% Abstract Syntax Trees
+%%
+\newcommand{\ocamlkwd}[1]{\textnormal{\textsf{\textbf{#1}}}}
+\newcommand{\ocamltypename}[1]{\textnormal{\textsl{#1}}}
+\newcommand{\ocamlvaluename}[1]{\textnormal{\textit{#1}}}
+\newcommand{\asnkwdconstr}[1]{\textsc{#1}}
+\newcommand{\asnkwdpvar}[1]{\textsf{`}\textsc{#1}}
+\newcommand{\ocamlconstr}[1]{\textnormal{\textsf{#1}}}
+\newcommand{\ocamlpvar}[1]{\textnormal{\textsf{`#1}}}
+%%\newcommand{\asnsym}[1]{\textsf{\textbf{#1}}\xspace}
+\newcommand{\asnsymbol}[1]{\boldsymbol{#1}}
+%\newcommand{\wildcard}{\textnormal{\Huge \_\,}}
+\newcommand{\wildcard}{\textnormal{\large \raisebox{0.5mm}{\_}}\xspace}
+\newcommand{\wildcardof}{\wildcard \ocamlkwd{of}\xspace}
+\newcommand{\ocamlmodulepath}[1]{\textnormal{#1}}
+\newcommand{\ocamlcomment}[1]{\begin{flushleft} \textit{(* #1 *)} \end{flushleft}}
+%%\newcommand{\quotedasnsymbol}[1]{\textsf{"}$\asnsymbol{#1}$\,\textsf{"}}
+\newcommand{\backquote}{\textbf{\textsf{`}}}
+
+\newcommand{\LEQ}{\pmb{\leqslant}}
+\newcommand{\LT}{\pmb{<}}
+
+\newcommand{\Some}{\ocamlconstr{Some}}
+\newcommand{\None}{\ocamlconstr{None}}
+
+\newcommand{\where}{\ocamlkwd{where}}
+
+\newcommand{\kwdCHOICE}{\asnkwdconstr{Choice}}
+\newcommand{\kwdSET}{\asnkwdconstr{Set}}
+\newcommand{\kwdSEQUENCE}{\asnkwdconstr{Sequence}}
+\newcommand{\kwdSETOF}{\asnkwdconstr{Set of}}
+\newcommand{\kwdSEQUENCEOF}{\asnkwdconstr{Sequence of}}
+\newcommand{\kwdINTEGER}{\asnkwdconstr{Integer}}
+\newcommand{\kwdBITSTRING}{\asnkwdconstr{Bit string}}
+\newcommand{\kwdENUMERATED}{\asnkwdconstr{Enumerated}}
+\newcommand{\kwdREAL}{\asnkwdconstr{Real}}
+\newcommand{\kwdBOOLEAN}{\asnkwdconstr{Boolean}}
+\newcommand{\kwdNULL}{\asnkwdconstr{Null}}
+\newcommand{\kwdOCTETSTRING}{\asnkwdconstr{Octet string}}
+\newcommand{\kwdOBJECTIDENTIFIER}{\asnkwdconstr{Object identifier}}
+\newcommand{\kwdRELATIVEOID}{\asnkwdconstr{Relative OID}}
+\newcommand{\kwdEMBEDDEDPDV}{\asnkwdconstr{Embedded PDV}}
+\newcommand{\kwdEXTERNAL}{\asnkwdconstr{External}}
+\newcommand{\kwdCHARACTERSTRING}{\asnkwdconstr{Character string}}
+\newcommand{\kwdOPTIONAL}{\asnkwdconstr{Optional}}
+\newcommand{\kwdDEFAULT}{\asnkwdconstr{Default}}
+\newcommand{\kwdCOMPONENTSOF}{\asnkwdconstr{Components of}}
+\newcommand{\TRef}{\ocamlconstr{TRef}}
+\newcommand{\VRef}{\ocamlpvar{VRef}}
+\newcommand{\kwdTRUE}{\asnkwdconstr{True}}
+\newcommand{\kwdFALSE}{\asnkwdconstr{False}}
+\newcommand{\Null}{\ocamlpvar{Null}}
+\newcommand{\kwdMINUSINFINITY}{\asnkwdconstr{Minus-infinity}}
+\newcommand{\kwdPLUSINFINITY}{\asnkwdconstr{Plus-infinity}}
+\newcommand{\kwdMIN}{\asnkwdconstr{Min}}
+\newcommand{\kwdMAX}{\asnkwdconstr{Max}}
+\newcommand{\MinInfInt}{\ocamlpvar{MinInfInt}}
+\newcommand{\PlusInfInt}{\ocamlpvar{PlusInfInt}}
+\newcommand{\MinInfReal}{\ocamlpvar{MinInfReal}}
+\newcommand{\PlusInfReal}{\ocamlpvar{PlusInfReal}}
+\newcommand{\BinStr}{\ocamlpvar{BinStr}}
+\newcommand{\PosInt}{\ocamlpvar{PosInt}}
+\newcommand{\NegInt}{\ocamlpvar{NegInt}}
+\newcommand{\Real}{\ocamlconstr{Real}}
+\newcommand{\PosReal}{\ocamlpvar{PosReal}}
+\newcommand{\NegReal}{\ocamlpvar{NegReal}}
+\newcommand{\String}{\ocamlconstr{String}}
+\newcommand{\pvString}{\ocamlpvar{String}}
+\newcommand{\RestrStr}{\ocamlconstr{RestrStr}}
+\newcommand{\Regexp}{\ocamlpvar{Regexp}}
+\newcommand{\Ident}{\ocamlpvar{Ident}}
+\newcommand{\Enum}{\ocamlpvar{Enum}}
+\newcommand{\List}{\ocamlpvar{List}}
+\newcommand{\Map}{\ocamlpvar{Map}}
+\newcommand{\Nil}{\ocamlpvar{Nil}}
+\newcommand{\Cons}{\ocamlpvar{Cons}}
+\newcommand{\Bind}{\ocamlpvar{Bind}}
+\newcommand{\Comp}{\ocamlconstr{Comp}}
+\newcommand{\kwdAPPLICATION}{\asnkwdconstr{Application}}
+\newcommand{\kwdUNIVERSAL}{\asnkwdconstr{Universal}}
+\newcommand{\kwdPRIVATE}{\asnkwdconstr{Private}}
+\newcommand{\kwdEXPLICIT}{\asnkwdconstr{Explicit}}
+\newcommand{\kwdIMPLICIT}{\asnkwdconstr{Implicit}}
+\newcommand{\kwdAUTOMATIC}{\asnkwdconstr{Automatic}}
+\newcommand{\kwdTAGS}{\asnkwdconstr{Tags}}
+\newcommand{\kwdPRESENT}{\asnkwdconstr{Present}}
+\newcommand{\kwdABSENT}{\asnkwdconstr{Absent}}
+\newcommand{\kwdUNION}{\asnkwdconstr{Union}}
+\newcommand{\kwdINTERSECTION}{\asnkwdconstr{Intersection}}
+\newcommand{\kwdEXCEPT}{\asnkwdconstr{Except}}
+\newcommand{\kwdALLEXCEPT}{\asnkwdconstr{All except}}
+\newcommand{\kwdFROM}{\asnkwdconstr{From}}
+\newcommand{\kwdSIZE}{\asnkwdconstr{Size}}
+\newcommand{\kwdINCLUDES}{\asnkwdconstr{Includes}}
+\newcommand{\kwdWITHCOMPONENT}{\asnkwdconstr{With component}}
+\newcommand{\kwdWITHCOMPONENTS}{\asnkwdconstr{With components}}
+\newcommand{\kwdPATTERN}{\asnkwdconstr{Pattern}}
+\newcommand{\Value}{\ocamlconstr{Value}}
+\newcommand{\HexStr}{\ocamlpvar{HexStr}}
+\newcommand{\ObjId}{\ocamlconstr{ObjId}}
+\newcommand{\Empty}{\ocamlpvar{Empty}}
+\newcommand{\Universal}{\ocamlconstr{Universal}}
+\newcommand{\Partial}{\ocamlconstr{Partial}}
+\newcommand{\Full}{\ocamlconstr{Full}}
+\newcommand{\Interval}{\ocamlpvar{Interval}}
+
+\newcommand{\T}{\textnormal{\textrm{T}}}
+\newcommand{\normT}{\overline{\T}}
+\newcommand{\C}{\textnormal{\textrm{C}}}
+%%\newcommand{\F}{{\cal F}}
+\newcommand{\I}{{\cal I}}
+\newcommand{\J}{{\cal J}}
+\newcommand{\V}{{\cal V}}
+\newcommand{\normV}{\overline{\cal V}}
+
+\newcommand{\Labels}{{\cal L}}
+
+\newcommand{\Env}[2]{{#1}\hspace*{-0.5mm}_{_{#2}}}
+\newcommand{\FieldEnv}[1]{\Env{\textnormal{\textrm{F}}}{#1}}
+\newcommand{\CompEnv}[1]{\Env{\Phi}{#1}}
+\newcommand{\IdEnv}[1]{\Env{\textnormal{\textrm{M}}}{#1}}
+\newcommand{\IntEnv}[1]{\Env{\textnormal{\textrm{L}}}{#1}}
+\newcommand{\FieldConst}[1]{\Env{\textnormal{\textrm{K}}}{#1}}
+\newcommand{\NamedBits}[1]{\Env{{\cal N}}{#1}}
+
+\newcommand{\NormFieldConst}[1]{\textnormal{\textrm{K}}'\hspace*{-1.3mm}_{_{#1}}}
+\newcommand{\NormCompEnv}[1]{\Phi'\hspace*{-1.3mm}_{_{#1}}}
+
+\newcommand{\Herbrand}{{\cal H}}
+\newcommand{\LIST}{\textnormal{L}}
+\newcommand{\MAP}{{\cal Q}}
+\newcommand{\NEWTERMS}{\textnormal{N}}
+\newcommand{\ASSIGN}{\textnormal{\textrm{::=}\xspace}}
+
+\newcommand{\TSE}{\denotC}
+\newcommand{\R}{{\cal R}}
+\newcommand{\TSEmap}[1]{\MAP_{_{#1}}}
+\newcommand{\TSEnormMap}[1]{\MAP'_{#1}}
+
+\newcommand{\IntInter}{\ocamlconstr{IntInter}}
+\newcommand{\RealInter}{\ocamlconstr{RealInter}}
+\newcommand{\StrInter}{\ocamlconstr{StrInter}}
+
+\newcommand{\SC}{\textnormal{SC}}
+\newcommand{\VAR}{\textnormal{V}}
+
+\newcommand{\MU}[2]{\mu_{#1} \, (#2)}
+
