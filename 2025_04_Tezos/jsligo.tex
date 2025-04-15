@@ -74,6 +74,7 @@
 \newcommand{\Menhir}[0]{\textsf{Menhir}}
 \newcommand{\TypeScript}[0]{\textsf{TypeScript}}
 \newcommand{\TreeSitter}[0]{\textsf{tree-sitter}}
+\newcommand{\Michelson}[0]{\textsf{Michelson}}
 
 % Input files
 %
@@ -103,12 +104,12 @@
 
     \item I joined Nomadic in July 2018, where I started designing a
       smart contract language, similar to \textsf{Pascal}, that would
-      be compiled to Michelson.
+      be compiled to \Michelson{}.
 
     \item My then-colleague Gabriel Alfour also wanted to make
       programming smart contracts on \textsf{Tezos} easier, but with a
       bottom\hyp{}up approach: building a set of macros that expand
-      into Michelson.
+      into \Michelson{}.
 
     \item We joined our efforts in 2019 into what became LIGO.
 
@@ -277,7 +278,7 @@
     \item Yann Régis-Gianas wrote the front-end of Menhir, and
       François Pottier the automaton construction and the
       back\hyp{}end. The original interest was an application of GADTs
-      to the static typing of the automata's stack: \url{https://cambium.inria.fr/~fpottier/publis/fpottier-regis-gianas-typed-lr.pdf}
+      to the static typing of the parse stack: \url{https://cambium.inria.fr/~fpottier/publis/fpottier-regis-gianas-typed-lr.pdf}
   \end{itemize}
 \end{slide}
 
@@ -308,9 +309,40 @@
     \item One last very cool paper about using \Menhir{} to
       parse C11 (as in \textsf{CompCert}):
       \url{https://cambium.inria.fr/~fpottier/publis/jourdan-fpottier-2016.pdf}
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Error recovery with Menhir}
+
+  \begin{itemize}
+
+    \item \Menhir{} has several interfaces, improperly called
+      APIs. The \emph{Incremental API} enables the client to take
+      control when an error is encountered.
+
+    \item The parse stack (of terminal and non\hyp{}terminals
+      recognised so far) and the automaton state (e.g. the
+      LR\hyp{}items) are available for inspection, as persistent
+      values.
+
+    \item This enables to decide to either handle the error or try and
+      recover from it: a strategy has to be provided by the client.
+
+    \item LIGO features error recovery for both \CameLIGO{} and
+      \JsLIGO{}. Two continuations are possible for recovery: either
+      skipping some tokens or inserting one. The decision is made
+      based on a heuristic derived from a study of the grammar and
+      common cases (design patterns, keywords and symbol
+      uses,tabulations etc.).
+
+    \item The LSP makes constant use of this feature to maintain
+      syntax high\hyp{}lighting, to display types on hover, and
+      for go\hyp{}to\hyp{}definition on contracts being edited.
 
   \end{itemize}
 \end{slide}
+
 
 \begin{slide}
   \title{The Unified AST}
@@ -394,14 +426,13 @@ At this point, one of the following is expected:
 
   \begin{itemize}
 
-    \item Despite the subset of TypeScript needed for writing JsLIGO
-      contracts is comfortable enough (some computations can be
-      expressed in several ways, for instance), the exact frontier
-      with \TypeScript{} is not defined explicitly: a syntax error
-      cannot tell whether the input is actually valid \TypeScript{} or
-      not.
+    \item Despite the subset of TypeScript needed for writing
+      \JsLIGO{} contracts is comfortable enough (some computations can
+      be expressed in several ways, for instance, and insertion of
+      \Michelson{} code is possible), a syntax error cannot
+      tell whether the input is actually valid \TypeScript{} or not.
 
-    \item Note how, in the previous example, the parser cannot
+    \item For example, in the previous example, the parser cannot
       actually tell that the input is not valid \TypeScript{}, and the
       penultimate example is valid \JsLIGO{} but not correct
       \TypeScript{}: \JsLIGO{} is a non\hyp{}conservative extension of
@@ -410,7 +441,8 @@ At this point, one of the following is expected:
     \item Likewise, a type error cannot tell whether the source is
       valid \TypeScript{}. Worse, since the LIGO type system is
       \emph{ad hoc}, the inferred types may differ from those of a
-      \TypeScript{} compiler.
+      \TypeScript{} compiler (for example, due to different implicit
+      type coercions).
 
     \item The LIGO tooling (mainly the LSP) is custom\hyp{}made.
 
@@ -418,10 +450,9 @@ At this point, one of the following is expected:
 In short: Idioms and design patterns commonly used by \TypeScript{}
 developers are not supported in \JsLIGO{}; it is not possible for the
 LIGO compiler to tell whether it is because the input is not valid
-\TypeScript{}. If the code compiles, but the semantics differs (for
-example, due to different implicit type coercions), the LIGO team
-would consider it a bug, but it could be silent (we never found an
-example, though).
+\TypeScript{}. If the code compiles, but the semantics differs, the
+LIGO team would consider it a bug, but it could be silent (we never
+found an example, though).
 
 \end{slide}
 
@@ -433,28 +464,66 @@ example, though).
     \item In order to leverage existing \TypeScript{} tooling, for
       instance, a pretty\hyp{}printer,
 
-    \item have the LIGO compiler
-      inform the developers of the differences between \TypeScript{}
-      and \JsLIGO{},
+    \item to have the LIGO compiler inform the developers of the
+      differences between \TypeScript{} and \JsLIGO{},
 
-    \item and avoid writing a lexer and parser in \textsf{ocamllex}
-      and \Menhir{} for \TypeScript{}, a new approach was proposed,
-      namely use a third\hyp{}party \TypeScript{} parser.
+    \item and to avoid writing a lexer and parser for \TypeScript{}
+      with \textsf{ocamllex} and \Menhir{}, a new approach was
+      proposed, namely use a third\hyp{}party \TypeScript{} parser.
 
     \item Since those are most often closed\hyp{}source or blatantly
       incomplete, we decided to use a parser in C generated by
       \TreeSitter{} from a \TypeScript{} grammar.
 
     \item It is difficult to assess the correctness, let alone the
-      conformance of that parser. First, contrary to \Menhir{} (which
-      has a \textsf{Coq} back\hyp{}end!), we do not have a way to
-      prove that the parser indeed recognises the language generated
-      by the grammar. Second, there is no more formal grammar of
-      \TypeScript{} published by Microsoft since version 1.8 (current
-      is 5.8.3) ---~in 2016.
+      conformance, of that parser.
+
+    \item First, contrary to \Menhir{}, which has a \textsf{Coq}
+      back\hyp{}end, we do not have a way to prove that the parser
+      indeed recognises the language generated by the grammar, and is
+      complete, that is, exactly the valid inputs are
+      accepted. (Fun/Sad fact: termination is not proved with
+      ``\texttt{menhir --coq}''!)
+
+    \item Second, there is no more formal grammar of \TypeScript{}
+      published by Microsoft since version 1.8 (current is 5.8.3)
+      ---~in 2016.
 
   \end{itemize}
 
+\end{slide}
+
+\begin{slide}
+  \title{The parser generator tree-sitter}
+
+  \begin{itemize}
+
+    \item \TreeSitter{} has been designed to generate parsers in C
+      from LR(1) grammars.
+
+    \item Those parsers perform \emph{error recovery}: when
+      encountering an unexpected token, the parser can either
+      \emph{skip} any number of tokens or non\hyp{}terminal symbols
+      from the input, or \emph{insert} one virtual terminal (token)
+      when one is deemed missing in the input.
+
+    \item Instead of chosing one strategy rather than the other, the
+      parser engine runs internally as a \emph{Generalised LR} (GLR)
+      algorithm, so, in general, the parse stack is instead a tree of
+      valid prefix sentences (a.k.a. sentential forms). Skipping and
+      inserting become two new branches (up to six).
+
+    \item Each branch of the tree maintains two quantities: an
+      \emph{error cost} and a \emph{node count}, respectively, an
+      integer function of the number of skipped items and inserted
+      tokens, and the number of valid subtrees parsed since the last
+      error.
+
+    \item One heuristic prunes the automaton's tree based on those two
+      values, and another selects one final parse tree if many valid
+      were found (smaller and earlier trees are preferred).
+
+  \end{itemize}
 
 \end{slide}
 
