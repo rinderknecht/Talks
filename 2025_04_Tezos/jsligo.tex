@@ -1,0 +1,461 @@
+%%-*-latex-*-
+
+\documentclass[wide]{slides}
+
+% Colour in verbatim
+%
+\usepackage{alltt}
+\usepackage{xcolor}
+
+% Language
+%
+\usepackage{hyphenat}          % \hyp{} is a breakable dash
+\usepackage{alltt}
+
+\frenchspacing  % Follow French conventions after a period
+
+% Maths & Logic
+%
+\usepackage{stmaryrd}
+\usepackage{mathpartir}
+
+% URLs
+\usepackage{url}
+
+% Graphics
+%
+\usepackage{graphicx}
+
+% Code listing
+%
+\usepackage{listings}
+
+\usepackage{color}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={match, when, type, const, let, typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+   language=JavaScript,
+   backgroundcolor=\color{lightgray},
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   numberstyle=\footnotesize,
+   numbersep=9pt,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
+
+% New environments and commands
+%
+\newcommand{\JsLIGO}[0]{\textsf{JsLIGO}}
+\newcommand{\CameLIGO}[0]{\textsf{CameLIGO}}
+\newcommand{\OCaml}[0]{\textsf{OCaml}}
+\newcommand{\Menhir}[0]{\textsf{Menhir}}
+\newcommand{\TypeScript}[0]{\textsf{TypeScript}}
+\newcommand{\TreeSitter}[0]{\textsf{tree-sitter}}
+
+% Input files
+%
+% \input{commands}
+
+% ----------------------------------------------------------------
+% Document
+%
+\maintitle{LIGO for TypeScript developers on Layer-1}
+\mainauthor{\textbf{Christian Rinderknecht}\\
+  {\small\url{Christian.Rinderknecht@trili.tech}}\\
+\textsf{TriliTech}}
+\confname{Show and Tell}
+\confshortname{S\&T}
+\confdate{17 April 2025}
+
+\begin{document}
+
+\maketitle
+
+\begin{slide}
+  \title{A short history of LIGO}
+
+  \begin{itemize}
+
+    \item I did my PhD at INRIA under the supervision of Michel Mauny.
+
+    \item I joined Nomadic in July 2018, where I started designing a
+      smart contract language, similar to \textsf{Pascal}, that would
+      be compiled to Michelson.
+
+    \item My then-colleague Gabriel Alfour also wanted to make
+      programming smart contracts on \textsf{Tezos} easier, but with a
+      bottom\hyp{}up approach: building a set of macros that expand
+      into Michelson.
+
+    \item We joined our efforts in 2019 into what became LIGO.
+
+    \item I contributed the design and the front-end, he did the
+      type-checker and code generator (50-50 in lines of code).
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{A short history of LIGO}
+
+  \begin{itemize}
+
+    \item The idea was for LIGO to offer different concrete syntaxes
+      inspired from mainstream programming languages.
+
+    \item Those LIGO languages were meant to be domain-specific, but
+      not overly so: supporting special literals (natural numbers,
+      mutez, for examples), but taking most Tezos-specific types and
+      functions from a library.
+
+    \item The front-end had to lower their input to the common
+      pipeline, while sharing as much code as possible in the
+      processing of the different syntaxes.
+
+    \item The first syntax was \textsf{PascaLIGO}, as I thought it
+      would suit an imperative style, and lots of keywords would make
+      the code more explicit, given the high stakes.
+
+    \item Next, turmoil in the nascent ecosystem lead me to design
+      \CameLIGO{}. Then came \textsf{ReasonLIGO},
+      \JsLIGO{} (which is today's topic), and even
+      \textsf{PyLIGO}, which was never plugged in.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Architecture}
+
+  \begin{itemize}
+
+    \item Nowadays, only two LIGO syntaxes remain: \CameLIGO{}
+      and \JsLIGO{}. The former is a strict subset of
+      \OCaml{}, if we leave aside the Tezos-specific literals, a
+      local type definition construct, and attributes (they occur in
+      prefix position in LIGO).
+
+    \item \JsLIGO{} started also as a subset but evolved and
+      became syntactically incompatible with its model,
+      \TypeScript{}. For example, a proposal for pattern
+      matching in \TypeScript{} was implemented in
+      \JsLIGO{}.
+
+    \item The front-end is made, in order, of a preprocessor, a lexer,
+      two parsers and the first tree transformation before
+      type\hyp{}inference. Each pass can be built as a standalone
+      executable for testing.
+
+    \item I wrote the preprocessor because, at the time, we had no
+      time to design and implement a module system, together with a
+      build system.
+
+    \item Unfortunately, it became very popular, even when LIGO got
+      itself a module system, because it enabled conditional
+      compilation (often for new type definitions of the storage,
+      depending on the version of the standard being implemented).
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Preprocessor and Lexer}
+
+  \begin{itemize}
+
+    \item The preprocessor is not trivial, as it needs to understand
+      UTF-8 encoded glyphs (in comments only) and the kind of comments
+      and strings that depend on the LIGO variant.
+
+    \item The lexer is also a functor parameterised by a lexer that is
+      specific to a given LIGO syntax (comments, strings, keywords
+      etc.). Error reporting has to be aware of linemarkers left by
+      the preprocessor. Some style constraints are enforced (like a
+      linter) for the sake of clarity.
+
+    \item The lexer is specified as an input to \textsf{ocamllex}.
+
+    \item Until \JsLIGO{} was added to the party, the lexer
+      signature was a function that returned a single token, which the
+      parser called on demand. Syntactic constructs difficult to parse
+      sometimes rely on lexer hacks, that is, having the parser
+      informing the lexer of the syntactic left\hyp{}context. Instead,
+      I had the lexer run on all the (preprocessed) input, before
+      applying a series of self\hyp{}passes on the tokens
+      ---~injecting virtual tokens when needed to help the
+      parser. This is not as expressive as having the syntactic
+      context, but rational approximations work quite well in
+      practice.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \lstset{language=JavaScript}
+
+  \title{Lexer}
+
+  \begin{itemize}
+
+    \item Perhaps the most interesting self\hyp{}pass on the tokens is
+      found with \JsLIGO{}:
+      \begin{lstlisting}
+        const f = ([x,y]) ...
+      \end{lstlisting}
+      could be a parenthesised pair or the start of an arrow function
+      (a shift\hyp{}reduce conflict). Analysing the lexical
+      right\hyp{}context in the grammar helps disambiguate the two
+      cases, and the lexer injects a \verb+ES6FUN+ token in front of a
+      function:
+      \begin{quote}
+      \verb|CONST IDENT EQ ES6FUN LPAR ...|
+      \end{quote}
+      The parser knows a function is coming next upon reading the
+      virtual token \verb+ES6FUN+ (no more conflict).
+
+    \item A classic one is needed to handle ``\verb+>>+'' in
+      \begin{lstlisting}
+        type t = u<v<w>>
+      \end{lstlisting}
+      for which a self\hyp{}pass injects a Zero\hyp{}Width SPace
+      (\verb|ZWSP|) virtual token between the two closing chevrons:
+      \begin{quote}
+       \verb|TYPE IDENT EQ IDENT LCHEV IDENT LCHEV IDENT RCHEV ZWSP RCHEV|
+      \end{quote}
+      The parser can then distinguish the binary operator
+      ``\verb+>>+'' from the above.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{The parser generator Menhir}
+
+  \begin{itemize}
+
+    \item The LIGO pipeline is more than a compiler, because it
+      provides support for a LSP, and that is why the front-end has to
+      keep all the source information, including comments. This adds
+      significant complexity to the lexer, which has to hide it from
+      the parser.
+
+    \item The two LIGO parsers are generated by \Menhir{}.
+
+    \item \Menhir{} accepts LR(1) grammars, with semantic
+      actions in \OCaml{}. In practice, many grammars are
+      annotated with precedence declarations to solve
+      LR\hyp{}conflicts, potentially making the grammars not LR(1),
+      and making it difficult to reason about them.
+
+    \item Both \CameLIGO{} and \JsLIGO{} are given pure
+      LR(1) grammars, thanks to the rewriting of productions, and the
+      use of virtual tokens.
+
+    \item Yann Régis-Gianas wrote the front-end of Menhir, and
+      François Pottier the automaton construction and the
+      back\hyp{}end. The original interest was an application of GADTs
+      to the static typing of the automata's stack: \url{https://cambium.inria.fr/~fpottier/publis/fpottier-regis-gianas-typed-lr.pdf}
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{Menhir and the JsLIGO Parser}
+
+  \begin{itemize}
+
+    \item \Menhir{} can identify all error states in the
+      LR\hyp{}automaton, so we can write precise error messages for
+      them. They are precise because the stack and syntactic
+      righ\hyp{}context is available at the error state, instead of
+      just only the next valid tokens, so the past (the intention of
+      the programmer, inferred from the prefix of the stack in terms
+      of grammatical productions) can be expressed in terms of
+      constructs, and the future too, if we take some care when
+      writing the
+      grammar. \url{https://cambium.inria.fr/~fpottier/publis/bour-pottier-reachability.pdf}
+
+    \item The fun part of the \JsLIGO{} grammar is the handling
+      of the (in)famous \emph{Automatic Semicolon Insertion
+      (ASI)}. JavaScript has a set of dynamic heuristics allowing in
+      some contexts to omit a semicolon. Instead, I analysed the
+      grammar and hardcoded a sub\hyp{}grammar (\~{}100~LOC) for
+      statements that allow some semicolons to be missing (and omits
+      more than the mainstream compilers!).
+
+    \item One last very cool paper about using \Menhir{} to
+      parse C11 (as in \textsf{CompCert}):
+      \url{https://cambium.inria.fr/~fpottier/publis/jourdan-fpottier-2016.pdf}
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{The Unified AST}
+
+  \begin{itemize}
+
+    \item The parser produces an Abstract Syntax Tree (AST)
+      ---~confusingly named Concrete Syntax Tree (CST) in the code
+      base for legacy reasons: it used to be what its name proclaims.
+
+    \item The AST is then transformed into a more abstract kind of
+      tree, the \emph{unified AST}. Whereas the CSTs are specific to
+      each LIGO variant, the unified AST is common to all, and can be
+      considered as the entrance to the common pipeline.
+
+    \item Because it is the target of a functional and imperative
+      language, respectively \CameLIGO{} and \JsLIGO{},
+      the definition of the Unified AST is cumbersome. Also, in order
+      to enable some measure of decompilation (type expressions for
+      the LSP), it cannot be too abstracted.
+
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \title{JsLIGO concrete syntax}
+
+\begin{quote}
+\begin{lstlisting}
+type parameter = unit;
+type storage = unit;
+type t = [list<operation>, storage];
+
+@entry
+function give5tez (param: parameter, storage: storage): t {
+  let operations: list<operation> = [];
+  if (Tezos.get_balance() >= 5tez) {
+    const receiver =
+      match(Tezos.get_contract_opt(Tezos.get_sender())) {
+        when(Some(contract)): contract;
+        when(None): failwith("Couldn't find account");
+      };
+    operations =
+      [Tezos.Operation.transaction(param, 5tez, receiver)];
+  }
+  return [operations, storage];
+}
+\end{lstlisting}
+\end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{JsLIGO versus TypeScript}
+
+Even though the syntax error messages displayed by the TypeScript
+Playground, for example, are relatively good, the \JsLIGO{} parser
+enables to be correct about the past and complete about the
+future. For instance:
+\begin{quote}
+\small
+\begin{alltt}
+File "syn_err.jsligo", line 2, characters 9-11:
+  1 | interface I \{
+  2 |   type t \textcolor{red}{+=} int;
+  3 | \}
+\textcolor{red}{Ill-formed type declaration in an interface.
+At this point, one of the following is expected:
+  * the assignment symbol '=' followed by a type;
+  * type parameters (variables) between chevrons ('<', '>') if the
+    type is generic;
+  * a semicolon ';' if the type is abstract;
+  * a closing brace '\}' if no more entries.}
+\end{alltt}
+\end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{JsLIGO versus TypeScript}
+
+  \begin{itemize}
+
+    \item Despite the subset of TypeScript needed for writing JsLIGO
+      contracts is comfortable enough (some computations can be
+      expressed in several ways, for instance), the exact frontier
+      with \TypeScript{} is not defined explicitly: a syntax error
+      cannot tell whether the input is actually valid \TypeScript{} or
+      not.
+
+    \item Note how, in the previous example, the parser cannot
+      actually tell that the input is not valid \TypeScript{}, and the
+      penultimate example is valid \JsLIGO{} but not correct
+      \TypeScript{}: \JsLIGO{} is a non\hyp{}conservative extension of
+      \TypeScript{}.
+
+    \item Likewise, a type error cannot tell whether the source is
+      valid \TypeScript{}. Worse, since the LIGO type system is
+      \emph{ad hoc}, the inferred types may differ from those of a
+      \TypeScript{} compiler.
+
+    \item The LIGO tooling (mainly the LSP) is custom\hyp{}made.
+
+  \end{itemize}
+In short: Idioms and design patterns commonly used by \TypeScript{}
+developers are not supported in \JsLIGO{}; it is not possible for the
+LIGO compiler to tell whether it is because the input is not valid
+\TypeScript{}. If the code compiles, but the semantics differs (for
+example, due to different implicit type coercions), the LIGO team
+would consider it a bug, but it could be silent (we never found an
+example, though).
+
+\end{slide}
+
+\begin{slide}
+  \title{The parser generator tree-sitter}
+
+  \begin{itemize}
+
+    \item In order to leverage existing \TypeScript{} tooling, for
+      instance, a pretty\hyp{}printer,
+
+    \item have the LIGO compiler
+      inform the developers of the differences between \TypeScript{}
+      and \JsLIGO{},
+
+    \item and avoid writing a lexer and parser in \textsf{ocamllex}
+      and \Menhir{} for \TypeScript{}, a new approach was proposed,
+      namely use a third\hyp{}party \TypeScript{} parser.
+
+    \item Since those are most often closed\hyp{}source or blatantly
+      incomplete, we decided to use a parser in C generated by
+      \TreeSitter{} from a \TypeScript{} grammar.
+
+    \item It is difficult to assess the correctness, let alone the
+      conformance of that parser. First, contrary to \Menhir{} (which
+      has a \textsf{Coq} back\hyp{}end!), we do not have a way to
+      prove that the parser indeed recognises the language generated
+      by the grammar. Second, there is no more formal grammar of
+      \TypeScript{} published by Microsoft since version 1.8 (current
+      is 5.8.3) ---~in 2016.
+
+  \end{itemize}
+
+
+\end{slide}
+
+\end{document}
