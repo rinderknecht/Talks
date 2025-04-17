@@ -4,7 +4,6 @@
 
 % Colour in verbatim
 %
-\usepackage{alltt}
 \usepackage{xcolor}
 
 % Language
@@ -36,7 +35,8 @@
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
 
 \lstdefinelanguage{JavaScript}{
-  keywords={match, when, type, const, let, typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywords={interface, implements, extends, import, export, from, as,
+    namespace, do, class, match, when, type, const, let, typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
   keywordstyle=\color{blue}\bfseries,
   ndkeywords={class, export, boolean, throw, implements, import, this},
   ndkeywordstyle=\color{darkgray}\bfseries,
@@ -72,6 +72,7 @@
 \newcommand{\CameLIGO}[0]{\textsf{CameLIGO}}
 \newcommand{\OCaml}[0]{\textsf{OCaml}}
 \newcommand{\Menhir}[0]{\textsf{Menhir}}
+\newcommand{\JavaScript}[0]{\textsf{JavaScript}}
 \newcommand{\TypeScript}[0]{\textsf{TypeScript}}
 \newcommand{\TreeSitter}[0]{\textsf{tree-sitter}}
 \newcommand{\Michelson}[0]{\textsf{Michelson}}
@@ -102,7 +103,7 @@
 
     \item I did my PhD at INRIA under the supervision of Michel Mauny.
 
-    \item I joined Nomadic in July 2018, where I started designing a
+    \item In July 2018, I joined Nomadic, where I started designing a
       smart contract language, similar to \textsf{Pascal}, that would
       be compiled to \Michelson{}.
 
@@ -111,12 +112,10 @@
       bottom\hyp{}up approach: building a set of macros that expand
       into \Michelson{}.
 
-    \item We joined our efforts in 2019 and met in the middle to
-      produce what became LIGO.
-
-    \item I contributed the design and the front-end, he did the
-      type-checker and code generator ---~50\%-50\% in terms of lines
-      of code (LOCs).
+    \item In 2019, we joined our efforts by meeting half\hyp{}way to
+      produce what became LIGO: I contributed the language design and
+      the front-end; he crafted the type-checker and code generator
+      ---~50\%-50\% in terms of lines of code (LOC).
 
   \end{itemize}
 \end{slide}
@@ -131,8 +130,8 @@
 
     \item Those LIGO languages were meant to be domain-specific, but
       not overly so: supporting special literals (natural numbers,
-      mutez, for examples), but taking most Tezos-specific types and
-      functions from a library.
+      mutez, for examples), but taking most Tezos\hyp{}specific types
+      and functions from a library.
 
     \item The front-end had to lower their input to the common
       pipeline, while sharing as much code as possible in the
@@ -155,21 +154,21 @@
 
   \begin{itemize}
 
-    \item Nowadays, only two LIGO syntaxes remain: \CameLIGO{}
-      and \JsLIGO{}. The former is a strict subset of
-      \OCaml{}, if we leave aside the Tezos-specific literals, a
-      local type definition construct, and attributes (they occur in
-      prefix position in LIGO).
+    \item Nowadays, only two LIGO syntaxes remain: \CameLIGO{} and
+      \JsLIGO{}. The former is almost a strict subset of \OCaml{}, if
+      we leave aside the Tezos\hyp{}specific literals, a local type
+      definition construct, name punning of record field types, and
+      attributes (they occur in prefix position in LIGO).
 
-    \item \JsLIGO{} started also as a subset but evolved and became
-      syntactically incompatible with its model, \TypeScript{}. For
-      example, I implemented a proposal for pattern matching in
-      \TypeScript{}.
+    \item \JsLIGO{} started also as a subset of \TypeScript{}, but
+      evolved and became syntactically incompatible with its
+      model. For example, I implemented a proposal for pattern
+      matching in \TypeScript{}.
 
     \item The front-end is made, in order, of a preprocessor, a lexer,
-      two parsers and the first tree transformation before
-      type\hyp{}inference. Each pass can be built as a standalone
-      executable for testing prefixes of the pipeline.
+      two parsers and the first tree transformation before type
+      inference. Each pass can be built as a standalone executable for
+      testing prefixes of the pipeline.
 
     \item I wrote the preprocessor because, at the time, we had no
       time to design and implement a module system, together with a
@@ -198,7 +197,8 @@
       the preprocessor. Some style constraints are enforced (like a
       linter) for the sake of clarity.
 
-    \item The lexer is specified as an input to \textsf{ocamllex}.
+    \item The lexer is specified as an input to \textsf{ocamllex}
+      (\textsf{sedlex} would perhaps have been preferable).
 
     \item Until \JsLIGO{} was added to the party, the lexer signature
       was a function that returned a single token, which the parser
@@ -210,7 +210,7 @@
       self\hyp{}passes on the tokens ---~injecting virtual tokens when
       needed to help the parser. This is not as expressive as having
       the syntactic context, but (unbounded) rational approximations
-      work quite well in practice.
+      work well in practice.
 
   \end{itemize}
 \end{slide}
@@ -236,9 +236,11 @@
       \verb|CONST IDENT EQ ES6FUN LPAR ...|
       \end{quote}
       The parser knows a function is coming next upon reading the
-      virtual token \verb+ES6FUN+ (no more conflict).
+      virtual token \verb+ES6FUN+. Unwanted injections can simply be
+      ignored in the grammar.
 
-    \item A classic one is needed to handle ``\verb+>>+'' in
+    \item A classic one in \JsLIGO{} again is needed to handle
+      ``\verb+>>+'' in
       \begin{lstlisting}
         type t = u<v<w>>
       \end{lstlisting}
@@ -248,7 +250,7 @@
        \verb|TYPE IDENT EQ IDENT LCHEV IDENT LCHEV IDENT RCHEV ZWSP RCHEV|
       \end{quote}
       The parser can then distinguish the binary operator
-      ``\verb+>>+'' from the above.
+      ``\verb+>>+'' from the context.
 
   \end{itemize}
 \end{slide}
@@ -263,7 +265,8 @@
       keep all the source information, including comments. This adds
       significant complexity to the lexer, which has to hide it from
       the parser. I also wrote source pretty\hyp{}printers using
-      Pottier's amazing combinator\hyp{}based library \textsf{PPrint}.
+      Pottier's beautiful, backtracking, combinator\hyp{}based library
+      \textsf{PPrint} (forget \textsf{Format}).
 
     \item The two LIGO parsers are generated by \Menhir{}.
 
@@ -277,7 +280,7 @@
       LR(1) grammars, thanks to the rewriting of productions, and the
       use of virtual tokens.
 
-    \item Yann Régis-Gianas wrote the front-end of Menhir, and
+    \item Yann Régis-Gianas wrote the front-end of \Menhir{}, and
       François Pottier the automaton construction and the
       back\hyp{}end. The original interest was an application of GADTs
       to the static typing of the parse stack: \url{https://cambium.inria.fr/~fpottier/publis/fpottier-regis-gianas-typed-lr.pdf}
@@ -317,7 +320,7 @@ closed_expr:
     \item \Menhir{} can identify all error states in the
       LR\hyp{}automaton, so we can write precise error messages for
       them. They are precise because the stack and syntactic
-      righ\hyp{}context is available at the error state, instead of
+      right\hyp{}context is available at the error state, instead of
       only the next valid tokens, so the past (the intention of the
       programmer, inferred from the prefix of the stack in terms of
       grammatical productions) can be expressed in terms of
@@ -345,9 +348,9 @@ closed_expr:
 
   \begin{itemize}
 
-    \item \Menhir{} has several interfaces, improperly called
-      APIs. The \emph{Incremental API} enables the client to take
-      control when an error is encountered.
+    \item \Menhir{} has several interfaces, improperly called APIs,
+      like the \emph{Incremental API} which enables the client to
+      take full control when an error is encountered.
 
     \item The parse stack (of terminal and non\hyp{}terminals
       recognised so far) and the automaton state (e.g. the
@@ -365,9 +368,9 @@ closed_expr:
       cases (design patterns, keywords and symbol uses, tabulations
       etc.).
 
-    \item The LSP makes constant use of this feature to maintain
-      syntax high\hyp{}lighting, to display types on hover, and
-      for go\hyp{}to\hyp{}definition on contracts being edited.
+    \item The LSP makes constant use of this feature to maintain the
+      display of types and documentation on hover, and for
+      go\hyp{}to\hyp{}definition on contracts being edited.
 
   \end{itemize}
 \end{slide}
@@ -391,7 +394,7 @@ closed_expr:
       language, respectively \CameLIGO{} and \JsLIGO{},
       the definition of the Unified AST is cumbersome. Also, in order
       to enable some measure of decompilation (type expressions for
-      the LSP), it cannot be too abstracted.
+      the LSP), it cannot be too abstract.
 
   \end{itemize}
 \end{slide}
@@ -451,11 +454,37 @@ At this point, one of the following is expected:
 \end{slide}
 
 \begin{slide}
+  \title{Approximate size of the front-end}
+
+  The current front\hyp{}end is roughly 45~kLOC:
+  \begin{center}
+    \begin{tabular}{l|r}
+      Preprocessor library & 3,782 \\
+      Lexer library & 1,592 \\
+      Parser library & 1,215 \\
+      Preprocessor & 349 \\
+      Lexer & 6,160 \\
+      Two parsers and pretty-printers & 7,485 \\
+      Two syntax error specifications & 14,621 \\
+      Two CSTs & 6,657 \\
+      Two mappings to unifed AST & 1,609 \\
+      Sundry libraries & 1,569 \\
+      \hline
+      TOTAL & 45,039
+    \end{tabular}
+  \end{center}
+  Remember that, at one point, there was also \textsf{PascaLIGO}
+  (13,094~LOC) and \textsf{ReasonLIGO} (data not available) ---~not
+  counting poor \textsf{PyLIGO}, shell scripts and dune files.
+
+\end{slide}
+
+\begin{slide}
   \title{JsLIGO versus TypeScript}
 
   \begin{itemize}
 
-    \item Despite that the subset of TypeScript needed for writing
+    \item Despite that the subset of \TypeScript{} needed for writing
       \JsLIGO{} contracts is comfortable enough (some computations can
       be expressed in several ways, for instance, and injection of
       \Michelson{} code is possible), a syntax error cannot tell
@@ -472,8 +501,8 @@ At this point, one of the following is expected:
       \TypeScript{} compiler (for example, due to different implicit
       type coercions).
 
-    \item The LIGO tooling (LSP, pretty\hyp{}printer, decompiler etc.)
-      is custom\hyp{}made.
+    \item The LIGO tooling (LSP, pretty\hyp{}printers, decompilers
+      etc.) is custom\hyp{}made.
 
   \end{itemize}
 In short: Idioms and design patterns commonly used by \TypeScript{}
@@ -549,9 +578,957 @@ found an example, though).
       items and inserted tokens, and the number of valid subtrees
       parsed since the last error.
 
-    \item One heuristic prunes the automaton's tree based on those two
-      values, and another selects one final parse tree if many valid
-      were found (smaller and earlier trees are preferred).
+    \item One heuristic prunes branches ending in an error based on
+      those two values, and another selects the final parse tree if
+      many valid were found (smaller and earlier trees are preferred).
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{The parser generator tree-sitter}
+
+  \begin{itemize}
+
+    \item \TreeSitter{} will always produce a parse tree (CST), but it
+      might contain \emph{error nodes} if skipping or popping was
+      performed during parsing, and \emph{missing nodes} if
+      synchronisation tokens were inserted (one common occurrence is a
+      failure of ASI).
+
+    \item If a non\hyp{}terminal was popped from the parse stack, an
+      error node is then shifted instead (pushed) with the subtree of
+      the non\hyp{}terminal attached below.
+
+    \item This automatic error recovery mechanism illustrates the fact
+      that \TreeSitter{} was designed, and is mostly used, for
+      tooling, not compilation: as much input as possible must be
+      parsed, no matter how broken.
+
+    \item Tooling is required to work on syntactically invalid inputs
+      (as it is being edited), whereas compilers mostly care about
+      syntactically valid inputs in batches.
+
+    \item This difference means that it is often difficult to actually
+      find out if an error was encountered by a
+      \TreeSitter\hyp{}generated parser ---~let alone how many of
+      them.
+
+    \item Another difficulty is that errors are nodes in the parse
+      tree, so it can be rather difficult to express them, and their
+      remediation, in terms of the grammar.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{The parser generator tree-sitter}
+
+  For example, given a file named \texttt{broken.ts}:
+  \begin{quote}
+    \begin{lstlisting}
+      type t += int;
+    \end{lstlisting}
+  \end{quote}
+  if we call ``\texttt{tree-sitter parse broken.ts}'', we get:
+  \begin{quote}
+    \small
+\begin{verbatim}
+(program [0, 0] - [1, 0]
+  (type_alias_declaration [0, 0] - [0, 14]
+    name: (type_identifier [0, 5] - [0, 6])
+    (ERROR [0, 7] - [0, 8])
+    value: (type_identifier [0, 10] - [0, 13])))
+broken.ts Parse:    2.41 ms      6 bytes/ms (ERROR [0, 7] - [0, 8])
+\end{verbatim}
+\end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{The parser generator tree-sitter}
+
+  While this is one of the simplest kinds of error, we can already
+  see that an \verb|ERROR| node can be inserted \emph{anywhere}, with
+  respect to the grammar, which looks like this:
+  \begin{quote}
+    \small
+    \begin{verbatim}
+     type_alias_declaration: $ => seq(
+       'type',
+       field('name', $._type_identifier),
+       field('type_parameters', optional($.type_parameters)),
+       '=',
+       field('value', $.type),
+       $._semicolon)
+    \end{verbatim}
+  \end{quote}
+  Another remark is that the parse tree is not exactly what a compiler
+  designer would call it ---~and need, because it does not contain
+  keywords, symbols or identifiers. The rationale is, as we mentioned
+  above, that \TreeSitter{} is meant to be used in conjunction with a
+  text editor, where the input is already in memory, so retrieving
+  lexemes (to wit, concrete representation of tokens) is
+  efficient.
+
+\end{slide}
+
+\begin{slide}
+  \title{The parser generator tree-sitter}
+
+  \begin{itemize}
+
+    \item As seen above, a \TreeSitter{} grammar is a \JavaScript{}
+      declaration.
+
+    \item In the case of involved syntaxes, it is often the case that
+      writers of LR grammars resort to annotations to resolve
+      LR\hyp{}conflicts (shift/reduce or reduce/reduce).
+
+    \item This is not what I had done with \CameLIGO{} and \JsLIGO{}
+      in order to guarantee the LR(1) property, but this is what was
+      done for the \TreeSitter{} grammars of \JavaScript{} and
+      \TypeScript{}: about 45-50 precedence annotations in total.
+
+  \end{itemize}
+  \small
+  \begin{verbatim}
+// Oh boy
+// The issue is these special type queries need a lower relative precedence
+// than the normal ones, since these are used in type annotations whereas the
+// other ones are used where `typeof` is required beforehand. This allows for
+// parsing of annotations such as
+// foo: import('x').y.z;
+// but was a nightmare to get working.
+    \end{verbatim}
+
+\end{slide}
+
+\begin{slide}
+  \title{The parser generator tree-sitter}
+
+  \begin{itemize}
+
+    \item What is worse is that \verb|MISSING| nodes are actually not
+      named nodes, like \verb|ERROR| nodes are. Instead, they are
+      metadata to the closest node where the insertion of a
+      synchronisation token occurred, and that token has length zero.
+
+    \item From the point of view of an \OCaml{} developer, interfacing
+      with a \TreeSitter\hyp{}generated parser is a source of concern
+      because it provides a parse tree in~C with a great number of
+      kinds of node, and it is naturally accessed through pointer
+      arithmetics.
+
+    \item The first thing we did (Leo Unoki and Alistair O'Brien) was
+      to use the \texttt{ocaml-ctypes} Foreign Function Interface
+      (FFI).
+
+    \item I highly recommend that you read the amazing paper by Jeremy
+      Yallop and others about its design and implementation:
+      \url{https://www.cl.cam.ac.uk/~jdy22/papers/a-modular-foreign-function-interface.pdf}
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Interfacing tree-sitter from OCaml}
+
+  \begin{itemize}
+
+    \item The general idea is to provide a type\hyp{}safe and modular
+      interfacing to C~code, where both C~types and C~functions
+      correspond to \OCaml{} values built from the
+      \texttt{ocaml-ctypes} library.
+
+    \item It is modular in the sense that using \OCaml{} functors, we
+      can switch from dynamic linking to static linking, for
+      instance. In the case of the new \JsLIGO{}, we use the latter.
+
+    \item The most difficult part is actually building the piece of
+      code that uses the library: the \textsf{dune} file is
+      challenging because of the generation of \OCaml{} code.
+
+    \item For the rest, two files are needed: one for interfacing the
+      types, and one for the functions.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Interfacing types}
+
+  Here is how to define an \OCaml{} type corresponding to a C~type:
+  \begin{quote}
+    \small
+  \begin{lstlisting}[language=caml]
+  open Ctypes
+
+  (* Single source location:
+
+     typedef struct TSPoint {
+       uint32_t row;
+       uint32_t column;
+     } TSPoint;
+  *)
+
+  type ts_point
+
+  let ts_point : ts_point structure typ = structure "TSPoint"
+  let row      : _ field = field ts_point "row" uint
+  let column   : _ field = field ts_point "column" uint
+  let () = seal ts_point
+  \end{lstlisting}
+  \end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{Interfacing functions}
+
+  Here is how to define an \OCaml{} function calling a C~function:
+  \begin{quote}
+    \begin{lstlisting}[language=caml]
+  (* Call a parser on a contiguous buffer.
+
+     TSTree *ts_parser_parse_string(
+       TSParser *self,
+       const TSTree *old_tree,
+       const char *string,
+       uint32_t length
+     );
+  *)
+
+  let ts_parser_parse_string =
+    foreign
+      "ts_parser_parse_string"
+      (ptr ts_parser @-> ptr ts_tree @-> string @-> uint32_t @-> returning @@ ptr ts_tree)
+    \end{lstlisting}
+  \end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{Example of parse of TypeScript}
+  \begin{quote}
+    \begin{lstlisting}[language=caml]
+(* Parsing some TypeScript code as a string *)
+
+let parse_typescript_string source_code : ts_tree_ptr =
+  let parser = TS_fun.ts_parser_new ()
+  and language = tree_sitter_typescript () in
+  let _ = TS_fun.ts_parser_set_language parser language in
+  let null_tree = from_voidp TS_types.ts_tree null in
+  let parse_tree =
+    TS_fun.ts_parser_parse_string
+      parser
+      null_tree
+      source_code
+      (UInt32.of_int @@ String.length source_code)
+  in
+  TS_fun.ts_parser_delete parser;
+  parse_tree
+    \end{lstlisting}
+  \end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{Example of parsing TypeScript}
+  \begin{quote}
+    \small
+    \begin{lstlisting}[language=caml]
+  let code = "[1, null]" in
+  let tree : ts_tree_ptr = parse_typescript_string code in
+  let program_node : ts_tree = TS_fun.ts_tree_root_node tree in
+  let of_int = UInt32.of_int in
+  let expr_stmt_node : ts_tree =
+    TS_fun.ts_node_named_child program_node (of_int 0) in
+  let array_node : ts_tree =
+    TS_fun.ts_node_named_child expr_stmt_node (of_int 0) in
+  let number_node : ts_tree =
+    TS_fun.ts_node_named_child array_node (of_int 0) in
+  let null_node : ts_tree =
+    TS_fun.ts_node_named_child array_node (of_int 1) in
+  (* Checking the node types *)
+  assert (string_of_ts_node_type program_node = "program");
+  assert (string_of_ts_node_type expr_stmt_node = "expression_statement");
+  assert (string_of_ts_node_type array_node = "array");
+  assert (string_of_ts_node_type number_node = "number");
+  assert (string_of_ts_node_type null_node = "null");
+    \end{lstlisting}
+  \end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{Abstracting the FFI}
+
+   In order to prevent null pointers to be dereferenced through the
+   API, I created a layer on top of the library above, returning
+   either optional or result values.
+   \begin{quote}
+     \small
+     \begin{lstlisting}[language=caml]
+let collect ?(comments = false) select_child arity node =
+  if is_null node then []
+  else
+    let rec fold acc n =
+      if UInt32.(equal zero n) then acc
+      else
+        let index = UInt32.pred n in
+        let child = select_child node index in
+        match get_name child with
+        | "comment" when not comments -> fold acc index
+        | _ -> fold (child :: acc) index
+    in fold [] (arity node)
+
+let collect_named_children ?(comments = false) (node : ts_tree) : ts_forest =
+  TS_fun.(collect ~comments ts_node_named_child ts_node_named_child_count node)
+     \end{lstlisting}
+   \end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{Printing the CST}
+
+  \begin{itemize}
+
+    \item The next step was to write a printer for the CST, so that
+      null pointers, empty nodes (that is, with empty range of source
+      locations) and ERROR nodes are printed, so they can be retrieved
+      easily by a regular expression.
+
+    \item A crucial issue is that, on the one hand, we have the
+      \TypeScript{} grammar (we saw above an example), and, on the
+      other hand, the CST queried through the foreign interface is one
+      particular parse tree, but we need to be able to decode
+      \emph{all possible parse trees}.
+
+    \item In other words, we find ourselves in the awkward situation
+      of having to write by hand a parser for each grammar rule!
+
+    \item This is because normal usage of \TreeSitter{} is not for
+      compilation, but for reading syntactically invalid inputs
+      ---~not build another tree.
+
+    \item Another source of concern is the retrieval of as many
+      comments as possible, not just for the (future) LSP, but also
+      because we will need to collect from them decorators, in places
+      where the \TypeScript{} syntax does not allow them.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Printing the CST}
+
+  I reused a tiny library I wrote to debug the current CSTs. For example:
+  \begin{quote}
+    \begin{lstlisting}
+      type t += int;
+    \end{lstlisting}
+  \end{quote}
+
+  \begin{quote}
+  \begin{verbatim}
+program (broken.jsligo:1:0-2:0)
+`- type_alias_declaration (broken.jsligo:1:0-14)
+   |- ERROR (broken.jsligo:1:7-8)
+   |  `- +
+   |- type [keyword] (broken.jsligo:1:0-4)
+   |- type_identifier (broken.jsligo:1:5-6)
+   |  `- t
+   |- = (broken.jsligo:1:8-9)
+   `- type_identifier (broken.jsligo:1:10-13)
+      `- int
+  \end{verbatim}
+  \end{quote}
+
+  Note how I recovered the lexemes. (Compare with what \TreeSitter{}
+  printed above.)
+
+\end{slide}
+
+\begin{slide}
+  \title{Printing the CST}
+
+  \begin{quote}
+    \lstset{basicstyle=\scriptsize}
+    \begin{lstlisting}[language=caml]
+and print_type_alias_declaration ?(comments = []) state node =
+  match get_name node with
+  | "ERROR" | "MISSING" | "NULL" ->
+    print_error_node state node ~err:Type_alias_declaration
+  | _ ->
+    let comments = comments @ prev_comments node
+    and kwd_type = first_child_named "type" node ~err:Type
+    and name_field = child_with_field "name" node ~err:Type_name
+    and sym_equal = first_child_named "=" node ~err:Equal
+    and type_parameters_field = child_with_field_opt "type_parameters" node
+    and value_field = child_with_field "value" node ~err:Type_expression in
+    let children =
+      [ mk_child_res (mk_kwd_type ~comments) kwd_type
+      ; mk_child_res print_identifier name_field
+      ; mk_child_opt print_type_parameters type_parameters_field
+      ; mk_child_res mk_sym_equal sym_equal
+      ; mk_child_res print_type value_field
+      ] in
+    let error_child = Ts_wrap.first_child_named_opt "ERROR" node in
+    let children = mk_child_opt make_node error_child :: children in
+    make_tree state node children
+    \end{lstlisting}
+  \end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{Printing the CST}
+
+  \begin{itemize}
+
+    \item Lines 3-4 handle the error cases. Line~6 gathers the
+      comments inherited and before the non\hyp{}terminal we are
+      parsing. Lines 7-11 query (parse) the children node.
+
+    \item Lines 12-21 build the corresponding tree, and commit it to
+      the current state. Note lines 19-20 that insert a single ERROR
+      node amongst the children if at least one is found. (See example
+      above.)
+
+    \item The bare\hyp{}bones CST printer is 4,268~LOC. It is not
+      callable from the pipeline, only as a standalone binary.
+
+    \item I ran the printer on 5,609 \TypeScript{} files from the
+      Microsoft conformance test suite, and looked for ERROR nodes
+      (coming from the C~CST), error nodes MISSING and NULL that the
+      abstraction layer (on top of the foreign function interface)
+      might have created. If NULL nodes are present, then a null
+      pointer was intended to be dereferenced and that would point to
+      a wrong interpretation of the grammar.
+
+    \item Everything was fine. It was time consuming because the test
+      suite mixes positive and negative tests, but, at least, we made
+      sure that no null pointer showed up.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Decoding the CST}
+
+  \begin{itemize}
+
+    \item After testing the CST printer, I moved to write a decoder
+      that would query the CST as the printer does, but, instead of
+      printing it, an AST as an \OCaml{} value would be built.
+
+    \item It systematically makes use of the result type to handle
+      errors, with support from monadic let syntax (\verb|let*|).
+
+    \item The design of the AST was error\hyp{}prone because of the
+      semantics of \TreeSitter{} grammars: such grammars can reuse
+      others which either augment a given production with more cases,
+      shadow a production or add new productions.
+
+    \item In this instance, I had to read the \JavaScript{} and
+      \TypeScript{} grammars like synoptic gospels.
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Decoding the CST}
+
+  \begin{quote}
+    \lstset{basicstyle=\scriptsize}
+    \begin{lstlisting}[language=caml]
+and dec_type_alias_declaration ?(comments = []) node : (type_alias_declaration, _) result =
+  match get_name node with
+  | "ERROR" | "MISSING" | "NULL" -> mk_err Type_alias_declaration node
+  | _ ->
+    let comments = comments @ prev_comments node in
+    let* kwd_type = first_child_named "type" node ~err:Type in
+    let* kwd_type = dec_kwd_type ~comments kwd_type in
+    let* name_field = child_with_field "name" node ~err:Type_name in
+    let name = dec_type_identifier name_field in
+    let* sym_equal = first_child_named "=" node ~err:Equal in
+    let* sym_equal = dec_sym_equal sym_equal in
+    let type_parameters_field = child_with_field_opt "type_parameters" node in
+    let* type_parameters = make_opt_res dec_type_parameters type_parameters_field in
+    let* value_field = child_with_field "value" node ~err:Type_expression in
+    let* type_expr = dec_type value_field in
+    let* () = check_first_error_child node in
+    Ok { kwd_type; name; type_parameters; sym_equal; type_expr }
+    \end{lstlisting}
+  \end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{Decoding the CST}
+
+  \begin{itemize}
+
+    \item Lines 3-4 handle the error cases. Line~5 gathers the
+      comments inherited and before the non\hyp{}terminal we are
+      parsing.
+
+    \item Queries against the CST and decoding are interleaved. For
+      instance, line~6 queries the keyword ``\texttt{type}'', and
+      line~7 decodes it, that is, makes a value for the AST node under
+      construction (see line~17 that assembles it in the absence of
+      errors).
+
+    \item Line~16 looks for the presence of an ERROR child, and fails
+      with a generic ``Syntax error'' message, whereas other failures
+      at decoding carry more useful messages: those are denoted by the
+      named arguments \texttt{\~{}err:...}
+
+    \item The bare\hyp{}bones CST decoder is 8,903~LOC (including the
+      AST).
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \title{Decoding errors}
+
+  Let us decode (with a standalone executable, like the CST printer)
+  the same broken piece of code as printed above:
+  \begin{quote}
+    \begin{lstlisting}
+      type t += int;
+    \end{lstlisting}
+  \end{quote}
+
+  \begin{alltt}
+    \small
+File "Tests/broken.jsligo", line 1, characters 7-8:
+  1 | type t \textcolor{red}{+=} int;
+Error: Syntax error.
+  \end{alltt}
+
+\end{slide}
+
+\begin{slide}
+  \title{Decoding errors}
+
+  Another example, with a better error message (but not as awesome as
+  what \Menhir{} can do for us):
+  \begin{quote}
+    \begin{lstlisting}
+interface I {
+  type t
+}
+    \end{lstlisting}
+  \end{quote}
+
+  \begin{alltt}
+    \small
+File "Tests/broken.jsligo", line 2, characters 7-8:
+  1 | interface I \{
+  2 |   type \textcolor{red}{t}
+  3 | \}
+Error: A field for the object type is expected.
+  \end{alltt}
+
+  (``\texttt{type}'' is a so\hyp{}called \emph{soft keyword}, that is,
+  in certain contexts it is interpreted as a keyword, in others an
+  identifier.)
+\end{slide}
+
+\begin{slide}
+  \title{Stripping the AST}
+
+  The pass after decoding consists in stripping the AST to a proper
+  \JsLIGO{} AST, which we called \emph{stripped AST}. For instance, we
+  go from
+  \begin{quote}
+    \small
+    \begin{lstlisting}[language=caml]
+and type_alias_declaration = {
+  kwd_type : kwd_type;
+  name : type_identifier;
+  type_parameters : type_parameters option;
+  sym_equal : sym_equal;
+  type_expr : type_expr}
+    \end{lstlisting}
+  \end{quote}
+  to
+  \begin{quote}
+    \small
+    \begin{lstlisting}[language=caml]
+and type_decl = {
+  name : variable;
+  generics : variable list;
+  type_expr : type_expr}
+    \end{lstlisting}
+  \end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{Stripping the AST}
+
+  The code that performs the transformation above is:
+  \begin{quote}
+    \small
+    \begin{lstlisting}[language=caml]
+and strip_D_type_alias_declaration (node : Ast.type_alias_declaration wrap)
+    : (S.declaration, _) result
+  =
+  let type_decl, region = node#payload, node#region in
+  let Ast.{ kwd_type = _; name; type_parameters; sym_equal = _; type_expr } = type_decl in
+  let name = strip_type_identifier name in
+  let* generics = strip_list_opt strip_type_parameters type_parameters in
+  let* type_expr = strip_type_expr type_expr in
+  let type_decl = S.{ name; generics; type_expr } in
+  Ok (S.D_type (mk_reg region type_decl))
+    \end{lstlisting}
+  \end{quote}
+
+  The AST stripper is 3,606~LOC (including the stripped AST).
+
+\end{slide}
+
+\begin{slide}
+  \title{Stripping the AST}
+
+  The AST stripper enables to reject some syntactically valid
+  \TypeScript{} programs that are not accepted by \JsLIGO{}. For
+  example,
+  \begin{quote}
+    \begin{lstlisting}
+type t = int[];
+    \end{lstlisting}
+  \end{quote}
+
+  \begin{alltt}
+    \small
+File "Tests/broken.jsligo", line 1, characters 9-14:
+  1 | type t = \textcolor{red}{int[]};
+Error: The type 'array' is not supported by JsLIGO.
+  \end{alltt}
+
+  This is not possible with the \Menhir\hyp{}generated parser because
+  its grammar does not describe all of \TypeScript{}.
+
+\end{slide}
+
+\begin{slide}
+  \title{Architecture of the new JsLIGO front-end}
+
+  There is a new tool and two new passes:
+  \begin{enumerate}
+
+    \item the CST printer, for getting the tree traversal and queries
+      right;
+
+    \item the CST decoder, which queries the C~CST through the
+      abstraction of the FFI, and builds the \TypeScript{} AST;
+
+    \item the AST stripper, which filters down the \TypeScript{} AST
+      to the valid syntactic constructs of \JsLIGO{}.
+  \end{enumerate}
+
+  \medskip
+
+  An existing pass had to be entirely rewritten: the transformation
+  from the stripped AST to the unified AST (798~LOC).
+
+  \medskip
+
+  The total size of the \JsLIGO{} front\hyp{}end is 21,642~LOC
+  (including the new mapping to the unified AST and the printer).
+
+  \medskip
+
+  It can be argued that the next pass, after the unified AST, is also
+  part of the front\hyp{}end, because the middle\hyp{}end starts with
+  the type\hyp{}checker, but it is probably off\hyp{}topic here.
+
+\end{slide}
+
+\begin{slide}
+  \title{Syntactic changes of JsLIGO}
+
+  We lose the Tezos\hyp{}specific literals:
+  \begin{lstlisting}
+    const zero = 0x;
+    const one = 1n;
+  \end{lstlisting}
+  is now
+  \begin{lstlisting}
+    const zero = "" as bytes;
+    const one = 1 as nat;
+  \end{lstlisting}
+
+  Parameters of contracts change from
+  \begin{lstlisting}
+    parameter_of A.B.C
+  \end{lstlisting}
+  to
+  \begin{lstlisting}
+    parameter_of<A.B.C>
+  \end{lstlisting}
+
+\end{slide}
+
+\begin{slide}
+  \title{Syntactic changes of JsLIGO}
+
+  No more field name punning in types and expressions:
+  \begin{lstlisting}
+    const a = { x };
+  \end{lstlisting}
+  is now
+  \begin{lstlisting}
+    const a = { x: x };
+  \end{lstlisting}
+
+  Separators are not so versatile with the \TypeScript{} grammar we
+  use:
+  \begin{lstlisting}
+    { x: 4; y }
+  \end{lstlisting}
+  must use commas now:
+  \begin{lstlisting}
+    { x: 4, y }
+  \end{lstlisting}
+
+\end{slide}
+
+\begin{slide}
+  \title{Syntactic changes of JsLIGO}
+
+  We kept variant types as a special interpretation of union types:
+  when all the summands are tuples whose first component is a
+  singleton string type. Expressions constructed for those types
+  expect a type coercion to their original singleton type.
+  \begin{lstlisting}
+    type option<T> = ["Some", T] | ["None"];
+    const some_one = Some(1);
+  \end{lstlisting}
+  is now
+  \begin{lstlisting}
+    type option<T> = ["Some", T] | ["None"]; // Same as before
+    const some_one = ["Some" as "Some", 1];
+  \end{lstlisting}
+  If there is only one variant, it must start with a vertical bar:
+  \begin{lstlisting}
+    type singleton = | ["Single"]
+  \end{lstlisting}
+
+\end{slide}
+
+\begin{slide}
+  \title{Syntactic changes of JsLIGO}
+
+  We mentioned above that I added a proposal for doing pattern
+  matching in \TypeScript{}. Since that proposal has not been adopted
+  yet, we must find another way. We used to have:
+  \begin{quote}
+  \begin{lstlisting}
+    const is_some =
+      match(some_one) {
+        when (Some(_)): true;
+        when (None()): false
+      }
+  \end{lstlisting}
+  \end{quote}
+  Now, we assume a predefined function \verb|$match| and the cases
+  become object properties:
+  \begin{quote}
+  \begin{lstlisting}
+    const is_some =
+      $match(some_one, {
+        "Some": n => true,
+        "None": () => false
+      })
+  \end{lstlisting}
+  \end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{Syntactic changes of JsLIGO}
+
+  Because this new syntax expects names for data constructors, like
+  \verb|Some|, we cannot use \verb|[]| as a pattern matching the empty
+  list. I simply added to the LIGO standard library a function
+  \verb|List.head_and_tail|:
+  \begin{quote}
+  \begin{lstlisting}
+function rev <T>(xs : list<T>) : list<T> {
+  const rev = <T>([xs,acc]: [list<T>, list<T>]) : list<T> =>
+    $match(List.head_and_tail(xs), {
+      "None": () => acc,
+      "Some": ([y,ys]) => rev([ys, [y,...acc]])
+    });
+
+  return rev([xs, []]);
+};
+  \end{lstlisting}
+  \end{quote}
+
+\end{slide}
+
+\begin{slide}
+  \title{Syntactic changes of JsLIGO}
+
+  A big change is the unplugging of the preprocessor and the
+  development of a new build system (by Dmitry Laptov) that enables
+  three forms of import statements to replace \verb|#import|:
+  \begin{lstlisting}
+    import M = M.O;
+  \end{lstlisting}
+  remains the same, but now we can use
+  \begin{lstlisting}
+    import * as M from "/my/path.jsligo"
+  \end{lstlisting}
+  and
+  \begin{lstlisting}
+    import {x, y} from "/my/path.jsligo"
+  \end{lstlisting}
+  Note that this does not replace existing uses of \verb|#include| and
+  \verb|#if| for conditional compilation and as a guard against double
+  inclusions: manual upgrading is needed.
+
+\end{slide}
+
+\begin{slide}
+  \title{Syntactic changes of JsLIGO}
+
+  In \TypeScript{}, valid locations for decorators is rather limited
+  in comparison with \JsLIGO{}. As a consequence, we have sometimes to
+  put them in comments just before the construct they apply to. For
+  example, at the top\hyp{}level,
+  \begin{lstlisting}
+@entry
+const add = (s: int, k: int) : [list<operation>, int] => [[], s+k];
+  \end{lstlisting}
+  becomes
+  \begin{lstlisting}
+// @entry
+const add = (s: int, k: int) : [list<operation>, int] => [[], s+k];
+  \end{lstlisting}
+
+\end{slide}
+
+\begin{slide}
+  \title{Syntactic changes of JsLIGO}
+
+  Interfaces in \JsLIGO{} could contain type definitions, including of
+  abstract types, and entries could be decorated. This is no more
+  valid.
+  \begin{lstlisting}
+interface FA0 {
+  type storage = int;
+
+  @entry
+  const add: (p: int, s: storage) => [list<operation>, storage];
+}
+  \end{lstlisting}
+  is now
+  \begin{lstlisting}
+type storage = int;
+
+interface FA0 {
+  // @entry
+  add: (p: int, s: storage) => [list<operation>, storage];
+}
+  \end{lstlisting}
+
+  Sadly, there is no way for now to recover the loss of type abstraction.
+
+\end{slide}
+
+\begin{slide}
+  \title{Syntactic changes of JsLIGO}
+
+  Namespaces were able to implement interfaces, which is not possible
+  in \TypeScript{}. Instead we use now a class:
+  \begin{lstlisting}
+namespace Impl implements FA0 {
+  @entry
+  const add = (p: int, s: int) : [list<operation>, int] => [[],p+s];
+}
+  \end{lstlisting}
+  is now
+  \begin{lstlisting}
+class Impl implements FA0 {
+  @entry
+  add = (p: int, s: int) : [list<operation>, int] => [[], p+s];
+}
+  \end{lstlisting}
+
+\end{slide}
+
+\begin{slide}
+  \title{Syntactic changes of JsLIGO}
+
+  I implemented do-expressions in \JsLIGO{} for the right\hyp{}hand
+  sides of pattern matchings, which are expected to be expressions:
+  sometimes we need to evaluate some statements before returning a
+  value. Before
+  \begin{lstlisting}
+    do { ... return e }
+  \end{lstlisting}
+  and now, we use a thunk instead:
+  \begin{lstlisting}
+    (() => { ... return e })()
+  \end{lstlisting}
+  If some variable \textsf{v} cannot be captured in the thunk above,
+  because of \Michelson{} constraints, we simply pass it as an argument,
+  like so:
+  \begin{lstlisting}
+    ((v) => { ... return e })(v)
+  \end{lstlisting}
+
+\end{slide}
+
+\begin{slide}
+  \title{Conclusion}
+
+  \begin{itemize}
+
+    \item The test contracts and the code excerpts in the LIGO
+      documentation have been upgraded. All meaningful tests pass (I
+      disabled various kinds of LSP tests and pretty\hyp{}printing
+      tests, for example).
+
+    \item The documentation in English is being updated (Tim
+      McMackin).
+
+    \item Since we are breaking things, it is time to discard
+      deprecated modules from the LIGO standard libray, e.g. replace
+      the contents of \texttt{Tezos} by that of \texttt{Tezos.Next}.
+
+    \item Since the LIGO registry is being deprecated, some standard
+      contracts in \JsLIGO{} will have to be distributed in some other
+      way and updated manually.
+
+    \item Tooling is not available yet (LSP): this is a
+      non\hyp{}trivial undertaking.
+
+    \item An experimental release will be done without the tooling.
+
+    \item \CameLIGO{} will still work as usual, but the plan is to
+      release it separately later as a library for \OCaml{} developers
+      (Eduardo Rafael), instead as a standalone compiler.
+
+    \item For your information, the back\hyp{}end now uses LLTZ, that
+      is, benefits from SmartPy's optimisations (Alan Marko).
 
   \end{itemize}
 
