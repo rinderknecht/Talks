@@ -1287,13 +1287,15 @@ Error: The type 'array' is not supported by JsLIGO.
 \begin{slide}
   \title{Syntactic changes of JsLIGO}
 
-  No more field name punning in types and expressions:
+  No more field name punning in types:
   \begin{lstlisting}
-    const a = { x };
+    type t = int;
+    type u = { t };
   \end{lstlisting}
   is now
   \begin{lstlisting}
-    const a = { x: x };
+    type t = int;
+    type u = { t: t };
   \end{lstlisting}
 
   Separators are not so versatile with the \TypeScript{} grammar we
