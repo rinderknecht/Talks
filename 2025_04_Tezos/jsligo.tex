@@ -320,7 +320,7 @@ closed_expr:
     \item \Menhir{} can identify all error states in the
       LR\hyp{}automaton, so we can write precise error messages for
       them. They are precise because the stack and syntactic
-      right\hyp{}context is available at the error state, instead of
+      right\hyp{}context are available at the error states, instead of
       only the next valid tokens, so the past (the intention of the
       programmer, inferred from the prefix of the stack in terms of
       grammatical productions) can be expressed in terms of
@@ -335,7 +335,8 @@ closed_expr:
       semicolon. Instead, I analysed the grammar and hardcoded a
       sub\hyp{}grammar (\~{}100~LOC) for statements that allow some
       semicolons to be missing (and actually can omit more than the
-      mainstream compilers).
+      mainstream compilers --- a testament to the power of static
+      analysis).
 
     \item One last very cool paper about using \Menhir{} to
       parse C11 (as in \textsf{CompCert}):
@@ -688,8 +689,8 @@ broken.ts Parse:    2.41 ms      6 bytes/ms (ERROR [0, 7] - [0, 8])
       LR\hyp{}conflicts (shift/reduce or reduce/reduce).
 
     \item This is not what I had done with \CameLIGO{} and \JsLIGO{}
-      in order to guarantee the LR(1) property, but this is what was
-      done for the \TreeSitter{} grammars of \JavaScript{} and
+      in order to guarantee the LR(1) property, but this is what had
+      been done for the \TreeSitter{} grammars of \JavaScript{} and
       \TypeScript{}: about 45-50 precedence annotations in total.
 
   \end{itemize}
@@ -746,7 +747,8 @@ broken.ts Parse:    2.41 ms      6 bytes/ms (ERROR [0, 7] - [0, 8])
 
     \item It is modular in the sense that using \OCaml{} functors, we
       can switch from dynamic linking to static linking, for
-      instance. In the case of the new \JsLIGO{}, we use the latter.
+      instance. In the case of the new \JsLIGO{}, we use the latter,
+      which is more efficient and more self\hyp{}contained.
 
     \item The most difficult part is actually building the piece of
       code that uses the library: the \textsf{dune} file is
@@ -912,6 +914,7 @@ let collect_named_children ?(comments = false) (node : ts_tree) : ts_forest =
 
     \item In other words, we find ourselves in the awkward situation
       of having to write by hand a parser for each grammar rule!
+      (Technically, a top\hyp{}down tree automaton.)
 
     \item This is because normal usage of \TreeSitter{} is not for
       compilation, but for reading syntactically invalid inputs
@@ -1491,8 +1494,8 @@ class Impl implements FA0 {
     (() => { ... return e })()
   \end{lstlisting}
   If some variable \textsf{v} cannot be captured in the thunk above,
-  because of \Michelson{} constraints, we simply pass it as an argument,
-  like so:
+  because of \Michelson{} constraints (e.g. a big map cannot be
+  captured), we simply pass it as an argument, like so:
   \begin{lstlisting}
     (v => { ... return e })(v)
   \end{lstlisting}
