@@ -1,0 +1,188 @@
+%%-*-latex-*-
+
+%% ASN.1 Acronyms
+%%
+\newcommand{\ASN}{\mbox{ASN.1}\xspace}
+\newcommand{\core}{core \ASN}
+
+%% Variables
+\newcommand{\VAR}[1]{\nu (#1)}
+
+%% Abstract Syntax Trees
+%%
+\newcommand{\ocamlkwd}[1]{\textnormal{\textsf{\textbf{#1}}}}
+\newcommand{\ocamltypename}[1]{\textnormal{\textsl{#1}}}
+\newcommand{\ocamlvaluename}[1]{\textnormal{\textit{#1}}}
+\newcommand{\asnkwdconstr}[1]{\textsc{#1}}
+\newcommand{\asnkwdpvar}[1]{\textsf{`}\textsc{#1}}
+\newcommand{\ocamlconstr}[1]{\textnormal{\textsf{#1}}}
+\newcommand{\ocamlpvar}[1]{\textnormal{\textsf{`#1}}}
+%%\newcommand{\asnsym}[1]{\textsf{\textbf{#1}}\xspace}
+\newcommand{\asnsymbol}[1]{\boldsymbol{#1}}
+\newcommand{\wildcard}{\textnormal{\Huge \_\xspace}}
+%\newcommand{\wildcard}{\textnormal{\large \raisebox{0.5mm}{\_}}\xspace}
+\newcommand{\wildcardof}{\wildcard \ocamlkwd{of}\xspace}
+\newcommand{\ocamlmodulepath}[1]{\textnormal{#1}}
+\newcommand{\ocamlcomment}[1]{\begin{flushleft} \textit{(* #1 *)} \end{flushleft}}
+%%\newcommand{\quotedasnsymbol}[1]{\textsf{"}$\asnsymbol{#1}$\,\textsf{"}}
+\newcommand{\backquote}{\textbf{\textsf{`}}}
+\newcommand{\stringof}[1]{\texttt{"}\textsf{#1}\texttt{"}}
+\newcommand{\back}[1]{\symbol{92} {#1}}
+
+\newcommand{\LEQ}{\pmb{\leqslant}}
+\newcommand{\LT}{\pmb{<}}
+
+\newcommand{\Some}{\ocamlconstr{Some}}
+\newcommand{\None}{\ocamlconstr{None}}
+
+\newcommand{\where}{\ocamlkwd{where}}
+
+\newcommand{\kwdCHOICE}{\asnkwdconstr{Choi\-ce}}
+\newcommand{\kwdSET}{\asnkwdconstr{Set}}
+\newcommand{\kwdSEQUENCE}{\asnkwdconstr{Se\-quen\-ce}}
+\newcommand{\kwdSETOF}{\asnkwdconstr{Set of}}
+\newcommand{\kwdSEQUENCEOF}{\asnkwdconstr{Se\-quen\-ce of}}
+\newcommand{\kwdINTEGER}{\asnkwdconstr{In\-te\-ger}}
+\newcommand{\kwdBITSTRING}{\asnkwdconstr{Bit string}}
+\newcommand{\kwdENUMERATED}{\asnkwdconstr{Enu\-me\-ra\-ted}}
+\newcommand{\kwdREAL}{\asnkwdconstr{Real}}
+\newcommand{\kwdBOOLEAN}{\asnkwdconstr{Bool\-ean}}
+\newcommand{\kwdNULL}{\asnkwdconstr{Null}}
+\newcommand{\kwdOCTETSTRING}{\asnkwdconstr{Oc\-tet string}}
+\newcommand{\kwdOBJECTIDENTIFIER}{\asnkwdconstr{Obj\-ect ident\-ifier}}
+\newcommand{\kwdRELATIVEOID}{\asnkwdconstr{Re\-lat\-ive OID}}
+\newcommand{\kwdEMBEDDEDPDV}{\asnkwdconstr{Embed\-ded PDV}}
+\newcommand{\kwdEXTERNAL}{\asnkwdconstr{Ex\-ter\-nal}}
+\newcommand{\kwdCHARACTERSTRING}{\asnkwdconstr{Char\-acter string}}
+\newcommand{\kwdOPTIONAL}{\asnkwdconstr{Option\-al}}
+\newcommand{\kwdDEFAULT}{\asnkwdconstr{Def\-ault}}
+\newcommand{\kwdCOMPONENTSOF}{\asnkwdconstr{Com\-po\-nents of}}
+\newcommand{\kwdTRUE}{\asnkwdconstr{True}}
+\newcommand{\kwdFALSE}{\asnkwdconstr{False}}
+\newcommand{\kwdMINUSINFINITY}{\asnkwdconstr{Minus-in\-fi\-ni\-ty}}
+\newcommand{\kwdPLUSINFINITY}{\asnkwdconstr{Plus-in\-fi\-ni\-ty}}
+\newcommand{\kwdMIN}{\asnkwdconstr{Min}}
+\newcommand{\kwdMAX}{\asnkwdconstr{Max}}
+\newcommand{\TRef}{\ocamlpvar{TRef}}
+\newcommand{\VRef}{\ocamlpvar{VRef}}
+\newcommand{\Null}{\ocamlpvar{\small NULL}}
+\newcommand{\MinusInfinity}{\ocamlpvar{\small MINUS\_INFINITY}}
+\newcommand{\PlusInfinity}{\ocamlpvar{\small PLUS\_INFINITY}}
+\newcommand{\MinInfInt}{\ocamlpvar{Min\-Inf\-Int}}
+\newcommand{\PlusInfInt}{\ocamlpvar{Plus\-Inf\-Int}}
+\newcommand{\MinInfReal}{\ocamlpvar{Min\-Inf\-Real}}
+\newcommand{\PlusInfReal}{\ocamlpvar{Plus\-Inf\-Real}}
+\newcommand{\BitStr}{\ocamlpvar{BitStr}}
+\newcommand{\BinStr}{\ocamlpvar{Bin\-Str}}
+\newcommand{\PosInt}{\ocamlpvar{Pos\-Int}}
+\newcommand{\NegInt}{\ocamlpvar{Neg\-Int}}
+\newcommand{\Int}{\ocamlpvar{Int}}
+\newcommand{\Real}{\ocamlpvar{Real}}
+\newcommand{\REAL}{\ocamlpvar{REAL}}
+\newcommand{\PosReal}{\ocamlpvar{Pos\-Real}}
+\newcommand{\NegReal}{\ocamlpvar{Neg\-Real}}
+\newcommand{\Chosen}{\ocamlpvar{Chosen}}
+\newcommand{\String}{\ocamlconstr{String}}
+\newcommand{\pvString}{\ocamlpvar{String}}
+\newcommand{\RestrStr}{\ocamlconstr{Restr\-Str}}
+\newcommand{\Regexp}{\ocamlpvar{Reg\-exp}}
+\newcommand{\Ident}{\ocamlpvar{Ident}}
+\newcommand{\Enum}{\ocamlpvar{Enum}}
+\newcommand{\Enumerated}{\ocamlpvar{\small ENUMERATED}}
+\newcommand{\List}{\ocamlpvar{List}}
+\newcommand{\Map}{\ocamlpvar{Map}}
+\newcommand{\Nil}{\ocamlpvar{Nil}}
+\newcommand{\True}{\ocamlpvar{\small TRUE}}
+\newcommand{\False}{\ocamlpvar{\small FALSE}}
+\newcommand{\Cons}{\ocamlpvar{Cons}}
+\newcommand{\Bind}{\ocamlpvar{Bind}}
+\newcommand{\Comp}{\ocamlconstr{Comp}}
+\newcommand{\Choice}{\ocamlpvar{\small CHOICE}}
+\newcommand{\Set}{\ocamlpvar{\small Set}}
+\newcommand{\Seq}{\ocamlpvar{\small Seq}}
+\newcommand{\SET}{\ocamlpvar{\small SET}}
+\newcommand{\SEQUENCE}{\ocamlpvar{\small SEQUENCE}}
+\newcommand{\SetOf}{\ocamlpvar{\small SetOf}}
+\newcommand{\SeqOf}{\ocamlpvar{\small SeqOf}}
+\newcommand{\SETOF}{\ocamlpvar{\small SET\_OF}}
+\newcommand{\SEQUENCEOF}{\ocamlpvar{\small SEQUENCE\_OF}}
+\newcommand{\OctetString}{\ocamlpvar{\small OCTET\_STRING}}
+\newcommand{\BitString}{\ocamlpvar{\small BIT\_STRING}}
+\newcommand{\Integer}{\ocamlpvar{\small INTEGER}}
+\newcommand{\Boolean}{\ocamlpvar{BOOLEAN}}
+\newcommand{\Implicit}{\ocamlconstr{\small IMPLICIT}}
+\newcommand{\Explicit}{\ocamlconstr{\small EXPLICIT}}
+\newcommand{\Universal}{\ocamlconstr{UNIVERSAL}}
+\newcommand{\Private}{\ocamlconstr{\small PRIVATE}}
+\newcommand{\Application}{\ocamlconstr{APPLICATION}}
+\newcommand{\Context}{\ocamlconstr{Context}}
+\newcommand{\Optional}{\ocamlpvar{\small OPTIONAL}}
+\newcommand{\kwdAPPLICATION}{\asnkwdconstr{Ap\-pli\-ca\-tion}}
+\newcommand{\kwdUNIVERSAL}{\asnkwdconstr{Uni\-ver\-sal}}
+\newcommand{\kwdPRIVATE}{\asnkwdconstr{Pri\-va\-te}}
+\newcommand{\kwdEXPLICIT}{\asnkwdconstr{Ex\-pli\-cit}}
+\newcommand{\kwdIMPLICIT}{\asnkwdconstr{Im\-pli\-cit}}
+\newcommand{\kwdAUTOMATIC}{\asnkwdconstr{Au\-to\-ma\-tic}}
+\newcommand{\kwdTAGS}{\asnkwdconstr{Tags}}
+\newcommand{\kwdPRESENT}{\asnkwdconstr{Present}}
+\newcommand{\kwdABSENT}{\asnkwdconstr{Absent}}
+\newcommand{\kwdUNION}{\asnkwdconstr{Union}}
+\newcommand{\kwdINTERSECTION}{\asnkwdconstr{In\-ter\-sec\-tion}}
+\newcommand{\kwdEXCEPT}{\asnkwdconstr{Except}}
+\newcommand{\kwdALLEXCEPT}{\asnkwdconstr{All except}}
+\newcommand{\kwdFROM}{\asnkwdconstr{From}}
+\newcommand{\kwdSIZE}{\asnkwdconstr{Size}}
+\newcommand{\kwdINCLUDES}{\asnkwdconstr{In\-clu\-des}}
+\newcommand{\kwdWITHCOMPONENT}{\asnkwdconstr{With com\-po\-nent}}
+\newcommand{\kwdWITHCOMPONENTS}{\asnkwdconstr{With com\-po\-nents}}
+\newcommand{\kwdPATTERN}{\asnkwdconstr{Pat\-tern}}
+\newcommand{\Value}{\ocamlconstr{Value}}
+\newcommand{\HexStr}{\ocamlpvar{Hex\-Str}}
+\newcommand{\ObjId}{\ocamlconstr{Obj\-Id}}
+\newcommand{\Empty}{\ocamlpvar{Empty}}
+\newcommand{\Partial}{\ocamlconstr{Part\-ial}}
+\newcommand{\Full}{\ocamlconstr{Full}}
+\newcommand{\Interval}{\ocamlpvar{In\-ter\-val}}
+
+\newcommand{\T}{\textnormal{\textrm{T}}}
+\newcommand{\normT}{\overline{\T}}
+\newcommand{\C}{\textnormal{\textrm{C}}}
+%%\newcommand{\F}{{\cal F}}
+\newcommand{\I}{{\cal I}}
+\newcommand{\J}{{\cal J}}
+\newcommand{\V}{{\cal V}}
+\newcommand{\normV}{\overline{\cal V}}
+
+\newcommand{\Labels}{{\cal L}}
+
+\newcommand{\Env}[2]{{#1}\hspace*{-0.5mm}_{_{#2}}}
+\newcommand{\FieldEnv}[1]{\Env{\textnormal{\textrm{F}}}{#1}}
+\newcommand{\CompEnv}[1]{\Env{\Phi}{#1}}
+\newcommand{\IdEnv}[1]{\Env{\textnormal{\textrm{M}}}{#1}}
+\newcommand{\IntEnv}[1]{\Env{\textnormal{\textrm{L}}}{#1}}
+\newcommand{\FieldConst}[1]{\Env{\textnormal{\textrm{K}}}{#1}}
+\newcommand{\NamedBits}[1]{\Env{{\cal N}}{#1}}
+
+%%\newcommand{\NormFieldConst}[1]{\textnormal{\textrm{K}}'\hspace*{-1.3mm}_{_{#1}}}
+\newcommand{\NormFieldConst}[1]{\overline{\textnormal{\textrm{K}}}\hspace*{-0.5mm}_{_{#1}}}
+\newcommand{\NormCompEnv}[1]{\Phi'\hspace*{-1.3mm}_{_{#1}}}
+
+\newcommand{\Herbrand}{{\cal H}}
+\newcommand{\LIST}{\textnormal{L}}
+\newcommand{\MAP}{{\cal Q}}
+\newcommand{\NEWTERMS}{\textnormal{N}}
+\newcommand{\ASSIGN}{\textnormal{\textrm{::=}\xspace}}
+
+\newcommand{\TSE}{\denotC}
+\newcommand{\R}{{\cal R}}
+\newcommand{\TSEmap}[1]{\MAP_{_{#1}}}
+\newcommand{\TSEnormMap}[1]{\MAP'_{#1}}
+
+\newcommand{\IntInter}{\ocamlconstr{IntInter}}
+\newcommand{\RealInter}{\ocamlconstr{RealInter}}
+\newcommand{\StrInter}{\ocamlconstr{StrInter}}
+
+\newcommand{\SC}{\textnormal{SC}}
+
+\newcommand{\MU}[2]{\mu_{#1} \, (#2)}
+

@@ -1,12 +1,8 @@
 %%-*-latex-*-
 
-\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-
-\documentclass[english]{seminar}
+\documentclass[compress,dvips,xcolor={dvipsnames},t]{beamer}
 
 \usepackage[english]{babel}
-\usepackage[T1]{fontenc}
-\usepackage[latin1]{inputenc}
 \usepackage{graphicx}
 \usepackage{xspace}
 \usepackage{url}
@@ -16,39 +12,40 @@
 \usepackage{color}
 
 \input{cpp}
-\input{slides_look}
 \input{asn1}
 
 \newtheorem{proposition}{Proposition}
-\newtheorem{theorem}{Theorem}
+%\newtheorem{theorem}{Theorem}
 \newcommand{\id}[1]{\textsf{#1}}
 \newcommand{\coding}[4]{#1 \vdash #2 : #3 \rightarrow #4}
 \newcommand{\decoding}[3]{{\cal D}(#1,#2,#3)}
+
+\title{Research topics\\
+Konkuk University, Seoul}
+\author{Christian Rinderknecht}
+\date{18 October 2004}
 
 %---------------------------------------------------------------------
 % Title
 %
 \begin{document}
 
-\division{debut}{\url{christian_rinderknecht@yahoo.fr}}%
-         {Konkuk University, Seoul, October 18th, 2004}
+\frame{\maketitle}
 
-\begin{slide}
-\grandtitre{Illustrated professional overview}
+\begin{frame}
+\frametitle{Illustrated professional overview}
 
 \bigskip
 
 \centerline{Christian Rinderknecht}
 
-\end{slide}
-
-\centerslidesfalse
+\end{frame}
 
 %---------------------------------------------------------------------
 % In short
 %
-\begin{slide}
-\titre{In short}
+\begin{frame}
+\frametitle{In short}
 
 \begin{itemize}
 
@@ -56,7 +53,7 @@
   (\url{http://cristal.inria.fr}) from 1993 to 1997. Application of
   formal techniques to \ASN, a specification language used in
   telecommunications (design and development of a compiler front-end
-  and soundness proof of an encoding rule). \myblue{Theoretical
+  and soundness proof of an encoding rule). \textbf{Theoretical
   computer science background.}
 
   \item Alternating academic and industrial positions, with common
@@ -72,13 +69,13 @@
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 %---------------------------------------------------------------------
 % Research topics
 %
-\begin{slide}
-\titre{Research topics}
+\begin{frame}
+\frametitle{Research topics}
 
 \begin{itemize}
 
@@ -89,22 +86,22 @@
   \item Software development cycle (Alcatel, PolySpace): compilation,
   static program analysis, tests, code quality ($\approx$ two years).
 
-  \item At \emph{Léonard de Vinci}, XML-based web-site frameworks
+  \item At \emph{LÃ©onard de Vinci}, XML-based web-site frameworks
   supporting e-learning, but not exclusively. ($\approx$ one year)
 
   \item In all cases, my work was to lead and apply some research, the
   approach was rigourous (sometimes formal), often guided by the
-  \myblue{``language'' aspect of the problems}.
+  \textbf{``language'' aspect of the problems}.
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 %---------------------------------------------------------------------
 % Projects and collaborations
 %
-\begin{slide}
-\titre{Projects and collaborations}
+\begin{frame}
+\frametitle{Projects and collaborations}
 
 \begin{itemize}
 
@@ -116,7 +113,7 @@
   took part to two national projets, involving both academic and
   industrial partners.
 
-  \item At \emph{Léonard de Vinci}, I was a member of the European
+  \item At \emph{LÃ©onard de Vinci}, I was a member of the European
   project \textsc{Kaleidoscope} (e-learning, XML frameworks, semantic
   web, ontologies etc.) and of the AIDA seminar
   (\emph{Interdisciplinary Approach for Interactive Learning
@@ -124,23 +121,23 @@
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 
 %---------------------------------------------------------------------
 % Teaching
 %
-\begin{slide}
-\titre{Teaching}
+\begin{frame}
+\frametitle{Teaching}
 
 \begin{itemize}
 
-  \item During my Ph.D. (1993-1996), I teached at univ. René Diderot
+  \item During my Ph.D. (1993-1996), I teached at univ. RenÃ© Diderot
   (Paris VII) to undergraduates: algorithmics, Pascal, \cpp, linear
   algebra, integral calculus. I designed and tutored student projects,
   prepared exams etc.
 
-  \item Teaching assistant at \emph{Institut Supérieur d'Électronique
+  \item Teaching assistant at \emph{Institut SupÃ©rieur d'Ã‰lectronique
   de Paris}, an engineering school: \cpp{} programming (1993-1996).
 
   \item Teaching assistant in algorithmics and functional programming
@@ -148,13 +145,13 @@
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 %---------------------------------------------------------------------
 % Teaching (bis)
 %
-\begin{slide}
-\titre{Teaching (continued)}
+\begin{frame}
+\frametitle{Teaching (continued)}
 
 \begin{itemize}
 
@@ -165,7 +162,7 @@
   \emph{Semantics Definition Language} (SDL) to students and
   professionals (in Spanish), from 1998 to 2000.
 
-  \item At \emph{Léonard de Vinci}, I taught software engineering,
+  \item At \emph{LÃ©onard de Vinci}, I taught software engineering,
   introduction to formal methods, Java programming, Objective Caml
   (functional programming), Unix shell, \textsc{gnu} development
   tools, compiler generation, introduction to protocol engineering. I
@@ -173,13 +170,13 @@
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 %---------------------------------------------------------------------
 % ICU
 %
-\begin{slide}
-\titre{Visiting Professor at Information and Communications University (2001-2002)}
+\begin{frame}
+\frametitle{Visiting Professor at Information and Communications University (2001-2002)}
 
 \vspace*{-5pt}
 
@@ -205,24 +202,24 @@
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 
 %---------------------------------------------------------------------
-% Léonard de Vinci
+% LÃ©onard de Vinci
 %
-\begin{slide}
-\titre{Assistant Professor at \emph{Léonard de Vinci} (2003-2004)}
+\begin{frame}
+\frametitle{Assistant Professor at \emph{LÃ©onard de Vinci} (2003-2004)}
 
 \begin{itemize}
 
-  \item I published two papers on two very different topics: 
+  \item I published two papers on two very different topics:
 
   \begin{itemize}
 
-    \bitem a question-answering mining web-platform,
+    \item a question-answering mining web-platform,
 
-    \bitem the formal design review of \ASN and BER.
+    \item the formal design review of \ASN and BER.
 
   \end{itemize}
 
@@ -241,13 +238,13 @@
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % What are the Basic Encoding Rules (BER)?
 %
-\begin{slide}
-\titre{What are the Basic Encoding Rules (BER)?}
+\begin{frame}
+\frametitle{What are the Basic Encoding Rules (BER)?}
 
 \begin{itemize}
 
@@ -271,13 +268,13 @@
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % How do ASN.1 and the BER interact?
 %
-\begin{slide}
-\titre{How do \ASN and the BER interact?}
+\begin{frame}
+\frametitle{How do \ASN and the BER interact?}
 
 \begin{itemize}
 
@@ -300,13 +297,13 @@
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % So, what is wrong?
 %
-\begin{slide}
-\titre{So, what is wrong?}
+\begin{frame}
+\frametitle{So, what is wrong?}
 
 \begin{itemize}
 
@@ -329,17 +326,17 @@
   \item Further study proved that all the problems lay actually in
   \emph{implementations}:
 
-  \item \myblue{we want to show that \ASN and the BER are, themselves,
+  \item \textbf{we want to show that \ASN and the BER are, themselves,
   well designed.}
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % Modeling
-\begin{slide}
-\titre{Modeling (assumptions and encoding)}
+\begin{frame}
+\frametitle{Modeling (assumptions and encoding)}
 
 \vspace*{-6pt}
 
@@ -366,13 +363,13 @@ All the BER encodings of a given value, according to a given type, are
 equivalent.
 \end{proposition}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % BER decoding
 %
-\begin{slide}
-\titre{Modeling (decoding)}
+\begin{frame}
+\frametitle{Modeling (decoding)}
 
 \begin{itemize}
 
@@ -380,7 +377,7 @@ equivalent.
   decoding at all.
 
   \item We believe that the receiver is the peer most concerned with
-  the sound design of the BER: \myblue{the composition of encoding and
+  the sound design of the BER: \textbf{the composition of encoding and
   decoding yields a value equivalent to the original one}.
 
   \begin{theorem}[Soundness]
@@ -393,23 +390,23 @@ equivalent.
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % Soundness property
 %
-\begin{slide}
-\titre{Soundness property}
+\begin{frame}
+\frametitle{Soundness property}
 
 \centerline{\includegraphics[width=.85 \textwidth]{model-1.eps}}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % Equivalence entailment
 %
-\begin{slide}
-\titre{Equivalence entailment}
+\begin{frame}
+\frametitle{Equivalence entailment}
 
 As a consequence, in order to prove the soundness property, it appears
 that we need to link logically the two equivalence relationships we
@@ -421,29 +418,29 @@ $c_1$ is equivalent to the decoding of $c_2$ assuming the same type.
 \end{proposition}
 
 One equivalence rely solely on the BER and the other one is inherent
-to \ASN. Hence \myblue{this proposition is the link between the design
+to \ASN. Hence \textbf{this proposition is the link between the design
 of \ASN and the design of the BER}.
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % Core ASN.1
-% 
-\begin{slide}
-\titre{Core \ASN}
+%
+\begin{frame}
+\frametitle{Core \ASN}
 
 \vspace*{-4pt}
 
 \begin{itemize}
 
-  \item The BER only apply to a subset \ASN (whose definition spans 
+  \item The BER only apply to a subset \ASN (whose definition spans
   188~pages).
 
   \item This suggests that the whole \ASN can be reduced to an inner
-  subset which has the same expressivity, we call \myblue{BER domain}.
+  subset which has the same expressivity, we call \textbf{BER domain}.
 
   \item In fact it is even possible to reduce further the BER domain
-  to a smaller subset, we call \myblue{\core}, in which formal
+  to a smaller subset, we call \textbf{\core}, in which formal
   reasoning is easier.
 
   \item The formal definition of these reductions is achieved by means
@@ -459,45 +456,45 @@ of \ASN and the design of the BER}.
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % Core ASN.1 and soundness property
 %
-\begin{slide}
-\titre{Core \ASN and soundness property}
+\begin{frame}
+\frametitle{Core \ASN and soundness property}
 
 \centerline{\includegraphics[width=.85 \textwidth]{model-2.eps}}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % Getting formal
 %
-\begin{slide}
-\titre{Getting formal}
+\begin{frame}
+\frametitle{Getting formal}
 
 We define the encoding with a \emph{system
 of inference rules}. These are logical implications $P_1 \wedge P_2
 \wedge \ldots \wedge P_n \Rightarrow C$ graphically represented as
 \begin{mathpar}
-\inferrule{P_1\\ P_2\\ \ldots\\ P_n}{C} 
+\inferrule{P_1\\ P_2\\ \ldots\\ P_n}{C}
 \end{mathpar}
 where the $P_i$ are the
 \emph{premises} and $C$ is the \emph{conclusion}. When there is no
 premise, $C$ is an \emph{axiom} and is simply noted $C$.
 
-\myblue{An inference rule can be interpreted also from a computational
+\textbf{An inference rule can be interpreted also from a computational
 point of view}: in order to compute $C$, we need to compute the $P_i$
 first (order is left unspecified).
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % Inference rules (continued)
 %
-\begin{slide}
-\titre{Inference rules (continued)}
+\begin{frame}
+\frametitle{Inference rules (continued)}
 
 The rules and axioms can contain unquantified variables
 (\emph{free variables}). In this case they are implicitly universally
@@ -508,20 +505,20 @@ quantified ($\forall$) at the beginning. For instance
   {P(x,y)}\;\TirName{\textsc{Prop}}
 \]
 actually denotes the property \textsc{Prop} which is $\forall
-x,y.P_1(x) \, \wedge \, P_2(y) \Rightarrow P(x,y)$. 
+x,y.P_1(x) \, \wedge \, P_2(y) \Rightarrow P(x,y)$.
 
 A system of inference rules is a non-ordered set of inference rules.
 
 Given a system applying to one or more relations, these are defined as
 the smallest relations satisfiying the rules.
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % Smallest relations
-% 
-\begin{slide}
-\titre{Smallest relations}
+%
+\begin{frame}
+\frametitle{Smallest relations}
 
 Let the following rules applying to the predicates
 $\id{Even}(n)$ and $\id{Odd}(n)$:
@@ -555,13 +552,13 @@ $\id{Odd}(n)$ true for all $n$. But the smallest satisfactory
 predicates (the ones true the less often) are $\id{Even}(n) \triangleq
 (n \mod{2} = 0)$ and $\id{Odd}(n) \triangleq (n \mod{2} = 1)$.
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
-% Proof trees 
+% Proof trees
 %
-\begin{slide}
-\titre{Proof trees}
+\begin{frame}
+\frametitle{Proof trees}
 
 A theorem is a judgement, i.e. a formal statement, a formula.
 
@@ -583,28 +580,28 @@ the proof of $\id{Odd}(3)$ with the previous system:
   {\id{Odd}(3)}
 \end{mathpar}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % Back to our model
-% 
-\begin{slide}
-\titre{Back to our model}
+%
+\begin{frame}
+\frametitle{Back to our model}
 
 \begin{itemize}
 
-  \item Let us note \myblue{$\coding{\Gamma}{v}{\T}{c}$} the judgement
+  \item Let us note \textbf{$\coding{\Gamma}{v}{\T}{c}$} the judgement
   ``In the environment $\Gamma$, the value $v$ is encoded into the
   code $c$, following the type \T{}.''  (The environment models the
   \ASN module.)
 
-  \item Let us note \myblue{$\decoding{\Gamma}{c}{\T}$} the decoding
+  \item Let us note \textbf{$\decoding{\Gamma}{c}{\T}$} the decoding
   of $c$ in the environment $\Gamma$ according to type \T{}.
 
-  \item We already noted \myblue{$v_1 \approx v_2$} the equivalence of
+  \item We already noted \textbf{$v_1 \approx v_2$} the equivalence of
   values $v_1$ and $v_2$
 
-  \item and \myblue{$c_1 \sim c_2$} the equivalence of codes $c_1$ and
+  \item and \textbf{$c_1 \sim c_2$} the equivalence of codes $c_1$ and
   $c_2$.
 
 \end{itemize}
@@ -612,13 +609,13 @@ the proof of $\id{Odd}(3)$ with the previous system:
 The next step consists in defining these relations by means of systems
 of inference rules.
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
-% Formal model 
+% Formal model
 %
-\begin{slide}
-\titre{Formal model}
+\begin{frame}
+\frametitle{Formal model}
 
 \vspace*{-5pt}
 
@@ -652,19 +649,19 @@ We can now rephrase formally our propositions:
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
 % Final steps
-% 
-\begin{slide}
-\titre{Formal methods for the customer}
+%
+\begin{frame}
+\frametitle{Formal methods for the customer}
 
 \begin{itemize}
 
   \item We prove the soundness theorem with a technique called
-  \myblue{structural induction} (on the height of the proof trees) and
-  \myblue{case analysis}.
+  \textbf{structural induction} (on the height of the proof trees) and
+  \textbf{case analysis}.
 
   \item In case we are a standardization organisation or a tool seller
   we can say to the BER users: ``The formal design review concludes
@@ -676,21 +673,21 @@ We can now rephrase formally our propositions:
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
 % ------------------------------------------------------------------------
-% 
 %
-\begin{slide}
-\titre{Formal methods for the software company}
+%
+\begin{frame}
+\frametitle{Formal methods for the software company}
 
 \begin{itemize}
 
   \item In case we are a tool implementor, the \emph{reliable}
   back-end of an \ASN compiler can be derived from the previous
   work. Indeed our model, being based on inference rules, is actually
-  close to an \myblue{operational model}, i.e. a real implementation,
-  \myblue{based on a functional language}.
+  close to an \textbf{operational model}, i.e. a real implementation,
+  \textbf{based on a functional language}.
 
   \item In this case we do not need to publicise to our customer the
   usage of formal methods: these will ensure that the kernel of our
@@ -703,36 +700,36 @@ We can now rephrase formally our propositions:
 
 \end{itemize}
 
-\end{slide}
+\end{frame}
 
-%% \begin{slide}
-%% \titre{Nouveaux axes de recherche}
+%% \begin{frame}
+%% \frametitle{Nouveaux axes de recherche}
 
 %% Symbiose entre le \emph{web} et les \textsc{bd}: les sites \emph{web}
 %% reposent de plus en plus sur des \textsc{bd}, les collections de pages
-%% chaînées du \emph{web} sont une \textsc{bd} tentante.
+%% chaÃ®nÃ©es du \emph{web} sont une \textsc{bd} tentante.
 
-%% Il faut réinventer une approche \textsc{bd} du \emph{web} car celui-ci
-%% contient des données dites semi-structurées, c-à-d. auto-descriptives
-%% et irrégulières. Domaines affines:
+%% Il faut rÃ©inventer une approche \textsc{bd} du \emph{web} car celui-ci
+%% contient des donnÃ©es dites semi-structurÃ©es, c-Ã -d. auto-descriptives
+%% et irrÃ©guliÃ¨res. Domaines affines:
 
 %% \begin{itemize}
 
-%%   \item systèmes de types et analyse par contraintes des langages de
-%%         requêtes,
+%%   \item systÃ¨mes de types et analyse par contraintes des langages de
+%%         requÃªtes,
 
 %%   \item syntaxes de transfert (codages pour une faible bande passante),
 
-%%   \item interfonctionnement de systèmes hétérogènes (p. ex. ASN.1-XML),
+%%   \item interfonctionnement de systÃ¨mes hÃ©tÃ©rogÃ¨nes (p. ex. ASN.1-XML),
 
-%%   \item réingénierie des sites \emph{web} (migration, XML
-%%         \emph{wrappers}), 
+%%   \item rÃ©ingÃ©nierie des sites \emph{web} (migration, XML
+%%         \emph{wrappers}),
 
 %%   \item protocoles pour les nouveaux terminaux mobiles (assistants
-%%         numériques).
+%%         numÃ©riques).
 
 %% \end{itemize}
 
-%% \end{slide}
+%% \end{frame}
 
 \end{document}
