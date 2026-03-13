@@ -14,10 +14,11 @@
 \renewcommand{\refname}{}
 \newcommand\ASN{\textsf{ASN.1}\xspace}
 \newcommand{\core}{core \ASN}
-\newcommand\Cpp{\mbox{\textsf{C} \hspace*{-2.5mm} \raise 0.7mm \hbox 
+\newcommand\Cpp{\mbox{\textsf{C} \hspace*{-2.5mm} \raise 0.7mm \hbox
 {${\scriptscriptstyle \textsf{++}}$}}\xspace}
 
-\title{A Formalisation of \ASN}
+\title{A Formalisation of \ASN\\
+Eötvös Loránd University (ELTE)}
 \author{Christian Rinderknecht}
 \date{4 May 2014}
 
@@ -133,15 +134,15 @@ designers and tool implementors, \emph{e.g.}, SNMP, OpenSSL.
   \item The \texttt{NULL} type has only one value, also noted
         \texttt{NULL};
 
-  \item 
+  \item
 
-\begin{verbatim} 
-zero INTEGER ::= 0 
+\begin{verbatim}
+zero INTEGER ::= 0
 DayInTheYear ::= INTEGER {first(1), last(356)}
 newYearsEve DayInTheYear ::= last
 \end{verbatim}
 
-  \item 
+  \item
 \begin{verbatim}
 SynchroIndicator ::= ENUMERATED {serial,parallel}
 synchro SynchroIndicator ::= serial
@@ -289,7 +290,7 @@ Wednesday ::= Day (wednesday)
   \texttt{UNION} or symbol \texttt{|}):
 
 \begin{verbatim}
-Day ::= ENUMERATED {monday, tuesday, wednesday, 
+Day ::= ENUMERATED {monday, tuesday, wednesday,
               thursday, friday, saturday, sunday}
 WeekEnd ::= Day (saturday | sunday)
 \end{verbatim}
@@ -298,9 +299,9 @@ WeekEnd ::= Day (saturday | sunday)
   be built upon a given alphabet:
 
 \begin{verbatim}
-CapitalAndSmall ::= 
+CapitalAndSmall ::=
   IA5String (FROM ("A".."Z" | "a".."z"))
-CapitalOrSmall ::= 
+CapitalOrSmall ::=
   IA5STring (FROM ("A".."Z") | FROM ("a".."z"))
 \end{verbatim}
 
@@ -349,7 +350,7 @@ SetOfStringsOf5Char::=
         \texttt{INTERSECTION} or symbol \texttt{\symbol{94}}):
 
 \begin{verbatim}
-FrenchPhoneNumber ::= 
+FrenchPhoneNumber ::=
   NumericString (FROM ("0".."9") ^ SIZE (10))
 \end{verbatim}
 
@@ -414,8 +415,8 @@ and equals \verb+in+, and the component \verb+gamma+ always has
 five elements:
 \begin{verbatim}
 Quadruple1 ::=
-  Quadruple (WITH COMPONENTS {..., 
-                              alpha (in) PRESENT,  
+  Quadruple (WITH COMPONENTS {...,
+                              alpha (in) PRESENT,
                               gamma (SIZE (5))})
 \end{verbatim}
 
@@ -476,7 +477,7 @@ Quadruple1 ::= SET {
 
   \item English cannot tell the meaning of all combinations of
     syntactical constructs.
-  
+
   \item Types are value sets: subtypes yield general set constraints.
 
   \item Encoding only applies to a subset of \ASN.
@@ -526,12 +527,12 @@ constraints!
 \begin{itemize}
 
    \item An incorrect specification is badly rejected: \\
-         \verb+T ::= T+ \ \ produces \ \ \verb+typedef T T;+ \\ 
+         \verb+T ::= T+ \ \ produces \ \ \verb+typedef T T;+ \\
          before being rejected by the C~compiler!
 
    \item A correction specification is rejected:
 \begin{verbatim}
-T ::= SET (WITH COMPONENT (0) 
+T ::= SET (WITH COMPONENT (0)
           | WITH COMPONENT (1)) OF INTEGER
 \end{verbatim}
 
@@ -586,7 +587,7 @@ T ::= SET (WITH COMPONENT (0)
 \begin{verbatim}
 T ::= SET OF T
 x T ::= {x}
-y T ::= {{}} 
+y T ::= {{}}
 \end{verbatim}
 
 \end{itemize}
@@ -597,7 +598,7 @@ y T ::= {{}}
 \frametitle{Theoretical Problems}
 
 \begin{enumerate}
-  
+
   \item \label{finiteness} the types may have only infinite
         values:\\
         \texttt{T ::= SET \{a T\}};
@@ -617,9 +618,9 @@ y T ::= {{}}
 
   \item \label{subtype_non_emptyness} the subtypes may be empty, as\\
         \texttt{T ::= SET ((SIZE (1)) \symbol{94} (SIZE (2))) OF REAL};
-        
+
   \item \label{solvability} the subtypes may have no value set:\\
-        \texttt{T ::= REAL (ALL EXCEPT T)}. 
+        \texttt{T ::= REAL (ALL EXCEPT T)}.
 
 \end{enumerate}
 
@@ -632,7 +633,7 @@ In other words, the issues to settle are respectively:
 \begin{enumerate}
 
   \item the finiteness problem;
- 
+
   \item the typechecking problem;
 
   \item the type compatibility problem;
@@ -661,9 +662,9 @@ In other words, the issues to settle are respectively:
   \item typechecking $\subseteq$ solvability:
 \begin{tabular}{@{}r@{\,}c@{\,}l@{}}
    \texttt{y INTEGER (0..9) ::= 1}
-   & $\rightarrow$ 
+   & $\rightarrow$
    & $\left\{
-       \begin{tabular}{@{\,}l@{}} 
+       \begin{tabular}{@{\,}l@{}}
            \texttt{y A ::= 1} \\
            \texttt{A ::= INTEGER (0..9)} \\
            \texttt{B ::= A (y)}
@@ -697,12 +698,12 @@ So, finiteness and solvability are enough to get a full validation of
 
   \item For the specifiers:
     \begin{itemize}
-      
+
       \item The formalisation can also define the algorithmes for the
         front-end of an \ASN compiler.
-        
+
     \end{itemize}
-    
+
 \end{enumerate}
 
 \end{frame}
@@ -788,7 +789,7 @@ of \ASN and the design of the BER}.
 
 \begin{itemize}
 
-  \item The BER only apply to a subset \ASN (whose definition spans 
+  \item The BER only apply to a subset \ASN (whose definition spans
   188~pages).
 
   \item This suggests that the whole \ASN can be reduced to an inner
