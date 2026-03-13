@@ -7,10 +7,11 @@
 
 \renewcommand{\refname}{}
 \newcommand\ASN{\textsf{ASN.1}\xspace}
-\newcommand\Cpp{\mbox{\textsf{C} \hspace*{-2.5mm} \raise 0.7mm \hbox 
+\newcommand\Cpp{\mbox{\textsf{C} \hspace*{-2.5mm} \raise 0.7mm \hbox
 {${\scriptscriptstyle \textsf{++}}$}}\xspace}
 
-\title{Teaching and research plans}
+\title{Research topics\\
+Hanyang University}
 \author{Christian Rinderknecht}
 \date{1st November 2012}
 
@@ -87,7 +88,7 @@ It is used in network management, secure email, mobile telephony, wireless appli
 
   \item English cannot tell the meaning of all combinations of
     syntactical constructs.
-  
+
   \item Types are value sets: subtypes yield general set constraints.
 
   \item Encoding only applies to a subset of \ASN.
@@ -134,7 +135,7 @@ and time?''
 \frametitle{Problems}
 
 \begin{enumerate}
-  
+
   \item \label{finiteness} the types may have only infinite
         values:\\
         \texttt{T ::= SET \{a T\}};
@@ -154,9 +155,9 @@ and time?''
 
   \item \label{subtype_non_emptyness} the subtypes may be empty, as\\
         \texttt{T ::= SET ((SIZE (1)) \symbol{94} (SIZE (2))) OF REAL};
-        
+
   \item \label{solvability} the subtypes may have no value set:\\
-        \texttt{T ::= REAL (ALL EXCEPT T)}. 
+        \texttt{T ::= REAL (ALL EXCEPT T)}.
 
 \end{enumerate}
 
@@ -170,7 +171,7 @@ In other words, the issues to settle are respectively:
 \begin{enumerate}
 
   \item the finiteness problem;
- 
+
   \item the typechecking problem;
 
   \item the type compatibility problem;
@@ -199,9 +200,9 @@ In other words, the issues to settle are respectively:
   \item typechecking $\subseteq$ solvability:
 \begin{tabular}{@{}rcl@{}}
    \texttt{y INTEGER (0..9) ::= 1}
-   & $\rightarrow$ 
+   & $\rightarrow$
    & $\left\{
-       \begin{tabular}{l} 
+       \begin{tabular}{l}
            \texttt{y A ::= 1} \\
            \texttt{A ::= INTEGER (0..9)} \\
            \texttt{B ::= A (y)}
@@ -260,15 +261,15 @@ We need to find a trade-off.
 %%  \item The \texttt{NULL} type has only one value, also noted
 %%        \texttt{NULL};
 
-  \item 
+  \item
 
-\begin{verbatim} 
-zero INTEGER ::= 0 
+\begin{verbatim}
+zero INTEGER ::= 0
 DayInTheYear ::= INTEGER {first(1), last(356)}
 newYearsEve DayInTheYear ::= last
 \end{verbatim}
 
-  \item 
+  \item
 \begin{verbatim}
 SynchroIndicator ::= ENUMERATED {serial,parallel}
 synchro SynchroIndicator ::= serial
@@ -281,7 +282,7 @@ pi REAL ::= 3.14159
 micron REAL ::= {mantissa 1,base 10,exponent -6}
 \end{verbatim}
 
-  \item 
+  \item
 
 \begin{verbatim}
 byte BIT STRING ::= 'OD'H  -- or '00001110'B
@@ -408,7 +409,7 @@ Wednesday ::= Day (wednesday)
   \texttt{UNION} or symbol \texttt{|}):
 
 \begin{verbatim}
-Day ::= ENUMERATED {monday, tuesday, wednesday, 
+Day ::= ENUMERATED {monday, tuesday, wednesday,
               thursday, friday, saturday, sunday}
 WeekEnd ::= Day (saturday | sunday)
 \end{verbatim}
@@ -417,9 +418,9 @@ WeekEnd ::= Day (saturday | sunday)
   be built upon a given alphabet:
 
 \begin{verbatim}
-CapitalAndSmall ::= 
+CapitalAndSmall ::=
   IA5String (FROM ("A".."Z" | "a".."z"))
-CapitalOrSmall ::= 
+CapitalOrSmall ::=
   IA5STring (FROM ("A".."Z") | FROM ("a".."z"))
 \end{verbatim}
 
@@ -468,7 +469,7 @@ SetOfStringsOf5Char::=
         \texttt{INTERSECTION} or symbol \texttt{\symbol{94}}):
 
 \begin{verbatim}
-FrenchPhoneNumber ::= 
+FrenchPhoneNumber ::=
   NumericString (FROM ("0".."9") ^ SIZE (10))
 \end{verbatim}
 
@@ -533,8 +534,8 @@ and equals \verb+in+, and the component \verb+gamma+ always has
 five elements:
 \begin{verbatim}
 Quadruple1 ::=
-  Quadruple (WITH COMPONENTS {..., 
-                              alpha (in) PRESENT,  
+  Quadruple (WITH COMPONENTS {...,
+                              alpha (in) PRESENT,
                               gamma (SIZE (5))})
 \end{verbatim}
 
@@ -558,4 +559,3 @@ Quadruple1 ::= SET {
 
 
 \end{document}
-
