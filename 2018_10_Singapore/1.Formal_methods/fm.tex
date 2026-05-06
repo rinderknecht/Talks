@@ -266,184 +266,184 @@
 
 \end{slide}
 
-\begin{slide}
-  \title{Abstract interpretation}
+%% \begin{slide}
+%%   \title{Abstract interpretation}
 
-  \begin{itemize}
+%%   \begin{itemize}
 
-    \item For example, let us consider a simple program in \OCaml, a
-      functional language, that prints a message depending on the sign
-      of the square of its input:
-\begin{alltt}
+%%     \item For example, let us consider a simple program in \OCaml, a
+%%       functional language, that prints a message depending on the sign
+%%       of the square of its input:
+%% \begin{alltt}
 
-\textbf{let} f (p) =
-  \textbf{let} p2 = p * p \textbf{in}
-  \textbf{if} p2 < 0 \textbf{then} Printf.printf "Negative"
-  \textbf{else} \textbf{if} p2 > 0 \textbf{then} Printf.printf "Positive"
-        \textbf{else} Printf.printf "Zero"
+%% \textbf{let} f (p) =
+%%   \textbf{let} p2 = p * p \textbf{in}
+%%   \textbf{if} p2 < 0 \textbf{then} Printf.printf "Negative"
+%%   \textbf{else} \textbf{if} p2 > 0 \textbf{then} Printf.printf "Positive"
+%%         \textbf{else} Printf.printf "Zero"
 
-\end{alltt}
+%% \end{alltt}
 
-    \item We aim to answer the question:
-      \begin{quote}
-        \textit{Are there inputs for which a run of this program would
-          print ``\texttt{Negative}''?}
-      \end{quote}
+%%     \item We aim to answer the question:
+%%       \begin{quote}
+%%         \textit{Are there inputs for which a run of this program would
+%%           print ``\texttt{Negative}''?}
+%%       \end{quote}
 
-  \end{itemize}
+%%   \end{itemize}
 
-\end{slide}
+%% \end{slide}
 
-\begin{slide}
-  \title{Abstract interpretation}
+%% \begin{slide}
+%%   \title{Abstract interpretation}
 
-  \begin{itemize}
+%%   \begin{itemize}
 
-    \item If we identify the \OCaml operator ``\texttt{*}'' with the
-      mathematical addition ``\(\times\)'', then the answer is
-      obvious: \textbf{no}.
+%%     \item If we identify the \OCaml operator ``\texttt{*}'' with the
+%%       mathematical addition ``\(\times\)'', then the answer is
+%%       obvious: \textbf{no}.
 
-    \item But ``\texttt{*}'' is not ``\(\times\)'', simply because
-      ``\texttt{p}'' is not an element of~\(\mathbb{N}\).
+%%     \item But ``\texttt{*}'' is not ``\(\times\)'', simply because
+%%       ``\texttt{p}'' is not an element of~\(\mathbb{N}\).
 
-    \item \OCaml integers are those of the underlying hardware
-      architecture. The number ``\texttt{p}'' is encoded as a
-      \textbf{\(2\)-complement binary number}.
+%%     \item \OCaml integers are those of the underlying hardware
+%%       architecture. The number ``\texttt{p}'' is encoded as a
+%%       \textbf{\(2\)-complement binary number}.
 
-    \item The idea consists in interpreting the leftmost bit as a
-      negative positional value, that is to say
-      \begin{equation*}
-        p = (b_{n-1}b_{n-2}\dots{b_0})_2
-      \end{equation*}
-      means
-      \begin{equation*}
-        p = -b_{n-1} \times 2^{n-1} + b_{n-2} \times 2^{n-2} + \dots + b_0
-      \end{equation*}
-      Thus, in an \(8\)-bit \(2\)-complement binary number, the
-      leftmost bit has a positional value of \(-128\) rather than
-      \(+128\). For example, \(p = (11110101)_2\) is interpreted as
-      \begin{equation*}
-        \begin{array}{rrrrrrrr}
-          -128 & \mathbf{64} & \mathbf{32} & \mathbf{16} & 8 &
-          \mathbf{4} & 2 & \mathbf{1}\\
-          \hline
-          1 &  1 &  1 &  1 & 0 & 1 & 0 & 1
-        \end{array}
-        \end{equation*}
-      \begin{equation*}
-        -128 + 64 + 32 + 16 + 4 + 1 = -11
-      \end{equation*}
+%%     \item The idea consists in interpreting the leftmost bit as a
+%%       negative positional value, that is to say
+%%       \begin{equation*}
+%%         p = (b_{n-1}b_{n-2}\dots{b_0})_2
+%%       \end{equation*}
+%%       means
+%%       \begin{equation*}
+%%         p = -b_{n-1} \times 2^{n-1} + b_{n-2} \times 2^{n-2} + \dots + b_0
+%%       \end{equation*}
+%%       Thus, in an \(8\)-bit \(2\)-complement binary number, the
+%%       leftmost bit has a positional value of \(-128\) rather than
+%%       \(+128\). For example, \(p = (11110101)_2\) is interpreted as
+%%       \begin{equation*}
+%%         \begin{array}{rrrrrrrr}
+%%           -128 & \mathbf{64} & \mathbf{32} & \mathbf{16} & 8 &
+%%           \mathbf{4} & 2 & \mathbf{1}\\
+%%           \hline
+%%           1 &  1 &  1 &  1 & 0 & 1 & 0 & 1
+%%         \end{array}
+%%         \end{equation*}
+%%       \begin{equation*}
+%%         -128 + 64 + 32 + 16 + 4 + 1 = -11
+%%       \end{equation*}
 
-  \end{itemize}
+%%   \end{itemize}
 
-\end{slide}
+%% \end{slide}
 
-\begin{slide}
-  \title{Abstract interpretation}
+%% \begin{slide}
+%%   \title{Abstract interpretation}
 
-  \begin{itemize}
+%%   \begin{itemize}
 
-    \item It is easy to test the sign of such a number: if the
-      leftmost bit is~\(1\), the number is negative; if it is~\(0\),
-      then the number is positive or zero. That is because the
-      greatest number with the leftmost bit set to~\(1\) is
-      \((11...1)_2 = -2^{n-1} + (2^{n-2} + 2^{n-3} + \dots + 2^0) =
-      -2^{n-1} + (2^{n-1} - 1) = -1 < 0\).
+%%     \item It is easy to test the sign of such a number: if the
+%%       leftmost bit is~\(1\), the number is negative; if it is~\(0\),
+%%       then the number is positive or zero. That is because the
+%%       greatest number with the leftmost bit set to~\(1\) is
+%%       \((11...1)_2 = -2^{n-1} + (2^{n-2} + 2^{n-3} + \dots + 2^0) =
+%%       -2^{n-1} + (2^{n-1} - 1) = -1 < 0\).
 
-    \item \emph{A number is negative if, and only if, its leftmost bit
-      is~\(1\).}
+%%     \item \emph{A number is negative if, and only if, its leftmost bit
+%%       is~\(1\).}
 
-    \item But the algorithm for multiplying two \(2\)-complement
-      binary numbers is not straightforward.
+%%     \item But the algorithm for multiplying two \(2\)-complement
+%%       binary numbers is not straightforward.
 
-    \item It is not possible in practice to try all machine integers
-      to test that program on a 64-bit architecture. (That would be
-      \(2^{64} = 18,446,744,073,709,551,616\) numbers.)
+%%     \item It is not possible in practice to try all machine integers
+%%       to test that program on a 64-bit architecture. (That would be
+%%       \(2^{64} = 18,446,744,073,709,551,616\) numbers.)
 
-  \end{itemize}
+%%   \end{itemize}
 
-\end{slide}
+%% \end{slide}
 
-\begin{slide}
-  \title{Abstract interpretation}
+%% \begin{slide}
+%%   \title{Abstract interpretation}
 
-  \begin{itemize}
+%%   \begin{itemize}
 
-    \item Let us imagine now that we abstract \OCaml integers to only
-      keep track of their sign: we have only \emph{three} abstract
-      values for each number now.
-      \begin{alltt}
+%%     \item Let us imagine now that we abstract \OCaml integers to only
+%%       keep track of their sign: we have only \emph{three} abstract
+%%       values for each number now.
+%%       \begin{alltt}
 
-\textbf{type} abstract\_int = Positive | Negative | Zero
-      \end{alltt}
+%% \textbf{type} abstract\_int = Positive | Negative | Zero
+%%       \end{alltt}
 
-    \item The multiplication can be abstracted accordingly:
-      \medskip
-\begin{alltt}
-\textbf{let} abstract\_mult = \textbf{function}
-  Negative, Negative \(\rightarrow\) Positive
-| Negative, Positive \(\rightarrow\) Negative
-| Positive, Negative \(\rightarrow\) Negative
-| Positive, Positive \(\rightarrow\) Positive
-|          _,      Zero \(\rightarrow\) Zero
-|      Zero,          _ \(\rightarrow\) Zero
+%%     \item The multiplication can be abstracted accordingly:
+%%       \medskip
+%% \begin{alltt}
+%% \textbf{let} abstract\_mult = \textbf{function}
+%%   Negative, Negative \(\rightarrow\) Positive
+%% | Negative, Positive \(\rightarrow\) Negative
+%% | Positive, Negative \(\rightarrow\) Negative
+%% | Positive, Positive \(\rightarrow\) Positive
+%% |          _,      Zero \(\rightarrow\) Zero
+%% |      Zero,          _ \(\rightarrow\) Zero
 
-\end{alltt}
+%% \end{alltt}
 
-  \end{itemize}
+%%   \end{itemize}
 
-\end{slide}
+%% \end{slide}
 
 
-\begin{slide}
-  \title{Abstract interpretation (continued)}
+%% \begin{slide}
+%%   \title{Abstract interpretation (continued)}
 
-  \begin{itemize}
+%%   \begin{itemize}
 
-      \item The original program is also abstracted:
-\begin{alltt}
+%%       \item The original program is also abstracted:
+%% \begin{alltt}
 
-\textbf{let} abstract\_f (p) =
-  \textbf{let} p2 = abstract\_mult (p,p) \textbf{in}
-  \textbf{if} p2 = Negative \textbf{then} Printf.printf "Negative"
-  \textbf{else} \textbf{if} p2 = Positive \textbf{then} Printf.printf "Positive"
-        \textbf{else} Printf.printf "Zero"
+%% \textbf{let} abstract\_f (p) =
+%%   \textbf{let} p2 = abstract\_mult (p,p) \textbf{in}
+%%   \textbf{if} p2 = Negative \textbf{then} Printf.printf "Negative"
+%%   \textbf{else} \textbf{if} p2 = Positive \textbf{then} Printf.printf "Positive"
+%%         \textbf{else} Printf.printf "Zero"
 
-\end{alltt}
+%% \end{alltt}
 
-    \item The \textbf{correctness} of the abstraction is expressed as:
-      \begin{alltt}
+%%     \item The \textbf{correctness} of the abstraction is expressed as:
+%%       \begin{alltt}
 
-abstract (f (x)) = abstract\_f (abstract x)
+%% abstract (f (x)) = abstract\_f (abstract x)
 
-      \end{alltt}
+%%       \end{alltt}
 
-  \end{itemize}
+%%   \end{itemize}
 
-\end{slide}
+%% \end{slide}
 
-\begin{slide}
-  \title{Abstract interpretation / An illustration}
+%% \begin{slide}
+%%   \title{Abstract interpretation / An illustration}
 
-  \begin{itemize}
+%%   \begin{itemize}
 
-    \item The abstract program can now be tested on three abstract
-      values:
-\begin{alltt}
-abstract\_f (Negative) = Positive
-abstract\_f (Zero)      = Zero
-abstract\_f (Positive) = Positive
-\end{alltt}
+%%     \item The abstract program can now be tested on three abstract
+%%       values:
+%% \begin{alltt}
+%% abstract\_f (Negative) = Positive
+%% abstract\_f (Zero)      = Zero
+%% abstract\_f (Positive) = Positive
+%% \end{alltt}
 
-    \item Therefore, the abstract program can never print
-      ``\texttt{Negative}'', and neither can the original.
+%%     \item Therefore, the abstract program can never print
+%%       ``\texttt{Negative}'', and neither can the original.
 
-    \item This example showcases the use of abstract interpretation to
-      find \textbf{dead code}, that is, impossible runs of a program.
+%%     \item This example showcases the use of abstract interpretation to
+%%       find \textbf{dead code}, that is, impossible runs of a program.
 
-  \end{itemize}
+%%   \end{itemize}
 
-\end{slide}
+%% \end{slide}
 
 \begin{slide}
   \title{Abstract interpretation / An illustration}
