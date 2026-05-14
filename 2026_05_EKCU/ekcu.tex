@@ -2,9 +2,14 @@
 
 \usepackage[english]{babel}
 \usepackage{graphicx}
-\usepackage{amssymb,amsmath,amsthm}
 \usepackage{xspace}
 \usepackage{hyphenat}
+%\usepackage{alltt}
+
+% Maths & Logic
+%
+\usepackage{amsmath,amssymb,amsthm,stmaryrd}
+\usepackage{mathpartir}
 
 \newtheorem{proposition}{Proposition}
 %\newtheorem{theorem}{Theorem}
@@ -18,9 +23,14 @@
 \newcommand\Cpp{\mbox{\textsf{C} \hspace*{-2.5mm} \raise 0.7mm \hbox
 {${\scriptscriptstyle \textsf{++}}$}}\xspace}
 
-\title{Career overview}
-\author{Christian Rinderknecht}
-\date{20 May 2026}
+\frenchspacing  % Follow French conventions after a period
+
+\title{A Case of Two Languages}
+\author{Dr. Christian Rinderknecht}
+\date{20 May 2026\\
+\ \\
+  Eszterházy Károly Katolikus Egyetem\\
+  Eger (Hungary)}
 
 \begin{document}
 
@@ -32,23 +42,25 @@
 
   \begin{itemize}
 
-    \item My alma mater is \emph{Universit\'e Pierre et Marie Curie}
-      (UPMC, a.k.a. Paris~6).
+    \item My alma mater is \emph{Université Pierre et Marie Curie}
+      (UPMC, a.k.a. Paris~6 in France).
 
-    \item I did my doctoral studies at Inria, one of the most
-      prestigious research institutes in informatics in France.
+    \item I did my doctoral studies (1993\hyp{}1998) at INRIA, one of
+      the most prestigious research institutes in informatics in
+      France.
 
-    \item I was a member of the team that developed the programming
-      language OCaml. I am still in touch with the team.
+    \item I was a member of the team that has been developing the
+      programming language OCaml. I am still in touch with them.
 
     \item I went on to work as an engineer, a researcher and a
       professor for many years, across several countries (France,
       Korea, Hungary, Sweden), both in academia and private
       companies.
 
-    \item My main expertise domains are the design of programing
-      languages, compiler construction, functional programming and
-      didactics of programming languages.
+    \item My main expertise domains are the design of
+      Domain\hyp{}Specific Languages (e.g., for abstract neuron
+      networks or blockchains), compiler construction, functional
+      programming and didactics of programming languages.
 
   \end{itemize}
 
@@ -61,7 +73,8 @@
 
   \begin{minipage}{0.5\linewidth}
     My book about functional programming and the analysis of
-    algorithms is published by King's College London (600 pages).
+    algorithms is published by King's College London (600
+    pages). \\ Revised in 2025.
   \end{minipage}%
   \begin{minipage}{0.5\linewidth}
     \includegraphics[scale=0.35]{my_book.eps}
@@ -72,36 +85,7 @@
 %%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
-  \frametitle{Career}
-
-  I propose a simplified thematic approach:
-  \begin{enumerate}
-
-    \item the design of programming languages and their compilation
-      (front\hyp{}ends, type\hyp{}checkers, static analysis);
-
-    \item the didactics of programming languages and the analysis of
-      algorithms;
-
-    \item the teaching of programming languages and their models.
-
-  \end{enumerate}
-
-  \bigskip
-
-  My work on compiler construction is split between academia and
-  industry, as 2/3 of my career was in academia.
-
-  \bigskip
-
-  I will hightlight only a few topics.
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}
-\frametitle{Compiler front-ends -- The case of \ASN}
+  \frametitle{Compiler front-ends -- The case of \ASN}
 
 My doctoral studies were dedicated to applying formal logic from the
 theory of programming languages to an industrial language in use in
@@ -122,7 +106,7 @@ heterogeneous peers.
 values into streams of bits, the two most prominent being
 \begin{itemize}
 
-  \item the Basic Encoding Rules (BER),
+  \item the Basic Encoding Rules (BER, and derived CER/DER),
   \item and Packed Encoding Rules (PER).
 
 \end{itemize}
@@ -375,120 +359,120 @@ specifications.
 
 \end{frame}
 
-%% \begin{frame}
-%% \frametitle{Analysis}
+\begin{frame}
+\frametitle{Analysis}
 
-%% \begin{itemize}
+\begin{itemize}
 
-%%   \item type compatibility $\subseteq$ typechecking;
+  \item type compatibility $\subseteq$ typechecking;
 
-%%   \item constraint consistence, non-emptiness $\subseteq$ solvability
-%%         (the system is solved when we construct explicitly the values
-%%         of each subtype);
+  \item constraint consistence, non-emptiness $\subseteq$ solvability
+        (the system is solved when we construct explicitly the values
+        of each subtype);
 
-%%   \item typechecking $\subseteq$ solvability:
-%% \begin{tabular}{@{}r@{\,}c@{\,}l@{}}
-%%    \texttt{y INTEGER (0..9) ::= 1}
-%%    & $\rightarrow$
-%%    & $\left\{
-%%        \begin{tabular}{@{\,}l@{}}
-%%            \texttt{y A ::= 1} \\
-%%            \texttt{A ::= INTEGER (0..9)} \\
-%%            \texttt{B ::= A (y)}
-%%         \end{tabular}
-%%      \right.$
-%% \end{tabular}
-%% where \texttt{A}~and~\texttt{B} are fresh type references.
+  \item typechecking $\subseteq$ solvability:
+\begin{tabular}{@{}r@{\,}c@{\,}l@{}}
+   \texttt{y INTEGER (0..9) ::= 1}
+   & $\rightarrow$
+   & $\left\{
+       \begin{tabular}{@{\,}l@{}}
+           \texttt{y A ::= 1} \\
+           \texttt{A ::= INTEGER (0..9)} \\
+           \texttt{B ::= A (y)}
+        \end{tabular}
+     \right.$
+\end{tabular}
+where \texttt{A}~and~\texttt{B} are fresh type references.
 
-%% \end{itemize}
+\end{itemize}
 
-%% So, finiteness and solvability are enough to get a full validation of
-%% \ASN.
+So, finiteness and solvability are enough to get a full validation of
+\ASN.
 
-%% \end{frame}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Set Constraints}
+
+Sets constraints are inclusions between expressions interpreted over
+the domain of sets of trees which may be recursively defined.
+
+\medskip
+
+The \ASN types, by having a tree structure (technically, they are
+rational trees), fit perfectly in the usual domain of set
+constraints.
+
+\medskip
+
+A set constraint has the form $\alpha \subseteq \beta$, where $\alpha$
+and $\beta$ are \emph{set expressions}. Examples are \textsf{0} (the
+empty set), \textsf{1} (the set of all terms), $\alpha$ (a set-valued
+variable), $c(\alpha, \beta)$ (a constructor application), and the
+union, intersection or complement of set expressions. Given a set of
+constructors ${\cal C}$, where each $c \in \mathcal{C}$ has arity
+$a(c)$, set expressions are defined by the grammar:
+\begin{equation*}
+E ::= \textsf{0} \mid \textsf{1} \mid \alpha \mid c (E_1, \ldots,
+E_{a(c)}) \mid E_1 \cup E_2 \mid E_1 \cap E_2 \mid \neg E_1.
+\end{equation*}
+
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%
 
-%% \begin{frame}
-%% \frametitle{Set Constraints}
+\begin{frame}
+\frametitle{Common Application}
 
-%% Sets constraints are inclusions between expressions interpreted over
-%% the domain of sets of trees which may be recursively defined.
+In general, set constraints are used in the static analysis of
+programs: they are the smallest supersets of the sets of the computed
+values. Solving these constraints means constructing these
+approximated sets (\emph{e.g.}, for optimisation).
 
-%% \medskip
+\medskip
 
-%% The \ASN types, by having a tree structure (technically, they are
-%% rational trees), fit perfectly in the usual domain of set
-%% constraints.
+For example, consider a program with two uses of a variable
+$v$. Assume that from one use we determine that $v$ must be a number
+(\emph{i.e.}, $v \subseteq \textsf{Int} \, \cup \, \textsf{Float}$)
+and from the other use that $v$ cannot be an integer (\emph{i.e.}, $v
+\subseteq \neg\textsf{Int}$). Combining these constraints, we can
+infer that $v$ must be a floating point number (\emph{i.e.}, $v
+\subseteq (\textsf{Int} \, \cup \, \textsf{Float}) \cap
+\neg\textsf{Int} = \textsf{Float}$).
 
-%% \medskip
+\end{frame}
 
-%% A set constraint has the form $\alpha \subseteq \beta$, where $\alpha$
-%% and $\beta$ are \emph{set expressions}. Examples are \textsf{0} (the
-%% empty set), \textsf{1} (the set of all terms), $\alpha$ (a set-valued
-%% variable), $c(\alpha, \beta)$ (a constructor application), and the
-%% union, intersection or complement of set expressions. Given a set of
-%% constructors ${\cal C}$, where each $c \in \mathcal{C}$ has arity
-%% $a(c)$, set expressions are defined by the grammar:
-%% \begin{equation*}
-%% E ::= \textsf{0} \mid \textsf{1} \mid \alpha \mid c (E_1, \ldots,
-%% E_{a(c)}) \mid E_1 \cup E_2 \mid E_1 \cap E_2 \mid \neg E_1.
-%% \end{equation*}
+%%%%%%%%%%%%%%%%%%%
 
-%% \end{frame}
+\begin{frame}
+\frametitle{Application to \ASN}
 
-%% %%%%%%%%%%%%%%%%%%%
+In order to apply the set constraints to \ASN we define specific
+constructors that model all the subtyping constraints (like parsing to
+obtain an abstract syntax tree).
 
-%% \begin{frame}
-%% \frametitle{Common Application}
+\medskip
 
-%% In general, set constraints are used in the static analysis of
-%% programs: they are the smallest supersets of the sets of the computed
-%% values. Solving these constraints means constructing these
-%% approximated sets (\emph{e.g.}, for optimisation).
+Then, the problem consists in extracting set constraints from each
+subtype, such as their solving provide a mapping from the subtype to
+its set of values: this is a kind of \emph{denotational semantics} of
+\ASN.
 
-%% \medskip
+\medskip
 
-%% For example, consider a program with two uses of a variable
-%% $v$. Assume that from one use we determine that $v$ must be a number
-%% (\emph{i.e.}, $v \subseteq \textsf{Int} \, \cup \, \textsf{Float}$)
-%% and from the other use that $v$ cannot be an integer (\emph{i.e.}, $v
-%% \subseteq \neg\textsf{Int}$). Combining these constraints, we can
-%% infer that $v$ must be a floating point number (\emph{i.e.}, $v
-%% \subseteq (\textsf{Int} \, \cup \, \textsf{Float}) \cap
-%% \neg\textsf{Int} = \textsf{Float}$).
+As far as validation is concerned, if some constraints are unsolvable
+or the set of solutions is empty, them the specification must be
+rejected.
 
-%% \end{frame}
+\medskip
 
-%% %%%%%%%%%%%%%%%%%%%
+Aiken and Wimmers (1993) proposed the first solving algorithm for the
+class of constraints we are using, \emph{but there are practical
+  limitations.}
 
-%% \begin{frame}
-%% \frametitle{Application to \ASN}
-
-%% In order to apply the set constraints to \ASN we define specific
-%% constructors that model all the subtyping constraints (like parsing to
-%% obtain an abstract syntax tree).
-
-%% \medskip
-
-%% Then, the problem consists in extracting set constraints from each
-%% subtype, such as their solving provide a mapping from the subtype to
-%% its set of values: this is a kind of \emph{denotational semantics} of
-%% \ASN.
-
-%% \medskip
-
-%% As far as validation is concerned, if some constraints are unsolvable
-%% or the set of solutions is empty, them the specification must be
-%% rejected.
-
-%% \medskip
-
-%% Aiken and Wimmers (1993) proposed the first solving algorithm for the
-%% class of constraints we are using, \emph{but there are practical
-%%   limitations.}
-
-%% \end{frame}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%
 
@@ -509,7 +493,7 @@ relating \ASN and the BER to SNMP and OpenSSL, about improper decoding
 
   \item unspecified (non-deterministic) behaviours,
 
-  \item stack corruptions,
+  \item call stack corruptions,
 
   \item hence possible denials of service.
 
@@ -542,19 +526,19 @@ the problems lay with the back-ends of the compilers.
       entries and resilience to malicious users.
 
     \item Those transactions consist in the exchange of assets
-      (tokens) between peers of the network. Each peer has an address
-      and an account (an amount of tokens), but \textbf{a physical
-        person can be several peers.}
+      (denoted on\hyp{}chain by \textbf{tokens}) between peers of the
+      network. Each peer has an address and an account (an amount of
+      tokens), but \textbf{a physical person can be several peers.}
 
     \item \textbf{Public-key cryptography} is used to secure the
       identity of the senders of transactions and to ensure that past
       transactions are not tempered with. An address is the hash of
       the peer's public key.
 
-    \item The economic protocol of Tezos offers the possibility to
-      record in the chain the business logic between the peers, that
-      is, the knowledge of what they agree should trigger transfers of
-      tokens, as \textbf{smart contracts}.
+    \item The economic protocol of Tezos enables the recording
+      on\hyp{}chain the business logic between peers, that is, the
+      knowledge of what they agree should trigger transfers of tokens:
+      \textbf{smart contracts}.
 
   \end{itemize}
 
@@ -574,16 +558,21 @@ the problems lay with the back-ends of the compilers.
       publicly readable.
 
     \item The smart contract (by synecdoche) is executed each time a
-      specific transaction is sent to its address.
+      specific transaction is sent to its address. The transaction may
+      include some parameters.
 
-    \item The transaction may include some parameters.
-
-    \item Any call to a contract in a block is replicated by all the
-      nodes in the chain, to check whether the block is valid before
-      including it in their local view of the head of the chain.
+    \item Any call to a contract in a candidate block of transactions
+      is replicated by all the nodes to check whether the block is
+      valid before including it in their local view of the head of the
+      chain.
 
     \item Once the block is validated, it is broadcasted by the
       underlying peer-to-peer, gossip network (as usual).
+
+    \item The validation of smart contracts therefore adds a
+      \textbf{delay} in the validation of a block: the execution time of
+      all the smart contracts in it must fit the interblock time for
+      the chain.
 
   \end{itemize}
 
@@ -596,11 +585,52 @@ the problems lay with the back-ends of the compilers.
 
   \begin{itemize}
 
+    \item Therefore, each smart contract is allowed a given and fixed
+      quantity of computation, measured in \textbf{gas}.
+
+    \item Each instruction has an associated cost expected to be
+      proportional to the wall-clock time and an \emph{ad hoc}
+      estimation is given by the node's client.
+
+    \item A \textbf{node} is a server process that is accessed by a
+      command-line client or RPCs. A node comprises a view of the
+      chain so far, the \textbf{context of the chain} (a map from
+      addresses to token amounts, used to validate transactions), and
+      the \textbf{memory pool} (staging area).
+
+    \item When the execution exceeds the alloted gas, it is stopped,
+      its effect on the storage is rolled back, a failed transaction
+      is included in the block, and thus fees are collected to
+      \textbf{discourage spamming attacks}.
+
+    \item The economic protocol sets limits on gas per block and per
+      transaction.
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Smart Contracts on Tezos}
+
+  \begin{itemize}
+
+    \item Each smart contract has a \textbf{code size} and a
+      \textbf{storage size}, which are allocated on every node on the
+      chain (in their context).
+
+    \item To limit the memory needed to synchronise the chain and
+      store it, a fee is set per byte and collected when a contract is
+      deployed (\emph{originated}, in Tezos parlance).
+
+      \item Smart contracts are \textbf{type\hyp{}checked} before
+        origination, which incurs a fee too.
+
     \item It is only at the normal termination of a contract that the
-      effects of a contract becomes atomically visible to the network:
-      the storage may appear modified and a list of operations may
-      have been returned (transactions, contract creations and
-      delegate settings) and validated.
+      \textbf{effects} of a contract become \textbf{atomically
+        visible} to the network: the storage may appear modified and a
+      list of operations may have been returned (transactions,
+      contract creations and delegate settings) and validated.
 
     \item In particular, a smart contract can transfer tokens to other
       smart contracts, enabling the design of \textbf{complex
@@ -618,8 +648,8 @@ the problems lay with the back-ends of the compilers.
   \begin{itemize}
 
     \item The language native to the Tezos blockchain for writing
-      smart contracts is \textbf{Michelson}, a Domain-Specific
-      Language (DSL) inspired by Lisp and Forth.
+      smart contracts is \textbf{Michelson}, a domain\hyp{}specific
+      language inspired by functional and stack\hyp{}based languages.
 
     \item This unusual lineage aims at satisfying unusual constraints,
       but entails some tensions in the design.
@@ -634,8 +664,8 @@ the problems lay with the back-ends of the compilers.
     \item On the other hand, it was originally thought that users will
       want to write in Michelson by hand, so \textbf{high-level
         features} were deemed necessary (like a restricted variant of
-      Lisp lambdas, a way to encode algebraic data types, as well as
-      built-in sets, maps and lists).
+      lambdas, a way to encode algebraic data types, and built\hyp{}in
+      sets, maps and lists).
 
   \end{itemize}
 
@@ -643,23 +673,417 @@ the problems lay with the back-ends of the compilers.
 
 %%%%%%%%%%%%%%%%%%%
 
-
 \begin{frame}
-  \frametitle{LIGO -- a high-level language for Tezos}
+  \frametitle{The design of Michelson}
 
   \begin{itemize}
 
-    \item I co-designed a high\hyp{}level language for programming
-      smart contracts on the blockchain Tezos, called LIGO.
+    \item To avoid ambiguous and otherwise misleading contracts, the
+      contents and layout of Michelson contracts has been constrained
+      (e.g. identation, no UTF-8), and a \textbf{canonical form} was
+      designed and enforced when storing contracts on the chain.
 
-    \item I designed and wrote the front-end of the LIGO compiler.
+    \item To avoid the origination of contracts that would fail due to
+      inconsistent assumptions on the storage and temporary values, a
+      \textbf{strong static type system} was designed for Michelson.
 
-    \item There were several concrete syntaxes, based on
-      general-purpose languages like Pascal, OCaml, ReasonML and
-      TypeScript.
+    \item To reduce the size of the code, Michelson was designed as
+      \textbf{a stack-based language}, whence the lineage from Forth
+      and other concatenative languages like PostScript.
+
+    \item Programs in those languages are \textbf{compact} because
+      they assume an implicit stack in which some input values are
+      popped, and output values are pushed, according to the current
+      instruction being executed.
 
   \end{itemize}
 
 \end{frame}
+
+\begin{frame}
+  \frametitle{The semantics of Michelson}
+
+  \begin{itemize}
+
+    \item The semantics of each Michelson instruction is determined by
+      the change of a prefix of the stack, that is, a segment starting
+      at the top.
+
+    \item An abstraction of that change can be captured by the
+      \textbf{type of the instruction}.
+
+    \item For example, the instruction \textsf{DUP} has type
+      \(\alpha::A \rightarrow \alpha::\alpha::A\), meaning that if the
+      stack before the instruction is executed has a topmost item
+      (also called \emph{head}) of type~\(\alpha\), where the substack
+      (also called \emph{tail}) has type~\(A\), then the instruction
+      leaves a stack with two items of type~\(\alpha\), on top of a
+      stack of type~\(A\). (We use the OCaml notation for consing,
+      that is, pushing items.)
+
+    \item This does not specify entirely the semantics, only the
+      \textbf{static semantics}.
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{The type system of Michelson}
+
+  \begin{itemize}
+
+    \item We need a \textbf{dynamic semantics}, also called
+      \emph{evaluation} or \emph{interpretation}, defined as a
+      transition system, which states what happens to values in the
+      stack. Here, the evaluation mimics exactly the typing judgement
+      above:
+\begin{mathpar}
+\inferrule
+    {\textsf{DUP} \; x::S \; \rightarrow \; x::x::S}
+    {}
+\end{mathpar}
+
+    \item Whilst the types of instructions can be polymorphic, their
+      instantiations must be monomorphic, hence instructions are not
+      first-class values and cannot be partially interpreted.
+
+    \item This enables a simple \textbf{static type checking}, as
+      opposed to a complex type inference. It can be performed
+      efficiently: \textbf{contract type checking consumes gas}.
+
+    \item Basically, type checking aims at validating the composition
+      of instructions, therefore is key to safely compose contracts
+      (concatenation) and refuse invalid data at run\hyp{}time.
+
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{The type system of Michelson}
+
+  \begin{itemize}
+
+    \item Once a contract passes type checking, it cannot fail due to
+      inconsistent assumptions on the storage and other values (there
+      are no null values, no casts), but it can still fail for other
+      reasons: division by zero, token exhaustion, gas exhaustion, or
+      an explicit \text{FAILWITH} instruction. This property is called
+      \textbf{type safety}. Also, such a contract cannot remain stuck:
+      this is the \textbf{progress property}.
+
+    \item The existence of a formal type system for Michelson, of a
+      formal specification of its dynamic semantics (evaluation), of a
+      Michelson interpreter in the proof assistant Coq/Rocq, of proofs
+      in Coq/Rocq of properties of some typical contracts, all those
+      achievements are instances of \textbf{formal methods} in Tezos.
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item We want to write a smart contract in Michelson that records
+      votes of peers for their favourite candidate.
+
+    \item For the sake of simplificity, a candidate is denoted by a
+      string.
+
+    \item The vote is open to all peers for a fee, and they have to
+      pick one candidate in a fixed list.
+
+    \item The state of the stack at a given point will be written in a
+      comment starting with \texttt{\#}.
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[containsverbatim]
+  \frametitle{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item We begin by defining the storage as a mapping from the
+      candidates (\textsf{string}) to the number of corresponding
+      votes (\textsf{int}):
+\begin{semiverbatim}
+\textbf{storage} (map string int);
+\end{semiverbatim}
+
+    \item Then we specify the type of the parameter of the contract,
+       that is, the vote:
+\begin{semiverbatim}
+\textbf{parameter} string;
+\end{semiverbatim}
+
+    \item The execution starts with a stack containing a single pair
+      made of the parameter and the storage:
+\begin{semiverbatim}
+\textbf{code} \{
+# (vote, storage)
+[...]
+\end{semiverbatim}
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[containsverbatim]
+  \frametitle{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item First, we check if the caller sent us enough tokens to
+      vote, and, if not, we fail:
+\begin{semiverbatim}
+AMOUNT;
+# amount::(vote, storage)
+PUSH mutez 5000;
+# 5000::amount::(vote, storage)
+IFCMPGT
+  \{PUSH string "Insufficient fee."; FAILWITH\} \{\};
+# (vote, storage)
+\end{semiverbatim}
+
+    \item The instruction \texttt{AMOUNT} pushes onto the stack the
+      amount sent by the voter.
+
+    \item The instruction \texttt{PUSH} pushes a typed constant.
+
+    \item The instruction \texttt{IFCMPGT} compares the first two
+      numbers on the stack, and, if the topmost is greater than the
+      next, the first sequence (between braces) is executed, else the
+      second one (which is empty here because of \texttt{FAILWITH}).
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[containsverbatim]
+  \frametitle{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item The instruction \texttt{FAILWITH} reads the value on top of
+      the stack, terminates the execution, and signals an error
+      (denoted by the value) to the node and the client.
+
+    \item In order to check the current number of votes for the same
+      candidate, we start by duplicating the topmost item:
+\begin{semiverbatim}
+DUP;
+# (vote, storage)::(vote, storage)
+\end{semiverbatim}
+
+    \item We then destructure the first pair:
+\begin{semiverbatim}
+UNPAIR;
+# vote::storage::(vote, storage)
+\end{semiverbatim}
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[containsverbatim]
+  \frametitle{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item We can now consult the map in storage for the current count:
+\begin{semiverbatim}
+GET;
+# (Some current | None)::(vote, storage)
+\end{semiverbatim}
+      The top of the stack is \texttt{None} if \texttt{vote} was not a
+      valid choice, and \texttt{(Some current)} if there were
+      \texttt{current} votes already.
+    \item If \texttt{None}, we must fail; otherwise, we increment the
+      number of votes:
+\begin{semiverbatim}
+IF\_SOME \{ PUSH int 1; ADD; SOME \}
+   \{ PUSH string "Unknown candidate."; FAILWITH \}
+# Some (current+1) :: (vote, storage)
+\end{semiverbatim}
+
+    \item We need now to update the storage with the new vote. For
+      that, we need to fish out the vote:
+\begin{semiverbatim}
+DIP \{ UNPAIR \};
+# Some (current+1) :: vote :: storage
+\end{semiverbatim}
+      The instruction \texttt{DIP} applies its sequence of
+      instructions (here \texttt{UNPAIR}) to the item just below the
+      top.
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[containsverbatim]
+  \frametitle{A voting contract in Michelson}
+
+  \begin{itemize}
+
+    \item Then we need to reorder the two first items, like so:
+\begin{semiverbatim}
+SWAP;
+# vote :: Some (current+1) :: storage
+\end{semiverbatim}
+
+    \item We can now update the map:
+\begin{semiverbatim}
+UPDATE;
+# storage'
+\end{semiverbatim}
+
+    \item All contracts must normally end by leaving in the stack a
+      pair made of a list of operations and the new storage.
+
+    \item In this instance, the list is empty because all we do is
+      update the internal storage of the contract. So we push an empty
+      list of operations and pair it with the new storage:
+\begin{semiverbatim}
+NIL operation;
+PAIR;
+# ([], storage')
+\}
+\end{semiverbatim}
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[containsverbatim]
+  \frametitle{The full Michelson contract}
+  \begin{semiverbatim}
+    \small
+\textbf{storage} (map string int);
+\textbf{parameter} string;
+\textbf{code} \{
+ AMOUNT;
+ PUSH mutez 5000;
+ IFCMPGT \{ PUSH string "Insufficient fee."; FAILWITH \} \{\};
+ DUP;
+ UNPAIR;
+ GET;
+ IF\_SOME \{ PUSH int 1; ADD; SOME \}
+         \{ PUSH string "Unknown candidate."; FAILWITH \}
+ DIP \{ UNPAIR \};
+ SWAP;
+ UPDATE;
+ NIL operation;
+ PAIR;
+\}
+\end{semiverbatim}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Assessment of the contract}
+
+  \begin{itemize}
+
+    \item We could improve upon this design by enforcing a deadline on
+      the ballot, or by granting the right to add new candidates in
+      exchange of a fee.
+
+    \item Anyhow, we had to modify, sometimes deeply, the stack in
+      order to fetch and prepare the data for the instructions.
+
+    \item Moreover, some instructions above were actually
+      \textbf{macros} (\texttt{IF\_SOME}, \texttt{IFCMPGT}), which are
+      actually expanded into a sequence of atomic instructions by the
+      Michelson parser, so the canonical contract on the chain is
+      longer.
+
+    \item Programming in \textbf{Michelson is fun} and might even save
+      the Caps Lock key from extinction.
+
+    \item \emph{But does it scale up to larger and involved contracts
+      with high stakes?}
+
+    \item This is where \textbf{LIGO comes into play}.
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{LIGO}
+
+  \begin{itemize}
+
+    \item Like Michelson, \textbf{LIGO is a programming language for
+      writing smart contracts on Tezos.}
+
+    \item Unlike Michelson, LIGO is a language akin to what a
+      mainstream programmer would expect.
+
+    \item This means that LIGO features variables, expressions,
+      function calls, data types, pattern matching etc.
+
+    \item Nevertheless LIGO remains a DSL for the Tezos blockchain, so
+      not all the usual bells and whistles of a mainstream language
+      are available.
+
+    \item It is hosted here: \url{https://ligolang.org/}
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{LIGO}
+
+  \begin{itemize}
+
+    \item Perhaps the most striking feature of LIGO is that it comes
+      in \textbf{different concrete syntaxes}, and even
+      \textbf{different programming paradigms}.
+
+    \item In other words, LIGO is not defined by one syntax and one
+      paradigm, like imperative versus functional.
+
+    \item There is \textbf{JsLIGO}, which is inspired by TypeScript,
+      an imperative language.
+
+    \item There is \textbf{CameLIGO}, which is inspired by the pure
+      subset of OCaml, hence is a functional language with few
+      keywords, where values cannot be mutated.
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[containsverbatim]
+  \frametitle{The voting contract in CameLIGO}
+
+  \begin{semiverbatim}
+\textbf{type} storage = (string, nat) map
+\textbf{type} return = operation list * storage
+
+\textbf{let} vote (ballot, s : string * storage) : return =
+  \textbf{if}   Tezos.get_amount () <= 5000mutez
+  \textbf{then} failwith "Insufficient fee."
+  \textbf{else}
+    \textbf{match} Map.find\_opt ballot s \textbf{with}
+      None -> failwith "Unknown candidate."
+    | Some current ->
+        [], Map.update ballot (Some (current + 1n)) s
+  \end{semiverbatim}
+
+\end{frame}
+
 
 \end{document}
