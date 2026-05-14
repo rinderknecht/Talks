@@ -1,2 +1,2 @@
 clean::
-> @rm -f *.out *.err ${DOC}.nav ${DOC}.snm
+> @rm -f *.out *.err ${DOC}.nav ${DOC}.snm *.vrb
