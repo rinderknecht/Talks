@@ -54,8 +54,7 @@
 
     \item I went on to work as an engineer, a researcher and a
       professor for many years, across several countries (France,
-      Korea, Hungary, Sweden), both in academia and private
-      companies.
+      Korea, Hungary, Sweden). I also worked in private companies.
 
     \item My main expertise domains are the design of
       Domain\hyp{}Specific Languages (e.g., for abstract neuron
@@ -73,7 +72,7 @@
 
   \begin{minipage}{0.5\linewidth}
     My book about functional programming and the analysis of
-    algorithms is published by King's College London (614
+    algorithms is published by King's College London (600
     pages). \\ Revised in 2025.
   \end{minipage}%
   \begin{minipage}{0.5\linewidth}
@@ -407,15 +406,15 @@ constraints.
 
 \medskip
 
-A set constraint has the form $\alpha \subseteq \beta$, where $\alpha$
-and $\beta$ are \emph{set expressions}. Examples are \textsf{0} (the
-empty set), \textsf{1} (the set of all terms), $\alpha$ (a set-valued
-variable), $c(\alpha, \beta)$ (a constructor application), and the
-union, intersection or complement of set expressions. Given a set of
+A set constraint has the form $E_1 \subseteq E_2$, where $E_1$ and
+$E_2$ are \emph{set expressions}. Examples are \textsf{0} (the empty
+set), \textsf{1} (the set of all terms), $\alpha$ (a set-valued
+variable), $c(E_1, E_2)$ (a constructor application), and the union,
+intersection or complement of set expressions. Given a set of
 constructors ${\cal C}$, where each $c \in \mathcal{C}$ has arity
 $a(c)$, set expressions are defined by the grammar:
 \begin{equation*}
-E ::= \textsf{0} \mid \textsf{1} \mid \alpha \mid c (E_1, \ldots,
+E ::= \textsf{0} \mid \textsf{1} \mid c (E_1, \ldots,
 E_{a(c)}) \mid E_1 \cup E_2 \mid E_1 \cap E_2 \mid \neg E_1.
 \end{equation*}
 
@@ -427,20 +426,19 @@ E_{a(c)}) \mid E_1 \cup E_2 \mid E_1 \cap E_2 \mid \neg E_1.
 \frametitle{Common Application}
 
 In general, set constraints are used in the static analysis of
-programs: they are the smallest supersets of the sets of the computed
-values. Solving these constraints means constructing these
-approximated sets (\emph{e.g.}, for optimisation).
+programs. For us, solving these constraints means constructing the
+smallest supersets of the sets of the computed values (least
+fixpoint).
 
 \medskip
 
 For example, consider a program with two uses of a variable
 $v$. Assume that from one use we determine that $v$ must be a number
-(\emph{i.e.}, $v \subseteq \textsf{Int} \, \cup \, \textsf{Float}$)
-and from the other use that $v$ cannot be an integer (\emph{i.e.}, $v
-\subseteq \neg\textsf{Int}$). Combining these constraints, we can
-infer that $v$ must be a floating point number (\emph{i.e.}, $v
-\subseteq (\textsf{Int} \, \cup \, \textsf{Float}) \cap
-\neg\textsf{Int} = \textsf{Float}$).
+(that is, $v \subseteq \textsf{Int} \, \cup \, \textsf{Float}$) and
+from the other use that $v$ cannot be an integer (namely, $v \subseteq
+\neg\textsf{Int}$). Combining these constraints, we can infer that $v$
+must be a floating point number (to wit, $v \subseteq (\textsf{Int} \,
+\cup \, \textsf{Float}) \cap \neg\textsf{Int} = \textsf{Float}$).
 
 \end{frame}
 
@@ -522,8 +520,8 @@ the problems lay with the back-ends of the compilers.
 
     \item The economic protocol of Tezos handles a ledger of
       transactions as a \textbf{blockchain}. In a nutshell: a
-      replicated database with strong access control, immutable
-      entries and resilience to malicious users.
+      replicated database, immutable entries and resilience to
+      malicious users.
 
     \item Those transactions consist in the exchange of assets
       (denoted on\hyp{}chain by \textbf{tokens}) between peers of the
